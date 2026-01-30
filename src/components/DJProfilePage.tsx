@@ -1,6 +1,6 @@
 import { ArrowLeft, Users, Music, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PackCard } from "./PackCard";
+import PackCard from "./PackCard";
 import { DJ, Pack } from "@/types";
 
 interface DJProfilePageProps {
