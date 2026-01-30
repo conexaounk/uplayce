@@ -279,7 +279,7 @@ export default function DJProfilePage() {
                         className="gap-2 bg-gradient-to-r from-primary to-secondary"
                       >
                         <Plus className="h-4 w-4" />
-                        Adicionar Pack/Track
+                        Novo Pack
                       </Button>
                     </>
                   ) : (
@@ -288,14 +288,26 @@ export default function DJProfilePage() {
                         <Share2 className="h-4 w-4" />
                         Compartilhar
                       </Button>
-                      <Button variant="outline" className="gap-2">
-                        <Instagram className="h-4 w-4" />
-                        <span className="hidden sm:inline">Instagram</span>
-                      </Button>
-                      <Button variant="outline" className="gap-2">
-                        <Youtube className="h-4 w-4" />
-                        <span className="hidden sm:inline">YouTube</span>
-                      </Button>
+                      {profile.instagram_url && (
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => window.open(profile.instagram_url, "_blank")}
+                        >
+                          <Instagram className="h-4 w-4" />
+                          <span className="hidden sm:inline">Instagram</span>
+                        </Button>
+                      )}
+                      {profile.youtube_url && (
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => window.open(profile.youtube_url, "_blank")}
+                        >
+                          <Youtube className="h-4 w-4" />
+                          <span className="hidden sm:inline">YouTube</span>
+                        </Button>
+                      )}
                     </>
                   )}
                 </div>
