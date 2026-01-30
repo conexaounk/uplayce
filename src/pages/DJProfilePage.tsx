@@ -29,12 +29,18 @@ export default function DJProfilePage() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { djName } = useParams<{ djName: string }>();
+  const { getPacks, deletePack } = usePacks();
+
   const [profile, setProfile] = useState<DJProfile | null>(null);
+  const [packs, setPacks] = useState<Pack[]>([]);
   const [loading, setLoading] = useState(true);
+  const [packsLoading, setPacksLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddPackModal, setShowAddPackModal] = useState(false);
+  const [showAddTrackModal, setShowAddTrackModal] = useState(false);
+  const [selectedPackId, setSelectedPackId] = useState<string | null>(null);
 
   // Edit form state
   const [editDjName, setEditDjName] = useState("");
