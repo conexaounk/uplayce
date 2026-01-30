@@ -148,6 +148,7 @@ export function usePacks() {
             ...(input.is_free !== undefined && { is_free: input.is_free }),
             ...(input.cover_url && { cover_url: input.cover_url }),
             ...(input.genre && { genre: input.genre }),
+            ...(input.download_link !== undefined && { download_link: input.download_link }),
           })
           .eq("id", packId)
           .select()
