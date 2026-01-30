@@ -2,11 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { usePacks, Pack } from "@/hooks/usePacks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Disc3, ArrowLeft, Instagram, Youtube, Share2, Edit2, Plus, LogOut, X } from "lucide-react";
+import PackCard from "@/components/PackCard";
+import AddPackModal from "@/components/AddPackModal";
+import AddTrackModal from "@/components/AddTrackModal";
 import logoImage from "@/assets/logo.png";
 
 interface DJProfile {
@@ -25,12 +29,18 @@ export default function DJProfilePage() {
   const navigate = useNavigate();
   const { user, signOut } = useAuth();
   const { djName } = useParams<{ djName: string }>();
+  const { getPacks, deletePack } = usePacks();
+
   const [profile, setProfile] = useState<DJProfile | null>(null);
+  const [packs, setPacks] = useState<Pack[]>([]);
   const [loading, setLoading] = useState(true);
+  const [packsLoading, setPacksLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isOwnProfile, setIsOwnProfile] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showAddPackModal, setShowAddPackModal] = useState(false);
+  const [showAddTrackModal, setShowAddTrackModal] = useState(false);
+  const [selectedPackId, setSelectedPackId] = useState<string | null>(null);
 
   // Edit form state
   const [editDjName, setEditDjName] = useState("");
@@ -49,6 +59,13 @@ export default function DJProfilePage() {
     }
   }, [djName]);
 
+  const fetchPacks = async (djId: string) => {
+    setPacksLoading(true);
+    const packsData = await getPacks(djId);
+    setPacks(packsData);
+    setPacksLoading(false);
+  };
+
   useEffect(() => {
     // Check if this is the logged-in user's profile
     if (user && profile) {
@@ -62,6 +79,8 @@ export default function DJProfilePage() {
       setEditInstagramUrl(profile.instagram_url || "");
       setEditYoutubeUrl(profile.youtube_url || "");
       setEditMusicLinks(profile.music_links || "");
+      // Load packs
+      fetchPacks(profile.id);
     }
   }, [user, profile]);
 
@@ -260,7 +279,7 @@ export default function DJProfilePage() {
                         className="gap-2 bg-gradient-to-r from-primary to-secondary"
                       >
                         <Plus className="h-4 w-4" />
-                        Adicionar Pack/Track
+                        Novo Pack
                       </Button>
                     </>
                   ) : (
@@ -269,14 +288,26 @@ export default function DJProfilePage() {
                         <Share2 className="h-4 w-4" />
                         Compartilhar
                       </Button>
-                      <Button variant="outline" className="gap-2">
-                        <Instagram className="h-4 w-4" />
-                        <span className="hidden sm:inline">Instagram</span>
-                      </Button>
-                      <Button variant="outline" className="gap-2">
-                        <Youtube className="h-4 w-4" />
-                        <span className="hidden sm:inline">YouTube</span>
-                      </Button>
+                      {profile.instagram_url && (
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => window.open(profile.instagram_url, "_blank")}
+                        >
+                          <Instagram className="h-4 w-4" />
+                          <span className="hidden sm:inline">Instagram</span>
+                        </Button>
+                      )}
+                      {profile.youtube_url && (
+                        <Button
+                          variant="outline"
+                          className="gap-2"
+                          onClick={() => window.open(profile.youtube_url, "_blank")}
+                        >
+                          <Youtube className="h-4 w-4" />
+                          <span className="hidden sm:inline">YouTube</span>
+                        </Button>
+                      )}
                     </>
                   )}
                 </div>
@@ -286,15 +317,81 @@ export default function DJProfilePage() {
 
           {/* Packs Section */}
           <div className="glass-card rounded-2xl border border-border/50 p-6 sm:p-8">
-            <h2 className="text-2xl font-bold mb-6">
-              Packs de <span className="neon-text">{profile.dj_name}</span>
-            </h2>
-            <div className="text-center py-12">
-              <p className="text-muted-foreground mb-4">Em breve novos packs estarão disponíveis!</p>
-              <Button variant="outline" disabled>
-                Packs em desenvolvimento
-              </Button>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">
+                Packs de <span className="neon-text">{profile.dj_name}</span>
+              </h2>
+              {isOwnProfile && (
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setSelectedPackId(null);
+                    setShowAddTrackModal(false);
+                    setShowAddPackModal(true);
+                  }}
+                  className="gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Novo Pack
+                </Button>
+              )}
             </div>
+
+            {packsLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Disc3 className="w-8 h-8 text-primary animate-spin" />
+              </div>
+            ) : packs.length === 0 ? (
+              <div className="text-center py-12">
+                <p className="text-muted-foreground mb-4">
+                  {isOwnProfile ? "Crie seu primeiro pack!" : "Nenhum pack disponível ainda"}
+                </p>
+                {isOwnProfile && (
+                  <Button
+                    onClick={() => setShowAddPackModal(true)}
+                    className="gap-2 bg-gradient-to-r from-primary to-secondary"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Criar Pack
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {packs.map((pack) => (
+                  <div key={pack.id}>
+                    <PackCard
+                      pack={pack}
+                      isOwner={isOwnProfile}
+                      onDelete={async (packId) => {
+                        const success = await deletePack(packId);
+                        if (success) {
+                          setPacks(packs.filter((p) => p.id !== packId));
+                        }
+                      }}
+                      onDownload={(pack) => {
+                        // Implementar download later
+                        console.log("Download pack:", pack);
+                      }}
+                    />
+                    {isOwnProfile && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full mt-3 gap-2"
+                        onClick={() => {
+                          setSelectedPackId(pack.id);
+                          setShowAddTrackModal(true);
+                        }}
+                      >
+                        <Plus className="h-4 w-4" />
+                        Adicionar Track
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </main>
@@ -390,37 +487,34 @@ export default function DJProfilePage() {
         </div>
       )}
 
-      {/* Add Pack/Track Modal */}
-      {showAddPackModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="glass-card rounded-2xl border border-border/50 p-6 w-full max-w-md">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Adicionar Pack/Track</h2>
-              <button
-                onClick={() => setShowAddPackModal(false)}
-                className="p-2 hover:bg-background rounded-lg transition"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+      {/* Add Pack Modal */}
+      <AddPackModal
+        djId={user?.id || ""}
+        isOpen={showAddPackModal}
+        onClose={() => setShowAddPackModal(false)}
+        onPackCreated={() => {
+          if (profile) {
+            fetchPacks(profile.id);
+          }
+        }}
+      />
 
-            <div className="space-y-4">
-              <div className="text-center py-8">
-                <Plus className="h-12 w-12 text-primary mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-bold mb-2">Funcionalidade em desenvolvimento</h3>
-                <p className="text-muted-foreground mb-4">
-                  Em breve você poderá adicionar packs e tracks diretamente do seu perfil.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAddPackModal(false)}
-                >
-                  Fechar
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Add Track Modal */}
+      {selectedPackId && (
+        <AddTrackModal
+          packId={selectedPackId}
+          djId={user?.id || ""}
+          isOpen={showAddTrackModal}
+          onClose={() => {
+            setShowAddTrackModal(false);
+            setSelectedPackId(null);
+          }}
+          onTrackAdded={() => {
+            if (profile) {
+              fetchPacks(profile.id);
+            }
+          }}
+        />
       )}
     </div>
   );
