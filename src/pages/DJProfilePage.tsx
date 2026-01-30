@@ -12,6 +12,7 @@ import PackCard from "@/components/PackCard";
 import AddPackModal from "@/components/AddPackModal";
 import AddTrackModal from "@/components/AddTrackModal";
 import logoImage from "@/assets/logo.png";
+import { getStorageUrl } from "@/lib/storageUtils";
 
 interface DJProfile {
   id: string;
