@@ -111,6 +111,9 @@ export default function DJProfilePage() {
           city: editCity.trim(),
           avatar_url: editAvatarUrl.trim(),
           background_url: editBackgroundUrl.trim(),
+          instagram_url: editInstagramUrl.trim(),
+          youtube_url: editYoutubeUrl.trim(),
+          music_links: editMusicLinks.trim(),
         });
 
       if (error) throw error;
