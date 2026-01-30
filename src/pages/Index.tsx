@@ -100,10 +100,12 @@ const Index = () => {
           selectedGenre={selectedGenre}
           onGenreChange={setSelectedGenre}
         />
-        <DJGrid
-          djs={filteredDJs}
-          onDJClick={handleDJClick}
-        />
+        {searchQuery && (
+          <DJGrid
+            djs={filteredDJs}
+            onDJClick={handleDJClick}
+          />
+        )}
       </>
 
       {/* Cart Sidebar */}
