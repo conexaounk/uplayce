@@ -197,13 +197,41 @@ export default function DJProfilePage() {
 
               {/* Info */}
               <div className="flex-1">
-                <h1 className="text-3xl sm:text-4xl font-bold mb-2">{profile.dj_name}</h1>
-                
-                {profile.city && (
-                  <p className="text-lg text-muted-foreground mb-4">
-                    📍 {profile.city}
-                  </p>
-                )}
+                <div className="flex items-start justify-between gap-4 mb-4">
+                  <div>
+                    <h1 className="text-3xl sm:text-4xl font-bold mb-2">{profile.dj_name}</h1>
+
+                    {profile.city && (
+                      <p className="text-lg text-muted-foreground">
+                        📍 {profile.city}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Owner Controls */}
+                  {isOwnProfile && (
+                    <div className="flex flex-col gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowEditModal(true)}
+                        className="gap-2"
+                      >
+                        <Edit2 className="h-4 w-4" />
+                        <span className="hidden sm:inline">Editar</span>
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleSignOut}
+                        className="gap-2"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        <span className="hidden sm:inline">Sair</span>
+                      </Button>
+                    </div>
+                  )}
+                </div>
 
                 {profile.bio && (
                   <p className="text-base text-muted-foreground leading-relaxed mb-6">
@@ -213,18 +241,32 @@ export default function DJProfilePage() {
 
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-3">
-                  <Button className="gap-2 bg-gradient-to-r from-primary to-secondary">
-                    <Share2 className="h-4 w-4" />
-                    Compartilhar
-                  </Button>
-                  <Button variant="outline" className="gap-2">
-                    <Instagram className="h-4 w-4" />
-                    <span className="hidden sm:inline">Instagram</span>
-                  </Button>
-                  <Button variant="outline" className="gap-2">
-                    <Youtube className="h-4 w-4" />
-                    <span className="hidden sm:inline">YouTube</span>
-                  </Button>
+                  {isOwnProfile ? (
+                    <>
+                      <Button
+                        onClick={() => setShowAddPackModal(true)}
+                        className="gap-2 bg-gradient-to-r from-primary to-secondary"
+                      >
+                        <Plus className="h-4 w-4" />
+                        Adicionar Pack/Track
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button className="gap-2 bg-gradient-to-r from-primary to-secondary">
+                        <Share2 className="h-4 w-4" />
+                        Compartilhar
+                      </Button>
+                      <Button variant="outline" className="gap-2">
+                        <Instagram className="h-4 w-4" />
+                        <span className="hidden sm:inline">Instagram</span>
+                      </Button>
+                      <Button variant="outline" className="gap-2">
+                        <Youtube className="h-4 w-4" />
+                        <span className="hidden sm:inline">YouTube</span>
+                      </Button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
