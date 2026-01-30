@@ -55,41 +55,43 @@ export default function AddTrackModal({
     }
   };
 
-  const uploadToR2 = async (file: File): Promise<{ url: string; r2Key: string } | null> => {
+  const uploadToCloudflare = async (file: File): Promise<{ url: string; r2Key: string } | null> => {
     try {
       setIsUploading(true);
-      const r2PublicUrl = import.meta.env.VITE_R2_PUBLIC_URL;
-
-      if (!r2PublicUrl) {
-        throw new Error("R2 não configurado");
-      }
+      const apiUrl = import.meta.env.VITE_API_URL || "https://api.conexaounk.com";
 
       const timestamp = Date.now();
       const random = Math.random().toString(36).substring(2, 8);
       const fileName = `${timestamp}-${random}.mp3`;
       const r2Key = `${djId}/${fileName}`;
 
-      // Upload para R2 via Cloudflare Workers API
+      // Upload para Cloudflare
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
+      formDataUpload.append("key", r2Key);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "https://api.conexaounk.com"}/upload`,
-        {
-          method: "POST",
-          body: formDataUpload,
-        }
-      );
+      const response = await fetch(`${apiUrl}/upload`, {
+        method: "POST",
+        body: formDataUpload,
+      });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Erro no upload");
+        const errorText = await response.text();
+        try {
+          const error = JSON.parse(errorText);
+          throw new Error(error.message || "Erro no upload");
+        } catch {
+          throw new Error(`Erro no upload: ${response.statusText}`);
+        }
       }
 
       const result = await response.json();
-      const publicUrl = result.publicUrl || `${r2PublicUrl}/${fileName}`;
 
-      return { url: publicUrl, r2Key };
+      if (!result.url) {
+        throw new Error("URL não retornada pelo servidor");
+      }
+
+      return { url: result.url, r2Key };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Erro no upload";
       toast.error(message);
