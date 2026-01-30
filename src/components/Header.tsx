@@ -1,6 +1,8 @@
-import { ShoppingCart, Menu, X } from "lucide-react";
+import { ShoppingCart, Menu, X, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import logoImage from "@/assets/logo.png";
 
 interface HeaderProps {
   cartItemsCount: number;
@@ -19,9 +21,7 @@ export function Header({ cartItemsCount, onCartClick, onLogoClick }: HeaderProps
           onClick={onLogoClick}
           className="flex items-center gap-2 hover:opacity-80 transition-opacity"
         >
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-xl font-bold text-primary-foreground">
-            U
-          </div>
+          <img src={logoImage} alt="Uplay Logo" className="w-10 h-10 rounded-xl object-cover" />
           <span className="text-xl font-bold neon-text">Uplay</span>
         </button>
 
@@ -43,6 +43,13 @@ export function Header({ cartItemsCount, onCartClick, onLogoClick }: HeaderProps
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <Link to="/auth">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <LogIn className="h-4 w-4" />
+              <span className="hidden sm:inline">Login DJ</span>
+            </Button>
+          </Link>
+          
           <Button
             variant="ghost"
             size="icon"
