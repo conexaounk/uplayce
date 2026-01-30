@@ -11,6 +11,7 @@ import { Disc3, ArrowLeft, Instagram, Youtube, Share2, Edit2, Plus, LogOut, X } 
 import PackCard from "@/components/PackCard";
 import AddPackModal from "@/components/AddPackModal";
 import AddTrackModal from "@/components/AddTrackModal";
+import { useState } from "react";
 import logoImage from "@/assets/logo.png";
 
 interface DJProfile {
