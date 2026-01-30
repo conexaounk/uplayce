@@ -41,6 +41,7 @@ interface CreatePackInput {
   is_free?: boolean;
   cover_url?: string;
   genre?: string;
+  download_link?: string;
 }
 
 interface AddTrackInput {
