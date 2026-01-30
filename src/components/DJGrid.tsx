@@ -8,13 +8,7 @@ interface DJGridProps {
 
 export function DJGrid({ djs, onDJClick }: DJGridProps) {
   if (djs.length === 0) {
-    return (
-      <div className="container mx-auto px-4 py-16 text-center">
-        <div className="text-6xl mb-4">🔍</div>
-        <h3 className="text-xl font-bold mb-2">Nenhum DJ encontrado</h3>
-        <p className="text-muted-foreground">Tente ajustar seus filtros de busca</p>
-      </div>
-    );
+    return <div />;
   }
 
   return (
@@ -24,8 +18,8 @@ export function DJGrid({ djs, onDJClick }: DJGridProps) {
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {djs.map((dj, index) => (
-          <div 
-            key={dj.id} 
+          <div
+            key={dj.id}
             className="animate-fade-in"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
