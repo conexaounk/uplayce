@@ -2,11 +2,15 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { usePacks, Pack } from "@/hooks/usePacks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Disc3, ArrowLeft, Instagram, Youtube, Share2, Edit2, Plus, LogOut, X } from "lucide-react";
+import PackCard from "@/components/PackCard";
+import AddPackModal from "@/components/AddPackModal";
+import AddTrackModal from "@/components/AddTrackModal";
 import logoImage from "@/assets/logo.png";
 
 interface DJProfile {
