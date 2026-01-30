@@ -29,6 +29,7 @@ export interface Pack {
   cover_url: string | null;
   size_gb: number | null;
   genre: string | null;
+  download_link: string | null;
   created_at: string;
   updated_at: string;
   tracks?: Track[];
