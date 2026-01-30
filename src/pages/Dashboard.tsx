@@ -142,6 +142,7 @@ export default function Dashboard() {
       // Refetch the profile to ensure UI is in sync
       await fetchProfile();
 
+      setSavedSuccessfully(true);
       toast({
         title: "Perfil salvo! ✅",
         description: "Suas alterações foram salvas com sucesso.",
