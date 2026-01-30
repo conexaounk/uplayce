@@ -1,9 +1,9 @@
-import { DJ } from "@/types";
+import { DJProfile } from "@/hooks/useDJs";
 import { DJCard } from "./DJCard";
 
 interface DJGridProps {
-  djs: DJ[];
-  onDJClick: (dj: DJ) => void;
+  djs: DJProfile[];
+  onDJClick: (djName: string) => void;
 }
 
 export function DJGrid({ djs, onDJClick }: DJGridProps) {
@@ -23,7 +23,7 @@ export function DJGrid({ djs, onDJClick }: DJGridProps) {
             className="animate-fade-in"
             style={{ animationDelay: `${index * 0.05}s` }}
           >
-            <DJCard dj={dj} onClick={() => onDJClick(dj)} />
+            <DJCard dj={dj} onClick={() => onDJClick(dj.dj_name)} />
           </div>
         ))}
       </div>
