@@ -53,7 +53,7 @@ export default function AddTrackModal({
     }
   };
 
-  const uploadToR2 = async (file: File): Promise<string | null> => {
+  const uploadToR2 = async (file: File): Promise<{ url: string; r2Key: string } | null> => {
     try {
       setIsUploading(true);
       const r2PublicUrl = import.meta.env.VITE_R2_PUBLIC_URL;
@@ -67,15 +67,17 @@ export default function AddTrackModal({
       const fileName = `${timestamp}-${random}.mp3`;
       const r2Key = `${djId}/${fileName}`;
 
-      // Upload para R2 via API Worker
-      const formDataToSend = new FormData();
-      formDataToSend.append("file", file);
-      formDataToSend.append("key", r2Key);
+      // Upload para R2 via Cloudflare Workers API
+      const formData = new FormData();
+      formData.append("file", file);
 
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataToSend,
-      });
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL || "https://api.conexaounk.com"}/upload`,
+        {
+          method: "POST",
+          body: formData,
+        }
+      );
 
       if (!response.ok) {
         const error = await response.json();
@@ -83,7 +85,9 @@ export default function AddTrackModal({
       }
 
       const result = await response.json();
-      return result.publicUrl || `${r2PublicUrl}/${r2Key}`;
+      const publicUrl = result.publicUrl || `${r2PublicUrl}/${fileName}`;
+
+      return { url: publicUrl, r2Key };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Erro no upload";
       toast.error(message);
