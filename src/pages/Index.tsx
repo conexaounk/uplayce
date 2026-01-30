@@ -30,13 +30,6 @@ const Index = () => {
   const [selectedPack, setSelectedPack] = useState<Pack | null>(null);
   const [isPackModalOpen, setIsPackModalOpen] = useState(false);
 
-  // Filter DJs by search query
-  const filteredDJs = useMemo(() => {
-    return djs.filter((dj) => {
-      const matchesSearch = dj.dj_name.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesSearch;
-    });
-  }, [djs, searchQuery]);
 
   // Cart item IDs for quick lookup
   const cartItemIds = useMemo(() => cartItems.map((item) => item.pack.id), [cartItems]);
