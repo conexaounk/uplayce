@@ -14,11 +14,12 @@ type Page = "home";
 
 const Index = () => {
   const navigate = useNavigate();
-  const { djs, loading } = useDJs();
-  
+
   // Search & Filter state
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("Todos");
+
+  const { djs, loading } = useDJs(searchQuery);
 
   // Cart state
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
