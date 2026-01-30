@@ -42,14 +42,8 @@ const Index = () => {
   const cartItemIds = useMemo(() => cartItems.map((item) => item.pack.id), [cartItems]);
 
   // Handlers
-  const handleDJClick = (dj: DJ) => {
-    setSelectedDJ(dj);
-    setCurrentPage("dj-profile");
-  };
-
-  const handleBackToHome = () => {
-    setCurrentPage("home");
-    setSelectedDJ(null);
+  const handleDJClick = (djName: string) => {
+    navigate(`/dj/${encodeURIComponent(djName)}`);
   };
 
   const handlePackClick = (pack: Pack) => {
