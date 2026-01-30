@@ -216,15 +216,15 @@ export default function Auth() {
                 onClick={() => setMode(mode === "login" ? "signup" : "login")}
                 className="text-sm text-muted-foreground hover:text-primary transition-colors"
               >
-                {mode === "login"
-                  ? "Não tem conta? Cadastre-se"
-                  : "Já tem conta? Faça login"}
+                <p>
+                  <br />
+                </p>
               </button>
             </div>
           </div>
 
           <p className="text-center text-xs text-muted-foreground mt-4">
-            Ao continuar, você concorda com nossos termos de uso.
+            <br />
           </p>
         </div>
       </div>
