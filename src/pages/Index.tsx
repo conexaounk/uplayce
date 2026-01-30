@@ -96,7 +96,7 @@ const Index = () => {
         />
         {searchQuery && (
           <DJGrid
-            djs={filteredDJs}
+            djs={djs}
             onDJClick={handleDJClick}
           />
         )}
