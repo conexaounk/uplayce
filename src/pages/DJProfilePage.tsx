@@ -487,37 +487,34 @@ export default function DJProfilePage() {
         </div>
       )}
 
-      {/* Add Pack/Track Modal */}
-      {showAddPackModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="glass-card rounded-2xl border border-border/50 p-6 w-full max-w-md">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold">Adicionar Pack/Track</h2>
-              <button
-                onClick={() => setShowAddPackModal(false)}
-                className="p-2 hover:bg-background rounded-lg transition"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
+      {/* Add Pack Modal */}
+      <AddPackModal
+        djId={user?.id || ""}
+        isOpen={showAddPackModal}
+        onClose={() => setShowAddPackModal(false)}
+        onPackCreated={() => {
+          if (profile) {
+            fetchPacks(profile.id);
+          }
+        }}
+      />
 
-            <div className="space-y-4">
-              <div className="text-center py-8">
-                <Plus className="h-12 w-12 text-primary mx-auto mb-4 opacity-50" />
-                <h3 className="text-lg font-bold mb-2">Funcionalidade em desenvolvimento</h3>
-                <p className="text-muted-foreground mb-4">
-                  Em breve você poderá adicionar packs e tracks diretamente do seu perfil.
-                </p>
-                <Button
-                  variant="outline"
-                  onClick={() => setShowAddPackModal(false)}
-                >
-                  Fechar
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
+      {/* Add Track Modal */}
+      {selectedPackId && (
+        <AddTrackModal
+          packId={selectedPackId}
+          djId={user?.id || ""}
+          isOpen={showAddTrackModal}
+          onClose={() => {
+            setShowAddTrackModal(false);
+            setSelectedPackId(null);
+          }}
+          onTrackAdded={() => {
+            if (profile) {
+              fetchPacks(profile.id);
+            }
+          }}
+        />
       )}
     </div>
   );
