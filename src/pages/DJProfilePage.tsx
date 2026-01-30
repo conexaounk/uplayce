@@ -1,8 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Disc3, ArrowLeft, Instagram, Youtube, Share2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Disc3, ArrowLeft, Instagram, Youtube, Share2, Edit2, Plus, LogOut, X } from "lucide-react";
 import logoImage from "@/assets/logo.png";
 
 interface DJProfile {
@@ -16,16 +20,41 @@ interface DJProfile {
 
 export default function DJProfilePage() {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const { djName } = useParams<{ djName: string }>();
   const [profile, setProfile] = useState<DJProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isOwnProfile, setIsOwnProfile] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showAddPackModal, setShowAddPackModal] = useState(false);
+
+  // Edit form state
+  const [editDjName, setEditDjName] = useState("");
+  const [editBio, setEditBio] = useState("");
+  const [editCity, setEditCity] = useState("");
+  const [editAvatarUrl, setEditAvatarUrl] = useState("");
+  const [editBackgroundUrl, setEditBackgroundUrl] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     if (djName) {
       fetchProfile();
     }
   }, [djName]);
+
+  useEffect(() => {
+    // Check if this is the logged-in user's profile
+    if (user && profile) {
+      setIsOwnProfile(user.id === profile.id);
+      // Populate edit form with current data
+      setEditDjName(profile.dj_name || "");
+      setEditBio(profile.bio || "");
+      setEditCity(profile.city || "");
+      setEditAvatarUrl(profile.avatar_url || "");
+      setEditBackgroundUrl(profile.background_url || "");
+    }
+  }, [user, profile]);
 
   const fetchProfile = async () => {
     if (!djName) return;
@@ -55,6 +84,41 @@ export default function DJProfilePage() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSaveProfile = async () => {
+    if (!user || !editDjName.trim()) {
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const { error } = await supabase
+        .from("profiles")
+        .upsert({
+          id: user.id,
+          dj_name: editDjName.trim(),
+          bio: editBio.trim(),
+          city: editCity.trim(),
+          avatar_url: editAvatarUrl.trim(),
+          background_url: editBackgroundUrl.trim(),
+        });
+
+      if (error) throw error;
+
+      // Refetch and close modal
+      await fetchProfile();
+      setShowEditModal(false);
+    } catch (err) {
+      console.error("Error saving profile:", err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
   };
 
   if (loading) {
