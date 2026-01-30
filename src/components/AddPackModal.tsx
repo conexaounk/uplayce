@@ -114,14 +114,10 @@ export default function AddPackModal({
     }
   };
 
-  const uploadMusicToR2 = async (file: File): Promise<{ url: string; r2Key: string } | null> => {
+  const uploadMusicToCloudflare = async (file: File): Promise<{ url: string; r2Key: string } | null> => {
     try {
       setIsUploadingMusic(true);
-      const r2PublicUrl = import.meta.env.VITE_R2_PUBLIC_URL;
-
-      if (!r2PublicUrl) {
-        throw new Error("R2 não configurado");
-      }
+      const apiUrl = import.meta.env.VITE_API_URL || "https://api.conexaounk.com";
 
       const timestamp = Date.now();
       const random = Math.random().toString(36).substring(2, 8);
@@ -130,24 +126,31 @@ export default function AddPackModal({
 
       const formDataUpload = new FormData();
       formDataUpload.append("file", file);
+      formDataUpload.append("key", r2Key);
 
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "https://api.conexaounk.com"}/upload`,
-        {
-          method: "POST",
-          body: formDataUpload,
-        }
-      );
+      const response = await fetch(`${apiUrl}/upload`, {
+        method: "POST",
+        body: formDataUpload,
+      });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Erro no upload");
+        const errorText = await response.text();
+        try {
+          const error = JSON.parse(errorText);
+          throw new Error(error.message || "Erro no upload");
+        } catch {
+          throw new Error(`Erro no upload: ${response.statusText}`);
+        }
       }
 
       const result = await response.json();
-      const publicUrl = result.publicUrl || `${r2PublicUrl}/${fileName}`;
 
-      return { url: publicUrl, r2Key };
+      const publicUrl = result.publicUrl || result.url;
+      if (!publicUrl) {
+        throw new Error("URL não retornada pelo servidor");
+      }
+
+      return { url: publicUrl, r2Key: result.r2_key || r2Key };
     } catch (error) {
       const message = error instanceof Error ? error.message : "Erro no upload";
       toast.error(message);
@@ -213,7 +216,7 @@ export default function AddPackModal({
         return;
       }
 
-      const uploadResult = await uploadMusicToR2(audioFile);
+      const uploadResult = await uploadMusicToCloudflare(audioFile);
       if (!uploadResult) {
         return;
       }
