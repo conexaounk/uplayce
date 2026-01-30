@@ -16,6 +16,9 @@ interface DJProfile {
   avatar_url: string | null;
   city: string | null;
   background_url: string | null;
+  instagram_url?: string | null;
+  youtube_url?: string | null;
+  music_links?: string | null;
 }
 
 export default function DJProfilePage() {
@@ -35,6 +38,9 @@ export default function DJProfilePage() {
   const [editCity, setEditCity] = useState("");
   const [editAvatarUrl, setEditAvatarUrl] = useState("");
   const [editBackgroundUrl, setEditBackgroundUrl] = useState("");
+  const [editInstagramUrl, setEditInstagramUrl] = useState("");
+  const [editYoutubeUrl, setEditYoutubeUrl] = useState("");
+  const [editMusicLinks, setEditMusicLinks] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
