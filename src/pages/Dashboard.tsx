@@ -59,6 +59,14 @@ export default function Dashboard() {
     }
   }, [user]);
 
+  // Reset success message after 5 seconds
+  useEffect(() => {
+    if (savedSuccessfully) {
+      const timer = setTimeout(() => setSavedSuccessfully(false), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [savedSuccessfully]);
+
   const fetchProfile = async () => {
     if (!user) return;
 
