@@ -207,7 +207,7 @@ export default function DJProfilePage() {
         <div
           className="bg-cover bg-center"
           style={{
-            backgroundImage: `url(${profile.background_url})`,
+            backgroundImage: `url(${getStorageUrl(profile.background_url)})`,
             height: "448px",
             paddingTop: "81px",
             margin: "3px 0 -1px",
