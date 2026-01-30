@@ -1,4 +1,5 @@
 import { DJProfile } from "@/hooks/useDJs";
+import { getStorageUrl } from "@/lib/storageUtils";
 
 interface DJCardProps {
   dj: DJProfile;
@@ -6,8 +7,7 @@ interface DJCardProps {
 }
 
 export function DJCard({ dj, onClick }: DJCardProps) {
-  // Extract avatar emoji from bio or use a default
-  const avatarEmoji = dj.avatar_url || "🎧";
+  const avatarUrl = getStorageUrl(dj.avatar_url);
 
   return (
     <button
@@ -16,8 +16,19 @@ export function DJCard({ dj, onClick }: DJCardProps) {
     >
       {/* Avatar */}
       <div className="relative mb-4">
-        <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-300">
-          {avatarEmoji}
+        <div className="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-4xl group-hover:scale-110 transition-transform duration-300 overflow-hidden">
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={dj.dj_name}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          ) : (
+            "🎧"
+          )}
         </div>
       </div>
 
