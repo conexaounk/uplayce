@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .maybeSingle();
 
       if (error) {
-        console.error("Error fetching user role:", error);
+        console.error("Supabase Error fetching user role:", error);
         // If user has no role entry, they're a DJ by default (once profile exists)
         setUserRole("dj");
         return;
@@ -73,7 +73,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUserRole("dj");
       }
     } catch (err) {
-      console.error("Error in fetchUserRole:", err);
+      console.error("Network/Connection error in fetchUserRole:", err);
       setUserRole("dj");
     }
   };
