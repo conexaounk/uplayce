@@ -224,10 +224,14 @@ export default function DJProfilePage() {
               {/* Avatar */}
               {profile.avatar_url && (
                 <img
-                  src={profile.avatar_url}
+                  src={getStorageUrl(profile.avatar_url)}
                   alt={profile.dj_name}
                   className="rounded-2xl object-cover flex-shrink-0 border-4 border-primary/20"
                   style={{height: "211px", width: "202px"}}
+                  onError={(e) => {
+                    console.error("Avatar image failed to load:", profile.avatar_url);
+                    e.currentTarget.style.display = "none";
+                  }}
                 />
               )}
 
