@@ -203,10 +203,13 @@ export default function DJProfilePage() {
 
       {/* Profile Background */}
       {profile.background_url && (
-        <div 
-          className="h-48 sm:h-64 bg-cover bg-center"
+        <div
+          className="bg-cover bg-center"
           style={{
             backgroundImage: `url(${profile.background_url})`,
+            height: "448px",
+            paddingTop: "81px",
+            margin: "3px 0 -1px",
           }}
         />
       )}
@@ -215,14 +218,15 @@ export default function DJProfilePage() {
       <main className="container mx-auto px-4 pb-12">
         <div className="relative max-w-2xl mx-auto">
           {/* Profile Card */}
-          <div className="glass-card rounded-2xl border border-border/50 p-6 sm:p-8 -mt-24 relative z-10 mb-8">
-            <div className="flex flex-col sm:flex-row gap-6 items-start">
+          <div className="glass-card rounded-2xl border border-border/50 relative z-10" style={{margin: "-222px 0 0 -2px", padding: "1px 8px 32px 32px"}}>
+            <div className="flex flex-col sm:flex-row gap-6 items-start" style={{paddingTop: "26px"}}>
               {/* Avatar */}
               {profile.avatar_url && (
                 <img
                   src={profile.avatar_url}
                   alt={profile.dj_name}
-                  className="w-32 h-32 sm:w-40 sm:h-40 rounded-2xl object-cover flex-shrink-0 border-4 border-primary/20"
+                  className="rounded-2xl object-cover flex-shrink-0 border-4 border-primary/20"
+                  style={{height: "211px", width: "202px"}}
                 />
               )}
 
@@ -273,15 +277,7 @@ export default function DJProfilePage() {
                 {/* Action Buttons */}
                 <div className="flex flex-wrap gap-3">
                   {isOwnProfile ? (
-                    <>
-                      <Button
-                        onClick={() => setShowAddPackModal(true)}
-                        className="gap-2 bg-gradient-to-r from-primary to-secondary"
-                      >
-                        <Plus className="h-4 w-4" />
-                        Novo Pack
-                      </Button>
-                    </>
+                    <></>
                   ) : (
                     <>
                       <Button className="gap-2 bg-gradient-to-r from-primary to-secondary">

@@ -48,7 +48,7 @@ interface CreatePackInput {
 interface AddTrackInput {
   name: string;
   file_url: string;
-  r2_key: string;
+  r2_key?: string | null;
   duration?: number;
   bpm?: number;
   genre?: string;

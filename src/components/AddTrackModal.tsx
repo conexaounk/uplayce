@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { X, Music2, Disc3, Upload } from "lucide-react";
+import { X, Music2, Disc3, Upload, Link as LinkIcon } from "lucide-react";
 import { usePacks } from "@/hooks/usePacks";
 import { toast } from "sonner";
 
@@ -22,11 +22,13 @@ export default function AddTrackModal({
   onTrackAdded,
 }: AddTrackModalProps) {
   const { addTrack, loading } = usePacks();
+  const [mode, setMode] = useState<"file" | "link">("file");
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [formData, setFormData] = useState({
     name: "",
+    fileUrl: "",
     bpm: "",
     genre: "",
     is_preview: false,
@@ -68,14 +70,14 @@ export default function AddTrackModal({
       const r2Key = `${djId}/${fileName}`;
 
       // Upload para R2 via Cloudflare Workers API
-      const formData = new FormData();
-      formData.append("file", file);
+      const formDataUpload = new FormData();
+      formDataUpload.append("file", file);
 
       const response = await fetch(
         `${import.meta.env.VITE_API_URL || "https://api.conexaounk.com"}/upload`,
         {
           method: "POST",
-          body: formData,
+          body: formDataUpload,
         }
       );
 
@@ -101,27 +103,42 @@ export default function AddTrackModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!audioFile) {
-      toast.error("Selecione um arquivo de áudio");
-      return;
-    }
-
     if (!formData.name.trim()) {
       toast.error("Digite o nome da track");
       return;
     }
 
-    // Upload arquivo para R2
-    const uploadResult = await uploadToR2(audioFile);
-    if (!uploadResult) {
-      return;
+    let fileUrl: string;
+    let r2Key: string | null = null;
+
+    if (mode === "file") {
+      if (!audioFile) {
+        toast.error("Selecione um arquivo de áudio");
+        return;
+      }
+
+      // Upload arquivo para R2
+      const uploadResult = await uploadToR2(audioFile);
+      if (!uploadResult) {
+        return;
+      }
+
+      fileUrl = uploadResult.url;
+      r2Key = uploadResult.r2Key;
+    } else {
+      if (!formData.fileUrl.trim()) {
+        toast.error("Cole o URL da música");
+        return;
+      }
+
+      fileUrl = formData.fileUrl.trim();
     }
 
     // Registrar track no Supabase
     const track = await addTrack(packId, djId, {
       name: formData.name,
-      file_url: uploadResult.url,
-      r2_key: uploadResult.r2Key,
+      file_url: fileUrl,
+      r2_key: r2Key || undefined,
       bpm: formData.bpm ? parseInt(formData.bpm) : undefined,
       genre: formData.genre || undefined,
       is_preview: formData.is_preview,
@@ -131,6 +148,7 @@ export default function AddTrackModal({
       setAudioFile(null);
       setFormData({
         name: "",
+        fileUrl: "",
         bpm: "",
         genre: "",
         is_preview: false,
@@ -157,45 +175,101 @@ export default function AddTrackModal({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* File Upload */}
-          <div className="space-y-2">
-            <Label htmlFor="audioFile">Arquivo de Áudio *</Label>
-            {!audioFile ? (
-              <label htmlFor="audioFile" className="block">
-                <input
-                  id="audioFile"
-                  type="file"
-                  accept="audio/*"
-                  onChange={handleFileSelect}
-                  className="hidden"
-                />
-                <div className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition">
-                  <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                  <p className="text-sm font-medium">Clique ou arraste um arquivo</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Máximo 500MB
-                  </p>
-                </div>
-              </label>
-            ) : (
-              <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg border border-primary/20">
-                <Music2 className="w-5 h-5 text-primary flex-shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium truncate">{audioFile.name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {(audioFile.size / 1024 / 1024).toFixed(2)} MB
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setAudioFile(null)}
-                  className="text-muted-foreground hover:text-destructive"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            )}
+          {/* Mode Selector */}
+          <div className="flex gap-2 bg-background rounded-lg p-1 border border-border">
+            <button
+              type="button"
+              onClick={() => {
+                setMode("file");
+                setFormData({ ...formData, fileUrl: "" });
+              }}
+              className={`flex-1 py-2 px-3 rounded transition text-sm font-medium flex items-center justify-center gap-1 ${
+                mode === "file"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <Upload className="w-4 h-4" />
+              Upload
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setMode("link");
+                setAudioFile(null);
+              }}
+              className={`flex-1 py-2 px-3 rounded transition text-sm font-medium flex items-center justify-center gap-1 ${
+                mode === "link"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              <LinkIcon className="w-4 h-4" />
+              Link
+            </button>
           </div>
+
+          {/* File Upload Option */}
+          {mode === "file" && (
+            <div className="space-y-2">
+              <Label htmlFor="audioFile">Arquivo de Áudio *</Label>
+              {!audioFile ? (
+                <label htmlFor="audioFile" className="block">
+                  <input
+                    id="audioFile"
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  <div className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition">
+                    <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
+                    <p className="text-sm font-medium">Clique ou arraste um arquivo</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Máximo 500MB
+                    </p>
+                  </div>
+                </label>
+              ) : (
+                <div className="flex items-center gap-3 p-3 bg-primary/10 rounded-lg border border-primary/20">
+                  <Music2 className="w-5 h-5 text-primary flex-shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{audioFile.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {(audioFile.size / 1024 / 1024).toFixed(2)} MB
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setAudioFile(null)}
+                    className="text-muted-foreground hover:text-destructive"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Link Option */}
+          {mode === "link" && (
+            <div className="space-y-2">
+              <Label htmlFor="musicLink">Link da Música *</Label>
+              <Input
+                id="musicLink"
+                type="url"
+                placeholder="https://exemplo.com/musica.mp3"
+                value={formData.fileUrl}
+                onChange={(e) =>
+                  setFormData({ ...formData, fileUrl: e.target.value })
+                }
+                required={mode === "link"}
+              />
+              <p className="text-xs text-muted-foreground">
+                Cole a URL completa da música (HTTP ou HTTPS)
+              </p>
+            </div>
+          )}
 
           {/* Track Name */}
           <div className="space-y-2">
@@ -298,7 +372,13 @@ export default function AddTrackModal({
             </Button>
             <Button
               type="submit"
-              disabled={!audioFile || !formData.name.trim() || loading || isUploading}
+              disabled={
+                (mode === "file" && !audioFile) ||
+                (mode === "link" && !formData.fileUrl.trim()) ||
+                !formData.name.trim() ||
+                loading ||
+                isUploading
+              }
               className="flex-1 bg-gradient-to-r from-primary to-secondary"
             >
               {loading || isUploading ? (
