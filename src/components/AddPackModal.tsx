@@ -215,7 +215,7 @@ export default function AddPackModal({
         return;
       }
 
-      const uploadResult = await uploadMusicToR2(audioFile);
+      const uploadResult = await uploadMusicToCloudflare(audioFile);
       if (!uploadResult) {
         return;
       }
