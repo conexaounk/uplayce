@@ -46,7 +46,16 @@ export default function ProfileViewPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10">
-                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                <img
+                  src={avatarUrl}
+                  alt="Avatar"
+                  className="object-cover block"
+                  style={{
+                    width: "105%",
+                    height: "104%",
+                    margin: "0 20px 14px 1px",
+                  }}
+                />
               </div>
               <div>
                 <CardTitle className="text-3xl font-bold mb-2">
