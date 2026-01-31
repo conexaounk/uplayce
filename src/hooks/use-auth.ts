@@ -54,5 +54,6 @@ export function useAuth() {
     isAuthenticated: !!user,
     logout,
     login,
+    signup,
   };
 }
