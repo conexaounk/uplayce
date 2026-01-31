@@ -6,7 +6,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Edit, Plus, Music, Play, Pause } from "lucide-react";
+import { Loader2, Edit, Plus, Music, Play, Pause, ShoppingCart } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { UploadTrackModal } from "@/components/UploadTrackModal";
 import { useState, useRef, useEffect } from "react";
