@@ -64,14 +64,19 @@ export default function ProfilePage() {
   };
 
   const avatarUrl = getStorageUrl(myProfile?.avatar_url, "avatars") || "/placeholder.svg";
+  const avatarEmoji = (myProfile as any)?.avatar_emoji;
 
   return (
     <div className="min-h-screen pt-24 pb-20 container max-w-4xl mx-auto px-4">
       <Card className="bg-card border-white/10 shadow-2xl">
         <CardHeader className="border-b border-white/5 pb-8">
           <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10">
-              <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center">
+              {avatarEmoji ? (
+                <span className="text-6xl">{avatarEmoji}</span>
+              ) : (
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              )}
             </div>
             <div>
               <CardTitle className="text-3xl font-bold mb-2">Perfil do Artista</CardTitle>
