@@ -62,6 +62,7 @@ const GENRES = [
 ];
 
 export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) {
+  const { user } = useAuth();
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
