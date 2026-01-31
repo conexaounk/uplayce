@@ -44,6 +44,33 @@ export function useTrackById(id: string) {
   });
 }
 
+export function useUserTracks(userId?: string, search?: string) {
+  return useQuery({
+    queryKey: ["user-tracks", userId, search],
+    queryFn: async () => {
+      if (!userId) return [];
+
+      const { fetchUserTracksFromDB1 } = await import("@/services/tracksDBService");
+      const data = await fetchUserTracksFromDB1(userId);
+
+      // Filtrar por busca se fornecido
+      if (search) {
+        const query = search.toLowerCase();
+        return data.filter(track =>
+          track.title.toLowerCase().includes(query) ||
+          track.artist?.toLowerCase().includes(query) ||
+          track.genre?.toLowerCase().includes(query)
+        );
+      }
+
+      return data;
+    },
+    enabled: !!userId,
+    retry: 2,
+    staleTime: 5 * 60 * 1000,
+  });
+}
+
 export function useAddTrackToProfile() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
