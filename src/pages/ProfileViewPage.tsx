@@ -6,9 +6,10 @@ import { useCart } from "@/hooks/use-cart";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Edit, Plus, Music, Play, Pause, ShoppingCart } from "lucide-react";
+import { Loader2, Edit, Plus, Play, Pause, ShoppingCart } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { UploadTrackModal } from "@/components/UploadTrackModal";
+import { BuyPackModal } from "@/components/BuyPackModal";
 import { useState, useRef, useEffect } from "react";
 
 export default function ProfileViewPage() {
@@ -19,6 +20,7 @@ export default function ProfileViewPage() {
   const { addItem, setIsOpen } = useCart();
   const [, setLocation] = useLocation();
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [buyPackModalOpen, setBuyPackModalOpen] = useState(false);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -74,6 +76,13 @@ export default function ProfileViewPage() {
     return () => audio.removeEventListener("timeupdate", handleTimeUpdate);
   }, []);
 
+  // Redirecionar se usuário não está autenticado
+  useEffect(() => {
+    if (!authLoading && !user) {
+      setLocation("/");
+    }
+  }, [authLoading, user, setLocation]);
+
   if (authLoading || profileLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -83,7 +92,6 @@ export default function ProfileViewPage() {
   }
 
   if (!user) {
-    setLocation("/");
     return null;
   }
 
@@ -259,22 +267,43 @@ export default function ProfileViewPage() {
         </Card>
       )}
 
-      <Button
-        onClick={() => setUploadModalOpen(true)}
-        size="lg"
-        className="w-full mt-6"
-        style={{
-          backgroundColor: "rgba(164, 36, 255, 0.01)",
-          boxShadow: "1px 1px 0 0 rgba(0, 0, 0, 1)",
-        }}
-      >
-        <Plus size={18} className="mr-2" />
-        Add Track
-      </Button>
+      <div className="space-y-3 mt-6">
+        <Button
+          onClick={() => setUploadModalOpen(true)}
+          size="lg"
+          className="w-full"
+          style={{
+            backgroundColor: "rgba(164, 36, 255, 0.01)",
+            boxShadow: "1px 1px 0 0 rgba(0, 0, 0, 1)",
+          }}
+        >
+          <Plus size={18} className="mr-2" />
+          Add Track
+        </Button>
+
+        {profileTracks.length >= 10 && (
+          <Button
+            onClick={() => setBuyPackModalOpen(true)}
+            size="lg"
+            className="w-full bg-primary hover:bg-primary/90"
+          >
+            <ShoppingCart className="mr-2 w-5 h-5" />
+            Teste: Comprar Pack
+          </Button>
+        )}
+      </div>
 
       <UploadTrackModal
         open={uploadModalOpen}
         onOpenChange={setUploadModalOpen}
+      />
+
+      <BuyPackModal
+        isOpen={buyPackModalOpen}
+        onClose={() => setBuyPackModalOpen(false)}
+        djName={myProfile?.dj_name || "Meu DJ"}
+        djId={user?.id || ""}
+        allTracks={profileTracks}
       />
 
       {/* Hidden audio element para preview */}

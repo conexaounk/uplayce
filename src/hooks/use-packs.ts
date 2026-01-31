@@ -128,3 +128,71 @@ export function useCreateOrder() {
     },
   });
 }
+
+// Hook para criar um pack customizado com seleção de 10 músicas
+export interface CreatePackOrderInput {
+  trackIds: string[];
+  packName: string;
+  packColor: string;
+  djId: string;
+  buyerId?: string;
+}
+
+export function useCreatePackOrder() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (data: CreatePackOrderInput) => {
+      // For now, just simulate the pack creation
+      // In production, you'd:
+      // 1. Create a new pack in the packs table
+      // 2. Add the selected tracks to that pack
+      // 3. Create an order/purchase record
+      // 4. Handle payment processing
+
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Simulate creating a pack
+      const { data: newPack, error } = await supabase
+        .from("packs")
+        .insert({
+          name: data.packName,
+          dj_id: data.djId,
+          is_free: false,
+          price: 99.9, // 10 tracks × R$ 9.99
+          // Note: packColor is stored in the front-end and can be persisted
+          // via an orders/purchases table in a real implementation
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // In a real implementation, you would also:
+      // - Add the selected tracks to the pack
+      // - Create an order record for the purchase with color and track selection
+      // - Handle payment processing with real payment gateway
+      // For now, we store the selection locally and can sync later
+
+      return {
+        ...newPack,
+        packColor: data.packColor, // Add color info to returned object
+      };
+    },
+    onSuccess: (pack) => {
+      queryClient.invalidateQueries({ queryKey: ["packs"] });
+      toast({
+        title: "Pack Criado com Sucesso!",
+        description: `O pack "${pack.name}" foi adicionado ao seu catálogo.`,
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao criar pack",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+}

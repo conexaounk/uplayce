@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Form,
   FormControl,
   FormField,
   FormItem,
@@ -24,6 +23,7 @@ import { Upload, Music, X, AlertCircle, Loader2, Search, Plus } from "lucide-rea
 import { toast } from "sonner";
 import { uploadTrackComplete } from "@/lib/uploadService";
 import { useAuth } from "@/hooks/use-auth";
+import { useDJ } from "@/hooks/use-djs";
 import { useTracks, useUserTracks } from "@/hooks/use-tracks";
 import { useAddProfileTrack } from "@/hooks/use-profile-tracks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -32,8 +32,8 @@ const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
 
 const metadataSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
-  artist: z.string().min(1, "Artista é obrigatório"),
   genre: z.string().min(1, "Gênero é obrigatório"),
+  collaborations: z.string().optional().nullable(),
 });
 
 type MetadataForm = z.infer<typeof metadataSchema>;
@@ -66,6 +66,7 @@ const GENRES = [
 
 export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) {
   const { user } = useAuth();
+  const { data: djProfile } = useDJ(user?.id || "");
   const [activeTab, setActiveTab] = useState("upload");
   const [file, setFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,8 +93,8 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
     resolver: zodResolver(metadataSchema),
     defaultValues: {
       title: "",
-      artist: "",
       genre: "",
+      collaborations: "",
     },
   });
 
@@ -207,6 +208,11 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
       return;
     }
 
+    if (!djProfile?.dj_name) {
+      toast.error("Perfil de DJ não configurado");
+      return;
+    }
+
     setIsSubmitting(true);
     setUploadProgress(0);
     setUploadError(null);
@@ -215,12 +221,15 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
 
     try {
       // Upload using the service
+      // Artist is always the DJ that's posting
       await uploadTrackComplete(
         file,
         {
           title: data.title,
-          artist: data.artist,
+          artist: djProfile.dj_name, // Use DJ name as the main artist
           genre: data.genre,
+          userId: user.id, // Include user_id for the tracks table
+          collaborations: data.collaborations || undefined,
           isPublic: true,
         },
         {
@@ -360,65 +369,53 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
                     className="space-y-6"
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Título</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Título da Música"
-                                className="bg-background/50 border-white/10"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Título</label>
+                        <Input
+                          placeholder="Título da Música"
+                          className="bg-background/50 border-white/10"
+                          {...form.register("title")}
+                        />
+                        {form.formState.errors.title && (
+                          <p className="text-xs text-red-400">{form.formState.errors.title.message}</p>
                         )}
-                      />
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name="artist"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Artista</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Nome do Artista"
-                                className="bg-background/50 border-white/10"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Artista Principal</label>
+                        <div className="h-10 bg-background/50 border border-white/10 rounded-md px-3 flex items-center text-muted-foreground">
+                          {djProfile?.dj_name || "Carregando..."}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Automático: seu nome de DJ</p>
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name="genre"
-                        render={({ field }) => (
-                          <FormItem className="md:col-span-2">
-                            <FormLabel>Gênero</FormLabel>
-                            <FormControl>
-                              <select
-                                {...field}
-                                className="w-full h-10 bg-background/50 border border-white/10 rounded-md px-3 outline-none focus:ring-2 focus:ring-primary/20"
-                              >
-                                <option value="">Selecione o Gênero</option>
-                                {GENRES.map((genre) => (
-                                  <option key={genre} value={genre.toLowerCase()}>
-                                    {genre}
-                                  </option>
-                                ))}
-                              </select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-sm font-medium">Gênero</label>
+                        <select
+                          {...form.register("genre")}
+                          className="w-full h-10 bg-background/50 border border-white/10 rounded-md px-3 outline-none focus:ring-2 focus:ring-primary/20"
+                        >
+                          <option value="">Selecione o Gênero</option>
+                          {GENRES.map((genre) => (
+                            <option key={genre} value={genre.toLowerCase()}>
+                              {genre}
+                            </option>
+                          ))}
+                        </select>
+                        {form.formState.errors.genre && (
+                          <p className="text-xs text-red-400">{form.formState.errors.genre.message}</p>
                         )}
-                      />
+                      </div>
+
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-sm font-medium">Colaborações (Opcional)</label>
+                        <Input
+                          placeholder="Nomes dos artistas colaboradores separados por vírgula"
+                          className="bg-background/50 border-white/10"
+                          {...form.register("collaborations")}
+                        />
+                        <p className="text-xs text-muted-foreground">Ex: DJ João, DJ Maria</p>
+                      </div>
                     </div>
 
                     {/* Submit Button */}
