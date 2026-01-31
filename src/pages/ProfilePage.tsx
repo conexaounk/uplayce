@@ -10,11 +10,13 @@ import { Loader2, Save } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { getStorageUrl } from "@/lib/storageUtils";
+import { EmojiAvatarPicker } from "@/components/EmojiAvatarPicker";
 
 interface ProfileFormData {
   dj_name: string;
   bio: string;
   city: string;
+  avatar_emoji?: string;
 }
 
 export default function ProfilePage() {
@@ -28,6 +30,7 @@ export default function ProfilePage() {
       dj_name: "",
       bio: "",
       city: "",
+      avatar_emoji: "",
     },
   });
 
@@ -38,6 +41,7 @@ export default function ProfilePage() {
         dj_name: myProfile.dj_name || "",
         bio: myProfile.bio || "",
         city: myProfile.city || "",
+        avatar_emoji: (myProfile as any).avatar_emoji || "",
       });
     }
   }, [myProfile, form]);
@@ -60,14 +64,19 @@ export default function ProfilePage() {
   };
 
   const avatarUrl = getStorageUrl(myProfile?.avatar_url, "avatars") || "/placeholder.svg";
+  const avatarEmoji = (myProfile as any)?.avatar_emoji;
 
   return (
     <div className="min-h-screen pt-24 pb-20 container max-w-4xl mx-auto px-4">
       <Card className="bg-card border-white/10 shadow-2xl">
         <CardHeader className="border-b border-white/5 pb-8">
           <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10">
-              <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+            <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center">
+              {avatarEmoji ? (
+                <span className="text-6xl">{avatarEmoji}</span>
+              ) : (
+                <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+              )}
             </div>
             <div>
               <CardTitle className="text-3xl font-bold mb-2">Perfil do Artista</CardTitle>
@@ -78,6 +87,22 @@ export default function ProfilePage() {
         <CardContent className="pt-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="avatar_emoji"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <EmojiAvatarPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}

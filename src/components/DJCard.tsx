@@ -10,6 +10,7 @@ interface DJCardProps {
 
 export function DJCard({ dj }: DJCardProps) {
   const avatarUrl = getStorageUrl(dj.avatar_url, "avatars") || "/placeholder.svg";
+  const avatarEmoji = (dj as any)?.avatar_emoji;
 
   return (
     <Link href={`/djs/${dj.id}`}>
@@ -18,12 +19,16 @@ export function DJCard({ dj }: DJCardProps) {
         className="group flex items-center gap-4 p-4 rounded-xl bg-card border border-white/5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all cursor-pointer"
       >
         {/* Avatar */}
-        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-primary/50 transition-colors flex-shrink-0">
-          <img
-            src={avatarUrl}
-            alt={dj.dj_name}
-            className="w-full h-full object-cover"
-          />
+        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-primary/50 transition-colors flex-shrink-0 flex items-center justify-center bg-white/5">
+          {avatarEmoji ? (
+            <span className="text-3xl">{avatarEmoji}</span>
+          ) : (
+            <img
+              src={avatarUrl}
+              alt={dj.dj_name}
+              className="w-full h-full object-cover"
+            />
+          )}
         </div>
 
         {/* Info */}
