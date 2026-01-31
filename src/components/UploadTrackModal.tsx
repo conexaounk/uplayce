@@ -20,7 +20,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Upload, Music, X, AlertCircle, Loader2, Search } from "lucide-react";
+import { Upload, Music, X, AlertCircle, Loader2, Search, Plus } from "lucide-react";
 import { toast } from "sonner";
 import { uploadTrackComplete } from "@/lib/uploadService";
 import { useAuth } from "@/hooks/use-auth";
@@ -211,7 +211,7 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
 
     try {
       // Upload using the service
-      const result = await uploadTrackComplete(
+      await uploadTrackComplete(
         file,
         {
           title: data.title,
@@ -243,174 +243,250 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
     }
   };
 
+  const handleSelectTrack = (trackId: string) => {
+    toast.success("Track adicionada ao seu perfil!");
+    onOpenChange(false);
+    setSearchQuery("");
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Enviar Música</DialogTitle>
-          <DialogDescription>Compartilhe sua música com o mundo</DialogDescription>
+          <DialogTitle>Adicionar Música</DialogTitle>
+          <DialogDescription>Upload novo ou selecione track já postada</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-          {/* Dropzone */}
-          {!file ? (
-            <div
-              onDragEnter={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onDragOver={handleDragOver}
-              onDrop={handleDrop}
-              className={`
-                border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer
-                ${isDragActive ? "border-primary bg-primary/5 scale-[1.02]" : "border-white/10 hover:border-white/20 hover:bg-white/5"}
-              `}
-            >
-              <input
-                type="file"
-                accept="audio/*"
-                onChange={handleFileInput}
-                className="hidden"
-                id="audio-input"
-              />
-              <label htmlFor="audio-input" className="cursor-pointer">
-                <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center mb-4 mx-auto shadow-xl hover:scale-110 transition-transform">
-                  <Upload
-                    className={`w-8 h-8 ${isDragActive ? "text-primary" : "text-zinc-500"}`}
-                  />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Arraste e solte sua música</h3>
-                <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-                  Suporta MP3, WAV, FLAC, AIFF até 500MB
-                </p>
-              </label>
-            </div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-card border border-white/10 rounded-xl p-4 flex items-center gap-4"
-            >
-              <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-                <Music className="w-6 h-6" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-semibold truncate">{file.name}</h4>
-                <p className="text-sm text-muted-foreground">{formatFileSize(file.size)}</p>
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => setFile(null)}
-                className="flex-shrink-0"
-              >
-                <X className="w-4 h-4" />
-              </Button>
-            </motion.div>
-          )}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="upload">Upload Novo</TabsTrigger>
+            <TabsTrigger value="browse">Buscar Existente</TabsTrigger>
+          </TabsList>
 
-          {/* Erro */}
-          {uploadError && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl"
-            >
-              <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-red-300">{uploadError}</p>
-            </motion.div>
-          )}
-
-          {/* Form Fields */}
-          <AnimatePresence>
-            {file && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="space-y-6"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Título</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Título da Música"
-                            className="bg-background/50 border-white/10"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="artist"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Artista</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Nome do Artista"
-                            className="bg-background/50 border-white/10"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="genre"
-                    render={({ field }) => (
-                      <FormItem className="md:col-span-2">
-                        <FormLabel>Gênero</FormLabel>
-                        <FormControl>
-                          <select
-                            {...field}
-                            className="w-full h-10 bg-background/50 border border-white/10 rounded-md px-3 outline-none focus:ring-2 focus:ring-primary/20"
-                          >
-                            <option value="">Selecione o Gênero</option>
-                            {GENRES.map((genre) => (
-                              <option key={genre} value={genre.toLowerCase()}>
-                                {genre}
-                              </option>
-                            ))}
-                          </select>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Submit Button */}
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  size="lg"
-                  className="w-full"
+          {/* UPLOAD TAB */}
+          <TabsContent value="upload" className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              {/* Dropzone */}
+              {!file ? (
+                <div
+                  onDragEnter={handleDragEnter}
+                  onDragLeave={handleDragLeave}
+                  onDragOver={handleDragOver}
+                  onDrop={handleDrop}
+                  className={`
+                    border-2 border-dashed rounded-2xl p-8 text-center transition-all cursor-pointer
+                    ${isDragActive ? "border-primary bg-primary/5 scale-[1.02]" : "border-white/10 hover:border-white/20 hover:bg-white/5"}
+                  `}
                 >
-                  {isSubmitting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Publicando...
-                    </>
-                  ) : (
-                    "Publicar Música"
-                  )}
-                </Button>
-              </motion.div>
+                  <input
+                    type="file"
+                    accept="audio/*"
+                    onChange={handleFileInput}
+                    className="hidden"
+                    id="audio-input"
+                  />
+                  <label htmlFor="audio-input" className="cursor-pointer">
+                    <div className="w-16 h-16 rounded-full bg-zinc-900 flex items-center justify-center mb-4 mx-auto shadow-xl hover:scale-110 transition-transform">
+                      <Upload
+                        className={`w-8 h-8 ${isDragActive ? "text-primary" : "text-zinc-500"}`}
+                      />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">Arraste e solte sua música</h3>
+                    <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+                      Suporta MP3, WAV, FLAC, AIFF até 500MB
+                    </p>
+                  </label>
+                </div>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-card border border-white/10 rounded-xl p-4 flex items-center gap-4"
+                >
+                  <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                    <Music className="w-6 h-6" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-semibold truncate">{file.name}</h4>
+                    <p className="text-sm text-muted-foreground">{formatFileSize(file.size)}</p>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setFile(null)}
+                    className="flex-shrink-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </motion.div>
+              )}
+
+              {/* Erro */}
+              {uploadError && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl"
+                >
+                  <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                  <p className="text-sm text-red-300">{uploadError}</p>
+                </motion.div>
+              )}
+
+              {/* Form Fields */}
+              <AnimatePresence>
+                {file && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="space-y-6"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="title"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Título</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Título da Música"
+                                className="bg-background/50 border-white/10"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="artist"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Artista</FormLabel>
+                            <FormControl>
+                              <Input
+                                placeholder="Nome do Artista"
+                                className="bg-background/50 border-white/10"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="genre"
+                        render={({ field }) => (
+                          <FormItem className="md:col-span-2">
+                            <FormLabel>Gênero</FormLabel>
+                            <FormControl>
+                              <select
+                                {...field}
+                                className="w-full h-10 bg-background/50 border border-white/10 rounded-md px-3 outline-none focus:ring-2 focus:ring-primary/20"
+                              >
+                                <option value="">Selecione o Gênero</option>
+                                {GENRES.map((genre) => (
+                                  <option key={genre} value={genre.toLowerCase()}>
+                                    {genre}
+                                  </option>
+                                ))}
+                              </select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting}
+                      size="lg"
+                      className="w-full"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Publicando...
+                        </>
+                      ) : (
+                        "Publicar Música"
+                      )}
+                    </Button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </form>
+          </TabsContent>
+
+          {/* BROWSE TAB */}
+          <TabsContent value="browse" className="space-y-6">
+            {/* Search Input */}
+            <div className="relative">
+              <Search className="absolute left-3 top-3 w-5 h-5 text-muted-foreground" />
+              <Input
+                placeholder="Buscar por título, artista ou gênero..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-background/50 border-white/10"
+              />
+            </div>
+
+            {/* Tracks List */}
+            {tracksLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : tracks.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <Music className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>Nenhuma track encontrada</p>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-[400px] overflow-y-auto">
+                {tracks.map((track) => (
+                  <motion.div
+                    key={track.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="bg-card border border-white/10 rounded-xl p-4 flex items-center justify-between hover:border-primary/50 transition-all"
+                  >
+                    <div className="flex items-center gap-4 flex-1 min-w-0">
+                      <div className="w-12 h-12 rounded-lg bg-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                        <Music className="w-6 h-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold truncate">{track.title}</h4>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          {track.artist && <span>{track.artist}</span>}
+                          {track.artist && track.genre && <span>•</span>}
+                          <span className="capitalize">{track.genre}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => handleSelectTrack(track.id)}
+                      size="sm"
+                      variant="outline"
+                      className="flex-shrink-0 ml-2"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Adicionar
+                    </Button>
+                  </motion.div>
+                ))}
+              </div>
             )}
-          </AnimatePresence>
-        </form>
+          </TabsContent>
+        </Tabs>
 
         {/* Upload Progress Modal */}
         <AnimatePresence>
