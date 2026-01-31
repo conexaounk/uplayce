@@ -3,13 +3,16 @@ import { useDJ } from "@/hooks/use-djs";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Edit } from "lucide-react";
+import { Loader2, Edit, Plus } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
+import { UploadTrackModal } from "@/components/UploadTrackModal";
+import { useState } from "react";
 
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
   const [, setLocation] = useLocation();
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   if (authLoading || profileLoading) {
     return (
@@ -98,6 +101,24 @@ export default function ProfileViewPage() {
           )}
         </CardContent>
       </Card>
+
+      <Button
+        onClick={() => setUploadModalOpen(true)}
+        size="lg"
+        className="w-full mt-6"
+        style={{
+          backgroundColor: "rgba(164, 36, 255, 0.01)",
+          boxShadow: "1px 1px 0 0 rgba(0, 0, 0, 1)",
+        }}
+      >
+        <Plus size={18} className="mr-2" />
+        Add Track
+      </Button>
+
+      <UploadTrackModal
+        open={uploadModalOpen}
+        onOpenChange={setUploadModalOpen}
+      />
     </div>
   );
 }

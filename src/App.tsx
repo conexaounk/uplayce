@@ -14,6 +14,7 @@ import { useState, useEffect, useRef } from "react";
 // Pages
 import HomePage from "@/pages/HomePage";
 import DJsPage from "@/pages/DJsPage";
+import DJProfilePage from "@/pages/DJProfilePage";
 import ProfileViewPage from "@/pages/ProfileViewPage";
 import ProfileEditPage from "@/pages/ProfileEditPage";
 import LoginPage from "@/pages/LoginPage";
@@ -31,7 +32,7 @@ function Navbar() {
   const [location, setLocation] = useLocation();
   const navLinks = [{
     href: "/",
-    label: "Marketplace"
+    label: "Home"
   }, {
     href: "/djs",
     label: "Artists"
@@ -109,6 +110,7 @@ function Router() {
   return <Switch>
       <Route path="/" component={HomePage} />
       <Route path="/djs" component={DJsPage} />
+      <Route path="/djs/:id" component={DJProfilePage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/profile/edit" component={ProfileEditPage} />
       <Route path="/profile" component={ProfileViewPage} />

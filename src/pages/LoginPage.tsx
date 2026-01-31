@@ -137,29 +137,8 @@ export default function LoginPage() {
                 <div className="absolute inset-0 flex items-center">
                   <div className="w-full border-t border-white/10"></div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-card text-muted-foreground">
-                    {isSignUp
-                      ? "Já tem uma conta?"
-                      : "Não tem uma conta?"}
-                  </span>
-                </div>
+                <div className="relative flex justify-center text-sm" />
               </div>
-
-              <Button
-                type="button"
-                variant="ghost"
-                size="lg"
-                className="w-full hover:bg-white/10"
-                onClick={() => {
-                  setIsSignUp(!isSignUp);
-                  setErrorMessage("");
-                  form.reset();
-                }}
-                disabled={isLoading}
-              >
-                {isSignUp ? "Entrar" : "Criar Conta"}
-              </Button>
             </form>
           </Form>
         </CardContent>
