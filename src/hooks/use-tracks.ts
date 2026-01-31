@@ -33,16 +33,14 @@ export function useTrackById(id: string) {
   return useQuery({
     queryKey: ["tracks", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("tracks")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
+      // Busca da API externa (tabela d1)
+      const { fetchTrackByIdFromDB1 } = await import("@/services/tracksDBService");
+      const data = await fetchTrackByIdFromDB1(id);
       return data as Track;
     },
     enabled: !!id,
+    retry: 2,
+    staleTime: 10 * 60 * 1000, // 10 minutos
   });
 }
 
