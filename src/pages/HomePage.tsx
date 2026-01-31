@@ -10,16 +10,24 @@ import { motion } from "framer-motion";
 import type { PackWithTracks } from "@/types/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { data: packs, isLoading: packsLoading } = usePacks({ search: searchTerm });
-  const { data: djs, isLoading: djsLoading } = useDJs();
+  const {
+    data: packs,
+    isLoading: packsLoading
+  } = usePacks({
+    search: searchTerm
+  });
+  const {
+    data: djs,
+    isLoading: djsLoading
+  } = useDJs();
   const [selectedPack, setSelectedPack] = useState<PackWithTracks | null>(null);
-  const { user, login } = useAuth();
-
-  return (
-    <div className="min-h-screen pb-20">
+  const {
+    user,
+    login
+  } = useAuth();
+  return <div className="min-h-screen pb-20">
       {/* Hero Section */}
       <section className="relative h-[600px] flex items-center overflow-hidden border-b border-white/10">
         <div className="absolute inset-0 bg-black">
@@ -28,42 +36,31 @@ export default function HomePage() {
         </div>
 
         <div className="container max-w-7xl mx-auto px-4 relative z-10">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-2xl"
-          >
+          <motion.div initial={{
+          opacity: 0,
+          x: -50
+        }} animate={{
+          opacity: 1,
+          x: 0
+        }} transition={{
+          duration: 0.8
+        }} className="max-w-2xl">
             <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white mb-6 leading-none">
               EVOLUA <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">SEU</span> <br />
               SET
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-              O marketplace definitivo para DJs profissionais. Packs exclusivos, tracks não lançadas e stems direto dos produtores.
+               Packs exclusivos, tracks não lançadas e stems direto dos DJs UNK   
             </p>
 
             <div className="flex gap-4">
               <div className="relative flex-1 max-w-md">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                <Input
-                  placeholder="Buscar gêneros, artistas ou packs..."
-                  className="pl-12 h-14 rounded-full bg-white/10 border-white/10 text-lg backdrop-blur-md focus:ring-primary"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                <Input placeholder="Buscar gêneros, artistas ou packs..." className="pl-12 h-14 rounded-full bg-white/10 border-white/10 text-lg backdrop-blur-md focus:ring-primary" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
               </div>
             </div>
 
-            {!user && (
-              <div className="mt-8">
-                <Button
-                  onClick={login}
-                  className="rounded-full px-8 py-6 text-lg font-bold bg-white text-black hover:bg-secondary hover:text-black transition-all"
-                >
-                  Entrar como Criador
-                </Button>
-              </div>
-            )}
+            {!user}
           </motion.div>
         </div>
       </section>
@@ -82,22 +79,14 @@ export default function HomePage() {
             </div>
           </div>
 
-          {packsLoading ? (
-            <div className="h-64 flex items-center justify-center">
+          {packsLoading ? <div className="h-64 flex items-center justify-center">
               <Loader2 className="animate-spin text-primary w-10 h-10" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-              {packs?.map((pack) => (
-                <PackCard key={pack.id} pack={pack} onClick={() => setSelectedPack(pack)} />
-              ))}
-              {packs?.length === 0 && (
-                <div className="col-span-full text-center py-20 text-muted-foreground border border-dashed border-white/10 rounded-xl">
+            </div> : <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {packs?.map(pack => <PackCard key={pack.id} pack={pack} onClick={() => setSelectedPack(pack)} />)}
+              {packs?.length === 0 && <div className="col-span-full text-center py-20 text-muted-foreground border border-dashed border-white/10 rounded-xl">
                   Nenhum pack encontrado para sua busca.
-                </div>
-              )}
-            </div>
-          )}
+                </div>}
+            </div>}
         </section>
 
         {/* Top DJs */}
@@ -109,21 +98,14 @@ export default function HomePage() {
             </h2>
           </div>
 
-          {djsLoading ? (
-            <div className="h-24 flex items-center justify-center">
+          {djsLoading ? <div className="h-24 flex items-center justify-center">
               <Loader2 className="animate-spin text-primary w-8 h-8" />
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {djs?.slice(0, 6).map((dj) => (
-                <DJCard key={dj.id} dj={dj} />
-              ))}
-            </div>
-          )}
+            </div> : <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {djs?.slice(0, 6).map(dj => <DJCard key={dj.id} dj={dj} />)}
+            </div>}
         </section>
       </div>
 
       <PackDetailsModal pack={selectedPack} isOpen={!!selectedPack} onClose={() => setSelectedPack(null)} />
-    </div>
-  );
+    </div>;
 }
