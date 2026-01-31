@@ -42,16 +42,18 @@ export default function ProfileViewPage() {
                 {myProfile?.city && (
                   <p className="text-muted-foreground mb-2">{myProfile.city}</p>
                 )}
-                <p className="text-sm text-muted-foreground">{user.email}</p>
               </div>
             </div>
             <Button
               onClick={() => setLocation("/profile/edit")}
               size="lg"
-              className="bg-primary hover:bg-primary/80 font-bold"
+              className="pl-2.5"
+              style={{
+                backgroundColor: "rgba(164, 36, 255, 0.01)",
+                boxShadow: "1px 1px 0 0 rgba(0, 0, 0, 1)",
+              }}
             >
-              <Edit className="mr-2" size={18} />
-              Editar Perfil
+              <Edit size={18} />
             </Button>
           </div>
         </CardHeader>
