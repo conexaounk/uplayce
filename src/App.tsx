@@ -9,7 +9,7 @@ import { CartSidebar } from "@/components/CartSidebar";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, User, LogOut, Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 // Pages
 import HomePage from "@/pages/HomePage";
