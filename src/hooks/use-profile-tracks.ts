@@ -33,33 +33,43 @@ export function useAddProfileTrack() {
 
   return useMutation({
     mutationFn: async (trackId: string) => {
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+      try {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-      if (userError || !user) {
-        throw new Error("Usuário não autenticado");
-      }
-
-      const { data, error } = await supabase
-        .from("user_profile_tracks")
-        .insert([
-          {
-            user_id: user.id,
-            track_id: trackId,
-          },
-        ])
-        .select();
-
-      if (error) {
-        if (error.message.includes("UNIQUE")) {
-          throw new Error("Esta track já foi adicionada ao seu perfil");
+        if (userError || !user) {
+          throw new Error("Usuário não autenticado");
         }
-        throw error;
-      }
 
-      return data;
+        const { data, error } = await supabase
+          .from("user_profile_tracks")
+          .insert([
+            {
+              user_id: user.id,
+              track_id: trackId,
+            },
+          ])
+          .select();
+
+        if (error) {
+          console.error("Erro ao inserir track no perfil:", error);
+          if (error.message && error.message.includes("UNIQUE")) {
+            throw new Error("Esta track já foi adicionada ao seu perfil");
+          }
+          // Se for erro de política de RLS
+          if (error.message && error.message.includes("row level security")) {
+            throw new Error("Você não tem permissão para adicionar tracks");
+          }
+          throw new Error(error.message || "Erro ao adicionar track");
+        }
+
+        return data;
+      } catch (err) {
+        console.error("Erro em useAddProfileTrack:", err);
+        throw err;
+      }
     },
     onSuccess: () => {
       // Invalidar ambas as queries para atualizar
@@ -67,9 +77,17 @@ export function useAddProfileTrack() {
       queryClient.invalidateQueries({ queryKey: ["user-tracks"] });
     },
     onError: (error) => {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : "Erro ao adicionar track";
+
+      console.error("Erro na mutação:", error);
+
       toast({
         title: "Erro",
-        description: error instanceof Error ? error.message : "Erro ao adicionar track",
+        description: errorMessage,
         variant: "destructive",
       });
     },
