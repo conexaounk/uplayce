@@ -112,7 +112,7 @@ export default function ProfileViewPage() {
       </Card>
 
       {/* Tracks Section */}
-      {userTracks.length > 0 && (
+      {profileTracks.length > 0 && (
         <Card
           className="bg-card overflow-hidden mt-6"
           style={{
@@ -130,13 +130,13 @@ export default function ProfileViewPage() {
             <CardTitle className="text-2xl font-bold">Suas Tracks</CardTitle>
           </CardHeader>
           <CardContent className="pt-8">
-            {tracksLoading ? (
+            {profileTracksLoading ? (
               <div className="flex justify-center py-8">
                 <Loader2 className="animate-spin text-primary" />
               </div>
             ) : (
               <div className="space-y-3">
-                {userTracks.map((track) => (
+                {profileTracks.map((track) => (
                   <div
                     key={track.id}
                     className="bg-muted/30 border border-white/10 rounded-lg p-4 flex items-center gap-4 hover:border-primary/50 transition-all"
