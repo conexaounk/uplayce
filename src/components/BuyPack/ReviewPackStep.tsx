@@ -217,16 +217,16 @@ export function ReviewPackStep({
       <div className="p-6 border-t border-white/10 bg-card space-y-3">
         <Button
           onClick={handleConfirmPurchase}
-          disabled={isConfirming}
+          disabled={isProcessing}
           className="w-full bg-primary hover:bg-primary/90 h-12 text-lg font-bold"
         >
-          {isConfirming ? "Processando..." : `Confirmar Compra - R$ ${totalPrice.toFixed(2)}`}
+          {isProcessing ? "Processando..." : `Confirmar Compra - R$ ${totalPrice.toFixed(2)}`}
         </Button>
 
         <Button
           variant="outline"
           onClick={onBack}
-          disabled={isConfirming}
+          disabled={isProcessing}
           className="w-full"
         >
           Voltar e Ajustar
