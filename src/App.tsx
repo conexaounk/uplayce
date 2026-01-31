@@ -24,11 +24,10 @@ function Navbar() {
   } = useCart();
   const {
     user,
-    logout,
-    login
+    logout
   } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const navLinks = [{
     href: "/",
     label: "Marketplace"
