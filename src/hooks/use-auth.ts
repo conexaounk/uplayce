@@ -28,14 +28,24 @@ export function useAuth() {
     await supabase.auth.signOut();
   };
 
-  const login = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: window.location.origin,
-      },
+  const login = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
-    if (error) console.error("Login error:", error);
+    if (error) {
+      throw error;
+    }
+  };
+
+  const signup = async (email: string, password: string) => {
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
+    if (error) {
+      throw error;
+    }
   };
 
   return {
