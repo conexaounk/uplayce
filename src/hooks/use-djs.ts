@@ -1,28 +1,38 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl } from "@shared/routes";
-import { type InsertProfile } from "@shared/schema";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { Profile, InsertProfile } from "@/types/supabase";
 
 export function useDJs() {
   return useQuery({
-    queryKey: [api.djs.list.path],
+    queryKey: ["djs"],
     queryFn: async () => {
-      const res = await fetch(api.djs.list.path, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch DJs");
-      return api.djs.list.responses[200].parse(await res.json());
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      return data as Profile[];
     },
   });
 }
 
-export function useDJ(id: number) {
+export function useDJ(id: string) {
   return useQuery({
-    queryKey: [api.djs.get.path, id],
+    queryKey: ["djs", id],
     queryFn: async () => {
-      const url = buildUrl(api.djs.get.path, { id });
-      const res = await fetch(url, { credentials: "include" });
-      if (res.status === 404) return null;
-      if (!res.ok) throw new Error("Failed to fetch DJ profile");
-      return api.djs.get.responses[200].parse(await res.json());
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        if (error.code === "PGRST116") return null;
+        throw error;
+      }
+      return data as Profile;
     },
     enabled: !!id,
   });
@@ -33,31 +43,31 @@ export function useUpdateProfile() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (data: Partial<InsertProfile>) => {
-      const res = await fetch(api.djs.updateProfile.path, {
-        method: api.djs.updateProfile.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
+    mutationFn: async (data: Partial<InsertProfile> & { id: string }) => {
+      const { id, ...updates } = data;
+      const { data: result, error } = await supabase
+        .from("profiles")
+        .update(updates)
+        .eq("id", id)
+        .select()
+        .single();
 
-      if (!res.ok) throw new Error("Failed to update profile");
-      return api.djs.updateProfile.responses[200].parse(await res.json());
+      if (error) throw error;
+      return result;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [api.djs.list.path] });
-      queryClient.invalidateQueries({ queryKey: ["/api/auth/user"] }); // Refresh auth user data if needed
+      queryClient.invalidateQueries({ queryKey: ["djs"] });
       toast({
-        title: "Profile Updated",
-        description: "Your DJ profile changes have been saved.",
+        title: "Perfil Atualizado",
+        description: "Suas alterações foram salvas.",
       });
     },
     onError: (error) => {
       toast({
-        title: "Update Failed",
+        title: "Erro",
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 }

@@ -2,6 +2,7 @@ import { useDJs } from "@/hooks/use-djs";
 import { DJCard } from "@/components/DJCard";
 import { Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
+import type { Profile } from "@/types/supabase";
 
 export default function DJsPage() {
   const { data: djs, isLoading } = useDJs();
@@ -25,9 +26,14 @@ export default function DJsPage() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {djs?.map((dj: any) => (
+          {djs?.map((dj: Profile) => (
             <DJCard key={dj.id} dj={dj} />
           ))}
+          {djs?.length === 0 && (
+            <div className="col-span-full text-center py-20 text-muted-foreground">
+              Nenhum artista cadastrado ainda.
+            </div>
+          )}
         </div>
       )}
     </div>

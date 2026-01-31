@@ -1,5 +1,4 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+const SUPABASE_URL = "https://mlamcmbqmdegyhgvfthj.supabase.co";
 
 /**
  * Converts a storage ID or partial path to a full Supabase storage URL

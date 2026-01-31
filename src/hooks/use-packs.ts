@@ -1,32 +1,52 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, buildUrl } from "@shared/routes";
-import { type InsertPack, type InsertTrack } from "@shared/schema";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import type { Pack, PackWithTracks, InsertPack, InsertTrack } from "@/types/supabase";
 
 export function usePacks(filters?: { genre?: string; search?: string }) {
   return useQuery({
-    queryKey: [api.packs.list.path, filters],
+    queryKey: ["packs", filters],
     queryFn: async () => {
-      const url = filters 
-        ? `${api.packs.list.path}?${new URLSearchParams(filters as Record<string, string>).toString()}`
-        : api.packs.list.path;
-        
-      const res = await fetch(url, { credentials: "include" });
-      if (!res.ok) throw new Error("Failed to fetch packs");
-      return api.packs.list.responses[200].parse(await res.json());
+      let query = supabase
+        .from("packs")
+        .select(`
+          *,
+          tracks (*),
+          profile:profiles!packs_dj_id_fkey (*)
+        `)
+        .order("created_at", { ascending: false });
+
+      if (filters?.search) {
+        query = query.ilike("name", `%${filters.search}%`);
+      }
+
+      const { data, error } = await query;
+
+      if (error) throw error;
+      return data as PackWithTracks[];
     },
   });
 }
 
-export function usePack(id: number) {
+export function usePack(id: string) {
   return useQuery({
-    queryKey: [api.packs.get.path, id],
+    queryKey: ["packs", id],
     queryFn: async () => {
-      const url = buildUrl(api.packs.get.path, { id });
-      const res = await fetch(url, { credentials: "include" });
-      if (res.status === 404) return null;
-      if (!res.ok) throw new Error("Failed to fetch pack details");
-      return api.packs.get.responses[200].parse(await res.json());
+      const { data, error } = await supabase
+        .from("packs")
+        .select(`
+          *,
+          tracks (*),
+          profile:profiles!packs_dj_id_fkey (*)
+        `)
+        .eq("id", id)
+        .single();
+
+      if (error) {
+        if (error.code === "PGRST116") return null;
+        throw error;
+      }
+      return data as PackWithTracks;
     },
     enabled: !!id,
   });
@@ -37,61 +57,74 @@ export function useCreatePack() {
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (data: InsertPack & { tracks: Omit<InsertTrack, "packId">[] }) => {
-      // Validate with schema first if possible, or trust server validation
-      const res = await fetch(api.packs.create.path, {
-        method: api.packs.create.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
-      
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.message || "Failed to create pack");
+    mutationFn: async (data: InsertPack & { tracks?: Omit<InsertTrack, "pack_id">[] }) => {
+      const { tracks, ...packData } = data;
+
+      // Create pack
+      const { data: pack, error: packError } = await supabase
+        .from("packs")
+        .insert(packData)
+        .select()
+        .single();
+
+      if (packError) throw packError;
+
+      // Create tracks if provided
+      if (tracks && tracks.length > 0) {
+        const tracksWithPackId = tracks.map((track) => ({
+          ...track,
+          pack_id: pack.id,
+        }));
+
+        const { error: tracksError } = await supabase
+          .from("tracks")
+          .insert(tracksWithPackId);
+
+        if (tracksError) throw tracksError;
       }
-      return api.packs.create.responses[201].parse(await res.json());
+
+      return pack;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [api.packs.list.path] });
+      queryClient.invalidateQueries({ queryKey: ["packs"] });
       toast({
-        title: "Pack Created",
-        description: "Your music pack is now live on the marketplace!",
-        variant: "default",
+        title: "Pack Criado",
+        description: "Seu pack está agora disponível no marketplace!",
       });
     },
     onError: (error) => {
       toast({
-        title: "Error",
+        title: "Erro",
         description: error.message,
         variant: "destructive",
       });
-    }
+    },
   });
 }
 
+// Placeholder for order creation - can be expanded with proper orders table
 export function useCreateOrder() {
-  const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (data: { items: number[], paymentMethod: 'pix' | 'credit_card' }) => {
-      const res = await fetch(api.orders.create.path, {
-        method: api.orders.create.method,
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        credentials: "include",
-      });
-
-      if (!res.ok) throw new Error("Checkout failed");
-      return api.orders.create.responses[201].parse(await res.json());
+    mutationFn: async (data: { items: string[]; paymentMethod: "pix" | "credit_card" }) => {
+      // For now, just simulate the order creation
+      // In production, you'd create an orders table and handle payments
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      return { success: true, items: data.items };
     },
     onSuccess: () => {
       toast({
-        title: "Order Placed!",
-        description: "Thank you for your purchase.",
-        variant: "default",
+        title: "Pedido Realizado!",
+        description: "Obrigado pela sua compra.",
       });
-    }
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
   });
 }

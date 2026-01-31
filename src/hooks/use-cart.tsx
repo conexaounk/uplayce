@@ -1,8 +1,8 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 type CartItem = {
-  id: number;
+  id: string;
   title: string;
   price: string;
   coverImage: string;
@@ -14,7 +14,7 @@ type CartItem = {
 interface CartContextType {
   items: CartItem[];
   addItem: (item: CartItem) => void;
-  removeItem: (id: number) => void;
+  removeItem: (id: string) => void;
   clearCart: () => void;
   total: number;
   isOpen: boolean;
@@ -30,7 +30,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Load cart from local storage on mount
   useEffect(() => {
-    const saved = localStorage.getItem('dj_marketplace_cart');
+    const saved = localStorage.getItem("dj_marketplace_cart");
     if (saved) {
       try {
         setItems(JSON.parse(saved));
@@ -42,14 +42,14 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   // Save to local storage on change
   useEffect(() => {
-    localStorage.setItem('dj_marketplace_cart', JSON.stringify(items));
+    localStorage.setItem("dj_marketplace_cart", JSON.stringify(items));
   }, [items]);
 
   const addItem = (item: CartItem) => {
-    if (items.some(i => i.id === item.id)) {
+    if (items.some((i) => i.id === item.id)) {
       toast({
-        title: "Already in cart",
-        description: "This pack is already in your cart.",
+        title: "Já no carrinho",
+        description: "Este pack já está no seu carrinho.",
         variant: "destructive",
       });
       return;
@@ -57,18 +57,18 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     setItems([...items, item]);
     setIsOpen(true);
     toast({
-      title: "Added to cart",
-      description: `${item.title} has been added.`,
+      title: "Adicionado ao carrinho",
+      description: `${item.title} foi adicionado.`,
     });
   };
 
-  const removeItem = (id: number) => {
-    setItems(items.filter(i => i.id !== id));
+  const removeItem = (id: string) => {
+    setItems(items.filter((i) => i.id !== id));
   };
 
   const clearCart = () => setItems([]);
 
-  const total = items.reduce((sum, item) => sum + parseFloat(item.price), 0);
+  const total = items.reduce((sum, item) => sum + parseFloat(item.price || "0"), 0);
 
   return (
     <CartContext.Provider value={{ items, addItem, removeItem, clearCart, total, isOpen, setIsOpen }}>
@@ -80,7 +80,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 export function useCart() {
   const context = useContext(CartContext);
   if (context === undefined) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error("useCart must be used within a CartProvider");
   }
   return context;
 }

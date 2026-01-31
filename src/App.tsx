@@ -19,7 +19,7 @@ import NotFound from "@/pages/not-found";
 
 function Navbar() {
   const { setIsOpen, items } = useCart();
-  const { user, logout } = useAuth();
+  const { user, logout, login } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [location] = useLocation();
 
@@ -45,9 +45,13 @@ function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8">
-          {navLinks.map(link => (
+          {navLinks.map((link) => (
             <Link key={link.href} href={link.href}>
-              <span className={`text-sm font-medium cursor-pointer transition-colors ${location === link.href ? 'text-white' : 'text-muted-foreground hover:text-white'}`}>
+              <span
+                className={`text-sm font-medium cursor-pointer transition-colors ${
+                  location === link.href ? "text-white" : "text-muted-foreground hover:text-white"
+                }`}
+              >
                 {link.label}
               </span>
             </Link>
@@ -56,12 +60,7 @@ function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-2">
-          <Button 
-            variant="ghost" 
-            size="icon" 
-            className="relative hover:bg-white/10"
-            onClick={() => setIsOpen(true)}
-          >
+          <Button variant="ghost" size="icon" className="relative hover:bg-white/10" onClick={() => setIsOpen(true)}>
             <ShoppingBag size={20} />
             {items.length > 0 && (
               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-secondary rounded-full border border-black" />
@@ -71,21 +70,17 @@ function Navbar() {
           {user ? (
             <div className="flex items-center gap-2">
               <Link href="/profile">
-                 <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-2 hover:bg-white/10">
-                   <User size={16} />
-                   <span>{user.username}</span>
-                 </Button>
+                <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-2 hover:bg-white/10">
+                  <User size={16} />
+                  <span>{user.email?.split("@")[0]}</span>
+                </Button>
               </Link>
-              <Button variant="ghost" size="icon" onClick={() => logout()} title="Logout" className="hover:text-destructive">
+              <Button variant="ghost" size="icon" onClick={logout} title="Logout" className="hover:text-destructive">
                 <LogOut size={18} />
               </Button>
             </div>
           ) : (
-            <Button 
-              size="sm" 
-              onClick={() => window.location.href = "/api/login"}
-              className="bg-primary hover:bg-primary/90 text-white hidden sm:flex"
-            >
+            <Button size="sm" onClick={login} className="bg-primary hover:bg-primary/90 text-white hidden sm:flex">
               Sign In
             </Button>
           )}
@@ -99,18 +94,18 @@ function Navbar() {
             </SheetTrigger>
             <SheetContent side="right" className="bg-card border-l border-white/10 pt-10">
               <div className="flex flex-col gap-4">
-                {navLinks.map(link => (
+                {navLinks.map((link) => (
                   <Link key={link.href} href={link.href} onClick={() => setMobileMenuOpen(false)}>
                     <span className="text-lg font-bold block py-2 border-b border-white/5">{link.label}</span>
                   </Link>
                 ))}
                 {user && (
-                   <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
-                     <span className="text-lg font-bold block py-2 border-b border-white/5">My Profile</span>
-                   </Link>
+                  <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
+                    <span className="text-lg font-bold block py-2 border-b border-white/5">My Profile</span>
+                  </Link>
                 )}
                 {!user && (
-                  <Button onClick={() => window.location.href = "/api/login"} className="mt-4">
+                  <Button onClick={login} className="mt-4">
                     Sign In
                   </Button>
                 )}
