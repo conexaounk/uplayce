@@ -12,6 +12,7 @@ export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
   const [, setLocation] = useLocation();
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
   if (authLoading || profileLoading) {
     return (
