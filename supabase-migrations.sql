@@ -83,3 +83,16 @@ CREATE POLICY "tracks_update" ON tracks
 
 CREATE POLICY "tracks_delete" ON tracks
   FOR DELETE USING (dj_id = auth.uid());
+
+-- Habilitar Row Level Security para user_profile_tracks
+ALTER TABLE user_profile_tracks ENABLE ROW LEVEL SECURITY;
+
+-- Políticas para user_profile_tracks
+CREATE POLICY "user_profile_tracks_select" ON user_profile_tracks
+  FOR SELECT USING (user_id = auth.uid() OR true);
+
+CREATE POLICY "user_profile_tracks_insert" ON user_profile_tracks
+  FOR INSERT WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY "user_profile_tracks_delete" ON user_profile_tracks
+  FOR DELETE USING (user_id = auth.uid());
