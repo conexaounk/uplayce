@@ -81,8 +81,8 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
   });
   const [uploadStartTime, setUploadStartTime] = useState<number | null>(null);
 
-  // Fetch available tracks
-  const { data: tracks = [], isLoading: tracksLoading } = useTracks(searchQuery || undefined);
+  // Fetch available tracks for the current user
+  const { data: tracks = [], isLoading: tracksLoading } = useUserTracks(user?.id, searchQuery || undefined);
 
   const form = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),
