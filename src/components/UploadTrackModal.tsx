@@ -20,10 +20,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Upload, Music, X, AlertCircle, Loader2 } from "lucide-react";
+import { Upload, Music, X, AlertCircle, Loader2, Search } from "lucide-react";
 import { toast } from "sonner";
 import { uploadTrackComplete } from "@/lib/uploadService";
 import { useAuth } from "@/hooks/use-auth";
+import { useTracks } from "@/hooks/use-tracks";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
 
