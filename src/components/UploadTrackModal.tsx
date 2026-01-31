@@ -359,65 +359,47 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
                     className="space-y-6"
                   >
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <FormField
-                        control={form.control}
-                        name="title"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Título</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Título da Música"
-                                className="bg-background/50 border-white/10"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Título</label>
+                        <Input
+                          placeholder="Título da Música"
+                          className="bg-background/50 border-white/10"
+                          {...form.register("title")}
+                        />
+                        {form.formState.errors.title && (
+                          <p className="text-xs text-red-400">{form.formState.errors.title.message}</p>
                         )}
-                      />
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name="artist"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Artista</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Nome do Artista"
-                                className="bg-background/50 border-white/10"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                      <div className="space-y-2">
+                        <label className="text-sm font-medium">Artista</label>
+                        <Input
+                          placeholder="Nome do Artista"
+                          className="bg-background/50 border-white/10"
+                          {...form.register("artist")}
+                        />
+                        {form.formState.errors.artist && (
+                          <p className="text-xs text-red-400">{form.formState.errors.artist.message}</p>
                         )}
-                      />
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name="genre"
-                        render={({ field }) => (
-                          <FormItem className="md:col-span-2">
-                            <FormLabel>Gênero</FormLabel>
-                            <FormControl>
-                              <select
-                                {...field}
-                                className="w-full h-10 bg-background/50 border border-white/10 rounded-md px-3 outline-none focus:ring-2 focus:ring-primary/20"
-                              >
-                                <option value="">Selecione o Gênero</option>
-                                {GENRES.map((genre) => (
-                                  <option key={genre} value={genre.toLowerCase()}>
-                                    {genre}
-                                  </option>
-                                ))}
-                              </select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-sm font-medium">Gênero</label>
+                        <select
+                          {...form.register("genre")}
+                          className="w-full h-10 bg-background/50 border border-white/10 rounded-md px-3 outline-none focus:ring-2 focus:ring-primary/20"
+                        >
+                          <option value="">Selecione o Gênero</option>
+                          {GENRES.map((genre) => (
+                            <option key={genre} value={genre.toLowerCase()}>
+                              {genre}
+                            </option>
+                          ))}
+                        </select>
+                        {form.formState.errors.genre && (
+                          <p className="text-xs text-red-400">{form.formState.errors.genre.message}</p>
                         )}
-                      />
+                      </div>
                     </div>
 
                     {/* Submit Button */}
