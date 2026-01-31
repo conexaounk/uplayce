@@ -1,9 +1,11 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useDJ } from "@/hooks/use-djs";
+import { useProfileTracks } from "@/hooks/use-profile-tracks";
+import { useUserTracks } from "@/hooks/use-tracks";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Edit, Plus } from "lucide-react";
+import { Loader2, Edit, Plus, Music } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { UploadTrackModal } from "@/components/UploadTrackModal";
 import { useState } from "react";
@@ -11,8 +13,15 @@ import { useState } from "react";
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
+  const { data: profileTrackIds = [], isLoading: profileTracksLoading } = useProfileTracks(user?.id);
+  const { data: allUserTracks = [] } = useUserTracks(user?.id);
   const [, setLocation] = useLocation();
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+
+  // Filtrar apenas as tracks que foram adicionadas ao perfil
+  const profileTracks = allUserTracks.filter(track =>
+    profileTrackIds.some(pt => pt.track_id === track.id)
+  );
 
   if (authLoading || profileLoading) {
     return (
@@ -101,6 +110,60 @@ export default function ProfileViewPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Tracks Section */}
+      {profileTracks.length > 0 && (
+        <Card
+          className="bg-card overflow-hidden mt-6"
+          style={{
+            borderRadius: "28px",
+            boxShadow: "0 0 5px 0 rgba(95, 49, 143, 0.77)",
+            border: "1px solid rgba(107, 30, 161, 0.85)",
+          }}
+        >
+          <CardHeader
+            style={{
+              borderRadius: "1px",
+              border: "1px solid rgba(144, 19, 254, 0.15)",
+            }}
+          >
+            <CardTitle className="text-2xl font-bold">Suas Tracks</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-8">
+            {profileTracksLoading ? (
+              <div className="flex justify-center py-8">
+                <Loader2 className="animate-spin text-primary" />
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {profileTracks.map((track) => (
+                  <div
+                    key={track.id}
+                    className="bg-muted/30 border border-white/10 rounded-lg p-4 flex items-center gap-4 hover:border-primary/50 transition-all"
+                  >
+                    <div className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                      <Music className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold truncate">{track.title}</h4>
+                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                        {track.artist && <span>{track.artist}</span>}
+                        {track.artist && track.genre && <span>•</span>}
+                        <span className="capitalize">{track.genre}</span>
+                      </div>
+                    </div>
+                    {track.duration && (
+                      <span className="text-sm text-muted-foreground flex-shrink-0">
+                        {Math.floor(track.duration / 60)}:{String(track.duration % 60).padStart(2, "0")}
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       <Button
         onClick={() => setUploadModalOpen(true)}

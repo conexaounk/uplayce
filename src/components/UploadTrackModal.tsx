@@ -24,7 +24,8 @@ import { Upload, Music, X, AlertCircle, Loader2, Search, Plus } from "lucide-rea
 import { toast } from "sonner";
 import { uploadTrackComplete } from "@/lib/uploadService";
 import { useAuth } from "@/hooks/use-auth";
-import { useTracks } from "@/hooks/use-tracks";
+import { useTracks, useUserTracks } from "@/hooks/use-tracks";
+import { useAddProfileTrack } from "@/hooks/use-profile-tracks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
@@ -81,8 +82,11 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
   });
   const [uploadStartTime, setUploadStartTime] = useState<number | null>(null);
 
-  // Fetch available tracks
-  const { data: tracks = [], isLoading: tracksLoading } = useTracks(searchQuery || undefined);
+  // Fetch available tracks for the current user
+  const { data: tracks = [], isLoading: tracksLoading } = useUserTracks(user?.id, searchQuery || undefined);
+
+  // Hook para adicionar track ao perfil
+  const addProfileTrackMutation = useAddProfileTrack();
 
   const form = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),
@@ -243,10 +247,22 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
     }
   };
 
-  const handleSelectTrack = (trackId: string) => {
-    toast.success("Track adicionada ao seu perfil!");
-    onOpenChange(false);
-    setSearchQuery("");
+  const handleSelectTrack = async (trackId: string) => {
+    try {
+      await addProfileTrackMutation.mutateAsync(trackId);
+      // Toast de sucesso é exibido aqui
+      toast.success("Track adicionada ao seu perfil com sucesso!");
+      onOpenChange(false);
+      setSearchQuery("");
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : "Erro desconhecido ao adicionar track";
+      console.error("Erro ao adicionar track:", errorMessage, error);
+      // Erro já é exibido pelo toast do mutation onError
+    }
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { fetchTracksFromDB1, type TrackFromDB1 } from "@/services/tracksDBService";
 
 export interface Track {
   id: string;
@@ -19,23 +20,12 @@ export function useTracks(search?: string, isPublic: boolean = true) {
   return useQuery({
     queryKey: ["tracks", search, isPublic],
     queryFn: async () => {
-      let query = supabase
-        .from("tracks")
-        .select("*")
-        .eq("is_public", isPublic)
-        .order("created_at", { ascending: false });
-
-      if (search) {
-        query = query.or(
-          `title.ilike.%${search}%,artist.ilike.%${search}%,genre.ilike.%${search}%`
-        );
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
+      // Busca da API externa (tabela d1)
+      const data = await fetchTracksFromDB1(search, isPublic);
       return data as Track[];
     },
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutos
   });
 }
 
@@ -43,16 +33,41 @@ export function useTrackById(id: string) {
   return useQuery({
     queryKey: ["tracks", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("tracks")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
+      // Busca da API externa (tabela d1)
+      const { fetchTrackByIdFromDB1 } = await import("@/services/tracksDBService");
+      const data = await fetchTrackByIdFromDB1(id);
       return data as Track;
     },
     enabled: !!id,
+    retry: 2,
+    staleTime: 10 * 60 * 1000, // 10 minutos
+  });
+}
+
+export function useUserTracks(userId?: string, search?: string) {
+  return useQuery({
+    queryKey: ["user-tracks", userId, search],
+    queryFn: async () => {
+      if (!userId) return [];
+
+      const { fetchUserTracksFromDB1 } = await import("@/services/tracksDBService");
+      const data = await fetchUserTracksFromDB1(userId);
+
+      // Filtrar por busca se fornecido
+      if (search) {
+        const query = search.toLowerCase();
+        return data.filter(track =>
+          track.title.toLowerCase().includes(query) ||
+          track.artist?.toLowerCase().includes(query) ||
+          track.genre?.toLowerCase().includes(query)
+        );
+      }
+
+      return data;
+    },
+    enabled: !!userId,
+    retry: 2,
+    staleTime: 5 * 60 * 1000,
   });
 }
 

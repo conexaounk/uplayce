@@ -389,6 +389,35 @@ export type Database = {
           },
         ]
       }
+      user_profile_tracks: {
+        Row: {
+          added_at: string | null
+          id: string
+          track_id: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string | null
+          id?: string
+          track_id: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string | null
+          id?: string
+          track_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_profile_tracks_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           created_at: string | null

@@ -41,6 +41,19 @@ CREATE INDEX IF NOT EXISTS idx_tracks_pack_id ON tracks(pack_id);
 CREATE INDEX IF NOT EXISTS idx_tracks_dj_id ON tracks(dj_id);
 CREATE INDEX IF NOT EXISTS idx_tracks_order_index ON tracks(pack_id, order_index);
 
+-- Criar tabela user_profile_tracks (tracks adicionadas ao perfil)
+CREATE TABLE IF NOT EXISTS user_profile_tracks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES profiles(id) ON DELETE CASCADE,
+  track_id TEXT NOT NULL,
+  added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id, track_id)
+);
+
+-- Criar índices para user_profile_tracks
+CREATE INDEX IF NOT EXISTS idx_user_profile_tracks_user_id ON user_profile_tracks(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_profile_tracks_track_id ON user_profile_tracks(track_id);
+
 -- Habilitar Row Level Security
 ALTER TABLE packs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE tracks ENABLE ROW LEVEL SECURITY;
@@ -70,3 +83,16 @@ CREATE POLICY "tracks_update" ON tracks
 
 CREATE POLICY "tracks_delete" ON tracks
   FOR DELETE USING (dj_id = auth.uid());
+
+-- Habilitar Row Level Security para user_profile_tracks
+ALTER TABLE user_profile_tracks ENABLE ROW LEVEL SECURITY;
+
+-- Políticas para user_profile_tracks
+CREATE POLICY "user_profile_tracks_select" ON user_profile_tracks
+  FOR SELECT USING (user_id = auth.uid() OR true);
+
+CREATE POLICY "user_profile_tracks_insert" ON user_profile_tracks
+  FOR INSERT WITH CHECK (user_id = auth.uid());
+
+CREATE POLICY "user_profile_tracks_delete" ON user_profile_tracks
+  FOR DELETE USING (user_id = auth.uid());
