@@ -257,6 +257,7 @@ export default function DJProfilePage() {
         isOpen={buyPackModalOpen}
         onClose={() => setBuyPackModalOpen(false)}
         djName={djProfile.dj_name || "DJ"}
+        djId={djProfile.id}
         allTracks={profileTracks}
       />
 
