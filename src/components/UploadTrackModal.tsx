@@ -250,12 +250,18 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
   const handleSelectTrack = async (trackId: string) => {
     try {
       await addProfileTrackMutation.mutateAsync(trackId);
-      toast.success("Track adicionada ao seu perfil!");
+      // Toast de sucesso é exibido aqui
+      toast.success("Track adicionada ao seu perfil com sucesso!");
       onOpenChange(false);
       setSearchQuery("");
     } catch (error) {
-      console.error("Erro ao adicionar track:", error);
-      // Erro já é exibido pelo toast do mutation
+      const errorMessage = error instanceof Error
+        ? error.message
+        : typeof error === 'string'
+          ? error
+          : "Erro desconhecido ao adicionar track";
+      console.error("Erro ao adicionar track:", errorMessage, error);
+      // Erro já é exibido pelo toast do mutation onError
     }
   };
 
