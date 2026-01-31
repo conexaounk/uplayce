@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { fetchTracksFromDB1, type TrackFromDB1 } from "@/services/tracksDBService";
 
 export interface Track {
   id: string;
@@ -19,23 +20,12 @@ export function useTracks(search?: string, isPublic: boolean = true) {
   return useQuery({
     queryKey: ["tracks", search, isPublic],
     queryFn: async () => {
-      let query = supabase
-        .from("tracks")
-        .select("*")
-        .eq("is_public", isPublic)
-        .order("created_at", { ascending: false });
-
-      if (search) {
-        query = query.or(
-          `title.ilike.%${search}%,artist.ilike.%${search}%,genre.ilike.%${search}%`
-        );
-      }
-
-      const { data, error } = await query;
-
-      if (error) throw error;
+      // Busca da API externa (tabela d1)
+      const data = await fetchTracksFromDB1(search, isPublic);
       return data as Track[];
     },
+    retry: 2,
+    staleTime: 5 * 60 * 1000, // 5 minutos
   });
 }
 
