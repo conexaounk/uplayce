@@ -15,7 +15,7 @@ interface BuyPackModalProps {
 
 export type Step = "select" | "confirm" | "review";
 
-export function BuyPackModal({ isOpen, onClose, djName, allTracks }: BuyPackModalProps) {
+export function BuyPackModal({ isOpen, onClose, djName, djId, allTracks }: BuyPackModalProps) {
   const [step, setStep] = useState<Step>("select");
   const [selectedTracks, setSelectedTracks] = useState<Track[]>([]);
   const [packName, setPackName] = useState(djName);
