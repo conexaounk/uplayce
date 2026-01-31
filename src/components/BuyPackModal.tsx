@@ -79,6 +79,7 @@ export function BuyPackModal({ isOpen, onClose, djName, djId, allTracks }: BuyPa
             packName={packName}
             packColor={packColor}
             djName={djName}
+            djId={djId}
             onComplete={handleReviewComplete}
             onBack={() => setStep("confirm")}
           />
