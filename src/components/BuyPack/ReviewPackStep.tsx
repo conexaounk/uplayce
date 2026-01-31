@@ -23,9 +23,12 @@ export function ReviewPackStep({
   packName,
   packColor,
   djName,
+  djId,
   onComplete,
   onBack,
 }: ReviewPackStepProps) {
+  const { user } = useAuth();
+  const createPackOrder = useCreatePackOrder();
   const [isConfirming, setIsConfirming] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
