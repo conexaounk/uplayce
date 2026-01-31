@@ -85,6 +85,9 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
   // Fetch available tracks for the current user
   const { data: tracks = [], isLoading: tracksLoading } = useUserTracks(user?.id, searchQuery || undefined);
 
+  // Hook para adicionar track ao perfil
+  const addProfileTrackMutation = useAddProfileTrack();
+
   const form = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),
     defaultValues: {
