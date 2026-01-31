@@ -12,6 +12,7 @@ import { useState } from "react";
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
+  const { data: userTracks = [], isLoading: tracksLoading } = useUserTracks(user?.id);
   const [, setLocation] = useLocation();
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
 
