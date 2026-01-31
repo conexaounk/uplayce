@@ -382,15 +382,11 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-sm font-medium">Artista</label>
-                        <Input
-                          placeholder="Nome do Artista"
-                          className="bg-background/50 border-white/10"
-                          {...form.register("artist")}
-                        />
-                        {form.formState.errors.artist && (
-                          <p className="text-xs text-red-400">{form.formState.errors.artist.message}</p>
-                        )}
+                        <label className="text-sm font-medium">Artista Principal</label>
+                        <div className="h-10 bg-background/50 border border-white/10 rounded-md px-3 flex items-center text-muted-foreground">
+                          {djProfile?.dj_name || "Carregando..."}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Automático: seu nome de DJ</p>
                       </div>
 
                       <div className="space-y-2 md:col-span-2">
@@ -409,6 +405,16 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
                         {form.formState.errors.genre && (
                           <p className="text-xs text-red-400">{form.formState.errors.genre.message}</p>
                         )}
+                      </div>
+
+                      <div className="space-y-2 md:col-span-2">
+                        <label className="text-sm font-medium">Colaborações (Opcional)</label>
+                        <Input
+                          placeholder="Nomes dos artistas colaboradores separados por vírgula"
+                          className="bg-background/50 border-white/10"
+                          {...form.register("collaborations")}
+                        />
+                        <p className="text-xs text-muted-foreground">Ex: DJ João, DJ Maria</p>
                       </div>
                     </div>
 
