@@ -38,11 +38,22 @@ export function ReviewPackStep({
   const totalPrice = selectedTracks.length * pricePerTrack;
 
   const handleConfirmPurchase = async () => {
-    setIsConfirming(true);
-    // Simular processamento de compra
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsConfirming(false);
-    onComplete();
+    if (!user) return;
+
+    try {
+      setIsConfirming(true);
+      await createPackOrder.mutateAsync({
+        trackIds: selectedTracks.map((t) => t.id),
+        packName,
+        packColor,
+        djId,
+        buyerId: user.id,
+      });
+      setShowConfirmation(true);
+    } catch (error) {
+      console.error("Erro ao confirmar compra:", error);
+      setIsConfirming(false);
+    }
   };
 
   if (showConfirmation) {
