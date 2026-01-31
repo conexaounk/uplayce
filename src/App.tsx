@@ -75,7 +75,7 @@ function Navbar() {
               <Button variant="ghost" size="icon" onClick={logout} title="Logout" className="hover:text-destructive">
                 <LogOut size={18} />
               </Button>
-            </div> : <Button size="sm" onClick={login} className="bg-primary hover:bg-primary/90 text-white hidden sm:flex">
+            </div> : <Button size="sm" onClick={() => setLocation("/login")} className="bg-primary hover:bg-primary/90 text-white hidden sm:flex">
               Sign In
             </Button>}
 
