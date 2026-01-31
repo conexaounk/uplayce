@@ -258,6 +258,67 @@ export default function ProfileViewPage() {
         </Card>
       )}
 
+      {/* Shopping Cart */}
+      {cartTracks.length > 0 && (
+        <Card
+          className="bg-card overflow-hidden mt-6"
+          style={{
+            borderRadius: "28px",
+            boxShadow: "0 0 5px 0 rgba(95, 49, 143, 0.77)",
+            border: "1px solid rgba(107, 30, 161, 0.85)",
+          }}
+        >
+          <CardHeader
+            style={{
+              borderRadius: "1px",
+              border: "1px solid rgba(144, 19, 254, 0.15)",
+            }}
+          >
+            <CardTitle className="text-2xl font-bold flex items-center gap-2">
+              <ShoppingCart className="w-6 h-6" />
+              Carrinho ({cartTracks.length})
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-8">
+            <div className="space-y-3">
+              {cartTracks.map((track) => (
+                <div
+                  key={track.id}
+                  className="bg-muted/30 border border-primary/30 rounded-lg p-4 flex items-center justify-between hover:border-primary/50 transition-all"
+                >
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <div className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center text-primary flex-shrink-0">
+                      <Music className="w-5 h-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-semibold truncate">{track.title}</h4>
+                      <p className="text-sm text-muted-foreground">{track.artist}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => toggleTrackSelection(track.id)}
+                    className="p-2 hover:bg-red-500/20 rounded transition-colors text-red-400 flex-shrink-0"
+                  >
+                    <Trash2 className="w-5 h-5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <Button
+              size="lg"
+              className="w-full mt-6"
+              style={{
+                backgroundColor: "rgba(34, 197, 94, 0.15)",
+                boxShadow: "1px 1px 0 0 rgba(0, 0, 0, 1)",
+              }}
+            >
+              Comprar {cartTracks.length} {cartTracks.length === 1 ? "Música" : "Músicas"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       <Button
         onClick={() => setUploadModalOpen(true)}
         size="lg"
