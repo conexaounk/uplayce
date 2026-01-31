@@ -10,11 +10,13 @@ import { Loader2, Save } from "lucide-react";
 import { useEffect } from "react";
 import { useLocation } from "wouter";
 import { getStorageUrl } from "@/lib/storageUtils";
+import { EmojiAvatarPicker } from "@/components/EmojiAvatarPicker";
 
 interface ProfileFormData {
   dj_name: string;
   bio: string;
   city: string;
+  avatar_emoji?: string;
 }
 
 export default function ProfilePage() {
