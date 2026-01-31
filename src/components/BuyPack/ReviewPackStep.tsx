@@ -29,7 +29,6 @@ export function ReviewPackStep({
 }: ReviewPackStepProps) {
   const { user } = useAuth();
   const createPackOrder = useCreatePackOrder();
-  const [isConfirming, setIsConfirming] = useState(false);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
   const totalDuration = selectedTracks.reduce((sum, track) => sum + (track.duration || 0), 0);
