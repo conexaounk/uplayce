@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { uploadTrackComplete } from "@/lib/uploadService";
 import { useAuth } from "@/hooks/use-auth";
 import { useTracks, useUserTracks } from "@/hooks/use-tracks";
+import { useAddProfileTrack } from "@/hooks/use-profile-tracks";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const MAX_FILE_SIZE = 500 * 1024 * 1024; // 500MB
