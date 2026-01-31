@@ -46,11 +46,11 @@ export default function HomePage() {
           duration: 0.8
         }} className="max-w-2xl">
             <h1 className="text-6xl font-black tracking-tighter text-white mb-6 leading-none md:text-5xl">
-              ​TRACKS <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">UNK</span> <br />
+              ​TRACKS <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">DJs UNK</span> <br />
               EXCLUSIVAS
             </h1>
             <p className="text-xl text-muted-foreground mb-8">
-               Packs exclusivos, tracks não lançadas e stems direto dos DJs UNK   
+               Packs, tracks não lançadas e stems direto dos DJs UNK   
             </p>
 
             <div className="flex gap-4">
