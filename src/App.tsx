@@ -132,6 +132,7 @@ function App() {
   return <QueryClientProvider client={queryClient}>
       <CartProvider>
         <TooltipProvider>
+          <AuthRedirect />
           <div className="bg-background min-h-screen text-foreground font-body">
             <Navbar />
             <Router />
