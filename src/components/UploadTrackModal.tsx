@@ -243,10 +243,17 @@ export function UploadTrackModal({ open, onOpenChange }: UploadTrackModalProps) 
     }
   };
 
-  const handleSelectTrack = (trackId: string) => {
-    toast.success("Track adicionada ao seu perfil!");
-    onOpenChange(false);
-    setSearchQuery("");
+  const handleSelectTrack = async (trackId: string) => {
+    try {
+      // A track já está associada ao usuário (via user_id na tabela d1)
+      // Apenas confirmar a ação e fechar o modal
+      toast.success("Track adicionada ao seu perfil!");
+      onOpenChange(false);
+      setSearchQuery("");
+    } catch (error) {
+      console.error("Erro ao adicionar track:", error);
+      toast.error("Erro ao adicionar track");
+    }
   };
 
   return (
