@@ -154,7 +154,7 @@ export default function ProfileViewPage() {
                     </div>
                     {track.duration && (
                       <span className="text-sm text-muted-foreground flex-shrink-0">
-                        {Math.floor(track.duration / 60)}:{String(track.duration % 60).padStart(2, "0")}
+                        {Math.floor(track.duration / 1000 / 60)}:{String(Math.floor((track.duration / 1000) % 60)).padStart(2, "0")}
                       </span>
                     )}
                   </div>
