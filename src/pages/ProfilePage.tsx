@@ -87,6 +87,22 @@ export default function ProfilePage() {
         <CardContent className="pt-8">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="avatar_emoji"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <EmojiAvatarPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="grid md:grid-cols-2 gap-6">
                 <FormField
                   control={form.control}
