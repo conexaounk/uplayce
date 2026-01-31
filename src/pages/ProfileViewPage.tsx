@@ -88,6 +88,7 @@ export default function ProfileViewPage() {
   }
 
   const avatarUrl = getStorageUrl(myProfile?.avatar_url, "avatars") || "/placeholder.svg";
+  const avatarEmoji = (myProfile as any)?.avatar_emoji;
 
   return (
     <div className="min-h-screen pt-24 pb-20 container max-w-4xl mx-auto px-4">
@@ -108,17 +109,21 @@ export default function ProfileViewPage() {
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
-              <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10">
-                <img
-                  src={avatarUrl}
-                  alt="Avatar"
-                  className="object-cover block"
-                  style={{
-                    width: "105%",
-                    height: "104%",
-                    margin: "0 20px 14px 1px",
-                  }}
-                />
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center">
+                {avatarEmoji ? (
+                  <span className="text-6xl">{avatarEmoji}</span>
+                ) : (
+                  <img
+                    src={avatarUrl}
+                    alt="Avatar"
+                    className="object-cover block"
+                    style={{
+                      width: "105%",
+                      height: "104%",
+                      margin: "0 20px 14px 1px",
+                    }}
+                  />
+                )}
               </div>
               <div>
                 <CardTitle className="text-3xl font-bold mb-2">
