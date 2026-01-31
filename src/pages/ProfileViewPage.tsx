@@ -79,7 +79,12 @@ export default function ProfileViewPage() {
             </Button>
           </div>
         </CardHeader>
-        <CardContent className="pt-8">
+        <CardContent
+          className="pt-8 overflow-hidden"
+          style={{
+            border: "1px solid rgba(144, 19, 254, 0.06)",
+          }}
+        >
           {myProfile?.bio && (
             <div>
               <h3 className="text-lg font-semibold mb-3">Bio</h3>
