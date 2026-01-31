@@ -254,21 +254,6 @@ export default function ProfileViewPage() {
         </Card>
       )}
 
-      {/* Add to Cart Button */}
-      {selectedTracksList.length > 0 && (
-        <Button
-          onClick={handleAddToCart}
-          size="lg"
-          className="w-full mt-6"
-          style={{
-            backgroundColor: "rgba(34, 197, 94, 0.15)",
-            boxShadow: "1px 1px 0 0 rgba(0, 0, 0, 1)",
-          }}
-        >
-          Adicionar {selectedTracksList.length} {selectedTracksList.length === 1 ? "Música" : "Músicas"} ao Carrinho
-        </Button>
-      )}
-
       <Button
         onClick={() => setUploadModalOpen(true)}
         size="lg"
