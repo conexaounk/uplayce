@@ -103,9 +103,7 @@ export default function ProfileViewPage() {
       </Card>
 
       <Button
-        onClick={() => {
-          // Handle add track action
-        }}
+        onClick={() => setUploadModalOpen(true)}
         size="lg"
         className="w-full mt-6"
         style={{
@@ -116,6 +114,11 @@ export default function ProfileViewPage() {
         <Plus size={18} className="mr-2" />
         Add Track
       </Button>
+
+      <UploadTrackModal
+        open={uploadModalOpen}
+        onOpenChange={setUploadModalOpen}
+      />
     </div>
   );
 }
