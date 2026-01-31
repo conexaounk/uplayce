@@ -28,7 +28,14 @@ export default function ProfileViewPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20 container max-w-4xl mx-auto px-4">
-      <Card className="bg-card border-white/10 shadow-2xl">
+      <Card
+        className="bg-card overflow-hidden"
+        style={{
+          borderRadius: "28px",
+          boxShadow: "0 0 5px 0 rgba(95, 49, 143, 0.77)",
+          border: "1px solid rgba(107, 30, 161, 0.85)",
+        }}
+      >
         <CardHeader className="border-b border-white/5 pb-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
