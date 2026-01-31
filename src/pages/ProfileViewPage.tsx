@@ -296,6 +296,7 @@ export default function ProfileViewPage() {
         isOpen={buyPackModalOpen}
         onClose={() => setBuyPackModalOpen(false)}
         djName={myProfile?.dj_name || "Meu DJ"}
+        djId={user?.id || ""}
         allTracks={profileTracks}
       />
 
