@@ -2,6 +2,7 @@ import { Switch, Route, Link, useLocation } from "wouter";
 import { PackProvider } from "@/context/packContext";
 import { FloatingFolder } from "@/components/FloatingFolder";
 import { CreatePackModal } from "@/components/CreatePackModal";
+import { MusicPlayer } from "@/components/MusicPlayer";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { TooltipProvider } from "@/components/ui/tooltip";
