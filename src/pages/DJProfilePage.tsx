@@ -17,7 +17,7 @@ export default function DJProfilePage() {
   // 3. ALTERADO: Usando o hook novo para buscar as músicas deste DJ específico
   const { useTracks } = useMusicApi();
   // Passamos o 'id' do DJ vindo da URL para filtrar apenas as músicas dele
-  const { data: tracks = [], isLoading: tracksLoading } = useTracks(id);
+  const { data: tracks, isLoading: tracksLoading } = useTracks(id);
 
   const [buyPackModalOpen, setBuyPackModalOpen] = useState(false);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
