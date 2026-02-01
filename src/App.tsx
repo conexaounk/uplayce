@@ -152,7 +152,7 @@ function App() {
         <PackProvider>
           <TooltipProvider>
             <AuthRedirect />
-            <div className="bg-background min-h-screen text-foreground font-body">
+            <div className="bg-background min-h-screen text-foreground font-body flex flex-col">
               <Navbar />
               <Router />
               <CartSidebar />

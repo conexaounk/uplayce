@@ -221,9 +221,9 @@ export function UploadTrackModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] glass-effect w-[95vw] sm:w-[90vw] md:w-full p-0 overflow-hidden rounded-2xl">
+      <DialogContent className="flex flex-col w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-5xl max-h-[95vh] glass-effect rounded-2xl p-0 overflow-hidden">
         {/* Header com gradiente */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 border-b border-white/10 p-6 sm:p-8">
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 border-b border-white/10 p-6 sm:p-8 flex-shrink-0">
           <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50" />
           <div className="relative z-10">
             <DialogTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
@@ -235,8 +235,8 @@ export function UploadTrackModal({
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-0">
-          <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-white/10 h-12 sm:h-14 rounded-none mx-0 p-0">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 overflow-hidden">
+          <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-white/10 h-12 sm:h-14 rounded-none mx-0 p-0 flex-shrink-0">
             <TabsTrigger value="upload" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent text-xs sm:text-sm font-medium transition-all">
               <Upload className="w-4 h-4 mr-2" />
               Novo Upload
@@ -248,8 +248,8 @@ export function UploadTrackModal({
           </TabsList>
 
           {/* ================= UPLOAD ================= */}
-          <TabsContent value="upload" className="space-y-4 mt-6 p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <TabsContent value="upload" className="flex-1 overflow-y-auto p-6 space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {!file ? (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
@@ -371,7 +371,7 @@ export function UploadTrackModal({
                         <select
                           {...form.register("genre")}
                           disabled={uploadMutation.isPending}
-                          className="h-11 sm:h-12 w-full text-sm font-medium bg-white/5 border border-white/10 rounded-lg px-4 pr-10 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
+                          className="h-11 sm:h-12 w-full px-4 pr-10 text-sm font-medium bg-white/5 border border-white/10 rounded-lg focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
                         >
                           <option value="" className="bg-background">Selecione um gênero...</option>
                           {GENRES.map((g) => (
@@ -450,7 +450,7 @@ export function UploadTrackModal({
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-4 sm:p-5 backdrop-blur-sm"
+                      className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-5 backdrop-blur-sm"
                     >
                       {trackType === "mashup" ? (
                         <div className="flex justify-between items-center">
@@ -463,7 +463,7 @@ export function UploadTrackModal({
                             </p>
                           </div>
                           <div className="text-right">
-                            <div className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                            <div className="text-3xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                               R$ {mashupPrice.toFixed(2).replace('.', ',')}
                             </div>
                           </div>
@@ -531,7 +531,7 @@ export function UploadTrackModal({
                           <select
                             {...form.register("key")}
                             disabled={uploadMutation.isPending}
-                            className="h-11 sm:h-12 w-full text-sm font-medium bg-white/5 border border-white/10 rounded-lg px-4 pr-10 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
+                            className="h-11 sm:h-12 w-full px-4 pr-10 text-sm font-medium bg-white/5 border border-white/10 rounded-lg focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
                           >
                             <option value="" className="bg-background">Selecione...</option>
                             {KEYS.map((k) => (
@@ -591,7 +591,7 @@ export function UploadTrackModal({
           </TabsContent>
 
           {/* ================= BROWSE ================= */}
-          <TabsContent value="browse" className="space-y-4 mt-6 p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-200px)]">
+          <TabsContent value="browse" className="flex-1 overflow-y-auto p-6 space-y-4">
             <div className="relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
               <Input

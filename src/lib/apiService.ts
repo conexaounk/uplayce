@@ -35,29 +35,26 @@ export const api = {
     return response.json();
   },
 
-  // Upload simples para arquivos até 50MB
+  // Upload simples para arquivos
   async uploadTrack(file: File, metadata: any, onProgress?: (p: number) => void) {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session?.access_token) {
       throw new Error("Usuário não autenticado");
     }
 
-    // Escolher endpoint baseado no tamanho do arquivo
-    const maxSimpleUpload = 50 * 1024 * 1024; // 50MB
-    const useChunked = file.size > maxSimpleUpload;
+    // 1. Upload do arquivo para o R2 (usando FormData)
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("filename", file.name);
+    formData.append("type", "audio");
 
-    if (useChunked) {
-      return this.uploadTrackChunked(file, metadata, onProgress);
-    }
-
-    // 1. Upload do arquivo para o R2 (Retorna apenas a URL)
     const headers = new Headers();
     headers.set("Authorization", `Bearer ${session.access_token}`);
-    // Enviamos o arquivo puro (body: file) para o Worker ler com arrayBuffer()
+
     const uploadResponse = await fetch(`${API_BASE}/upload`, {
       method: "POST",
-      body: file,
+      body: formData,
       headers,
     });
 
@@ -65,78 +62,31 @@ export const api = {
       const errorText = await uploadResponse.text();
       throw new Error(`Upload para R2 falhou (${uploadResponse.status}): ${errorText}`);
     }
-    
+
     const uploadResult = await uploadResponse.json();
 
+    // Simular progresso durante upload (já completado)
+    if (onProgress) {
+      onProgress(100);
+    }
+
     // 2. AGORA O PULO DO GATO: Salvar no D1
     // Chamamos a rota /tracks com os metadados completos
     const cleanedPayload = cleanPayload({
       ...metadata,
-      audio_url: uploadResult.publicUrl, // Link que veio do R2
-      r2_key_full: uploadResult.r2_key,
+      audio_url: uploadResult.url, // Link que veio do R2
+      bpm: metadata.bpm,
+      key: metadata.key,
     });
-    
+
     console.log('📝 Payload limpo para /tracks:', cleanedPayload);
-    
+
     return this.fetch("/tracks", {
       method: "POST",
       body: JSON.stringify(cleanedPayload),
     });
   },
 
-  // Upload chunked para arquivos grandes
-  async uploadTrackChunked(file: File, metadata: any, onProgress?: (p: number) => void) {
-    const { data: { session } } = await supabase.auth.getSession();
-    
-    if (!session?.access_token) {
-      throw new Error("Usuário não autenticado");
-    }
-
-    const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB conforme API
-    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-    const uploadId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-
-    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-      const start = chunkIndex * CHUNK_SIZE;
-      const end = Math.min(start + CHUNK_SIZE, file.size);
-      const chunk = file.slice(start, end);
-
-      const headers = new Headers();
-      headers.set("Authorization", `Bearer ${session.access_token}`);
-      headers.set("X-Upload-Chunk", String(chunkIndex));
-      headers.set("X-Upload-Total-Chunks", String(totalChunks));
-      headers.set("X-Upload-Id", uploadId);
-
-      const response = await fetch(`${API_BASE}/upload-chunked`, {
-        method: "POST",
-        body: chunk, // Enviar chunk puro, não FormData
-        headers,
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Upload do chunk ${chunkIndex + 1}/${totalChunks} falhou: ${errorText}`);
-      }
-
-      if (onProgress) {
-        onProgress(((chunkIndex + 1) / totalChunks) * 100);
-      }
-    }
-
-    // 2. AGORA O PULO DO GATO: Salvar no D1
-    // Chamamos a rota /tracks com os metadados completos
-    const cleanedPayload = cleanPayload({
-      ...metadata,
-      upload_id: uploadId,
-    });
-    
-    console.log('📝 Payload limpo para /tracks (chunked):', cleanedPayload);
-    
-    return this.fetch("/tracks", {
-      method: "POST",
-      body: JSON.stringify(cleanedPayload),
-    });
-  },
 
   async updateTrackPublicity(trackId: string, isPublic: boolean) {
     return this.fetch(`/tracks/${trackId}`, {
