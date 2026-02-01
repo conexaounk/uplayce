@@ -146,7 +146,7 @@ export function UploadTrackModal({
 
   async function onSubmit(data: MetadataForm) {
     if (!file || !user || !djProfile) {
-      toast.error("Informações incompletas para upload");
+      toast.error("Informações incompletas", "Verifique seus dados");
       return;
     }
 
