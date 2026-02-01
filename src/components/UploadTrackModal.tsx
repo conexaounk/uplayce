@@ -137,15 +137,15 @@ export function UploadTrackModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-white/10 w-[95vw] sm:w-full md:max-w-2xl p-4 sm:p-6">
-        <DialogHeader>
-          <DialogTitle className="text-xl sm:text-2xl font-bold">Gerenciar Músicas</DialogTitle>
+      <DialogContent className="max-w-2xl max-h-fit bg-card border-white/10 w-[95vw] sm:w-full md:max-w-2xl p-4 sm:p-5">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-lg sm:text-xl font-bold">Gerenciar Músicas</DialogTitle>
           <DialogDescription className="text-xs sm:text-sm">
             Faça upload de uma nova produção ou adicione da biblioteca global.
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-3">
           <TabsList className="grid w-full grid-cols-2 bg-muted/20">
             <TabsTrigger value="upload">Novo Upload</TabsTrigger>
             <TabsTrigger value="browse">Banco Global</TabsTrigger>
