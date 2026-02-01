@@ -217,9 +217,9 @@ export function UploadTrackModal({
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                        <Label>Gênero</Label>
+                        <Label className="text-xs sm:text-sm">Gênero</Label>
                         <select
                             {...form.register("genre")}
                             className="w-full h-10 bg-muted/30 border border-input rounded-md px-3 text-sm focus:ring-1 focus:ring-primary"
@@ -235,9 +235,9 @@ export function UploadTrackModal({
                             <p className="text-red-500 text-xs">{form.formState.errors.genre.message}</p>
                         )}
                     </div>
-                    
+
                     <div className="space-y-2">
-                        <Label>Colaborações (Feat)</Label>
+                        <Label className="text-xs sm:text-sm">Colaborações (Feat)</Label>
                         <Input
                             placeholder="Ex: MC Fulano"
                             {...form.register("collaborations")}
