@@ -188,13 +188,13 @@ export function UploadTrackModal({
                     <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                   <Button
-                    size="icon"
+                    size="sm"
                     variant="ghost"
                     onClick={() => setFile(null)}
                     type="button"
-                    className="hover:bg-destructive/10 hover:text-destructive"
+                    className="hover:bg-destructive/10 hover:text-destructive h-8 w-8 p-0"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </Button>
                 </div>
               )}
