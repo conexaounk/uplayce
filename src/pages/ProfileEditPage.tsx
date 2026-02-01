@@ -26,6 +26,7 @@ export default function ProfileEditPage() {
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
   const updateProfile = useUpdateProfile();
   const [, setLocation] = useLocation();
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   const form = useForm<ProfileFormData>({
     defaultValues: {
@@ -33,6 +34,7 @@ export default function ProfileEditPage() {
       bio: "",
       city: "",
       avatar_emoji: "",
+      avatar_url: null,
     },
   });
 
@@ -43,7 +45,9 @@ export default function ProfileEditPage() {
         bio: myProfile.bio || "",
         city: myProfile.city || "",
         avatar_emoji: (myProfile as any).avatar_emoji || "",
+        avatar_url: myProfile.avatar_url || null,
       });
+      setAvatarUrl(myProfile.avatar_url || null);
     }
   }, [myProfile, form]);
 
