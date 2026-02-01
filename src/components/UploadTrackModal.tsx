@@ -64,7 +64,7 @@ export function UploadTrackModal({
   const { data: djProfile } = useDJ(user?.id || "");
   
   // 1. AJUSTE AQUI: Pegamos as funções do hook
-  const { uploadMutation, useTracks, addToLibraryMutation } = useMusicApi();
+  const { uploadMutation, useTracks, addTrackToProfileMutation } = useMusicApi();
   
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
