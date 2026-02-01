@@ -159,7 +159,7 @@ export function UploadTrackModal({
                   onClick={() =>
                     document.getElementById("audio-input")?.click()
                   }
-                  className="border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer border-white/10 hover:bg-primary/5 hover:border-primary/50 transition-all group"
+                  className="border-2 border-dashed rounded-2xl p-6 sm:p-10 text-center cursor-pointer border-white/10 hover:bg-primary/5 hover:border-primary/50 transition-all group"
                 >
                   <input
                     id="audio-input"
@@ -170,11 +170,11 @@ export function UploadTrackModal({
                       e.target.files && processFile(e.target.files[0])
                     }
                   />
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Upload className="w-8 h-8 text-muted-foreground group-hover:text-primary" />
+                  <div className="w-12 sm:w-16 h-12 sm:h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Upload className="w-6 sm:w-8 h-6 sm:h-8 text-muted-foreground group-hover:text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-1">Clique para selecionar</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="text-base sm:text-lg font-semibold mb-1">Clique para selecionar</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
                     Suporta MP3, WAV, AIFF (até 500MB)
                   </p>
                 </div>
