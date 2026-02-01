@@ -73,7 +73,8 @@ export function UploadTrackModal({
 
   // 2. AJUSTE AQUI: Chamamos o hook useTracks passando a busca
   // Passamos undefined no primeiro argumento (userId) para buscar no banco geral
-  const { data: tracks = [], isLoading: tracksLoading } = useTracks(undefined, searchQuery);
+  const { data: tracksData, isLoading: tracksLoading } = useTracks(undefined, searchQuery);
+  const tracks = Array.isArray(tracksData) ? tracksData : [];
 
   const form = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),
@@ -136,29 +137,29 @@ export function UploadTrackModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-white/10">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">Gerenciar Músicas</DialogTitle>
-          <DialogDescription>
+      <DialogContent className="max-w-2xl max-h-fit bg-card border-white/10 w-[95vw] sm:w-full md:max-w-2xl p-4 sm:p-5">
+        <DialogHeader className="pb-2">
+          <DialogTitle className="text-lg sm:text-xl font-bold">Gerenciar Músicas</DialogTitle>
+          <DialogDescription className="text-xs sm:text-sm">
             Faça upload de uma nova produção ou adicione da biblioteca global.
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
-          <TabsList className="grid w-full grid-cols-2 bg-muted/20">
-            <TabsTrigger value="upload">Novo Upload</TabsTrigger>
-            <TabsTrigger value="browse">Banco Global</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-2">
+          <TabsList className="grid w-full grid-cols-2 bg-muted/20 h-8">
+            <TabsTrigger value="upload" className="text-xs sm:text-sm">Novo Upload</TabsTrigger>
+            <TabsTrigger value="browse" className="text-xs sm:text-sm">Banco Global</TabsTrigger>
           </TabsList>
 
           {/* ================= UPLOAD ================= */}
-          <TabsContent value="upload" className="space-y-6 mt-6">
+          <TabsContent value="upload" className="space-y-3 mt-3">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {!file ? (
                 <div
                   onClick={() =>
                     document.getElementById("audio-input")?.click()
                   }
-                  className="border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer border-white/10 hover:bg-primary/5 hover:border-primary/50 transition-all group"
+                  className="border-2 border-dashed rounded-2xl p-4 sm:p-6 text-center cursor-pointer border-white/10 hover:bg-primary/5 hover:border-primary/50 transition-all group"
                 >
                   <input
                     id="audio-input"
@@ -169,31 +170,31 @@ export function UploadTrackModal({
                       e.target.files && processFile(e.target.files[0])
                     }
                   />
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Upload className="w-8 h-8 text-muted-foreground group-hover:text-primary" />
+                  <div className="w-10 sm:w-12 h-10 sm:h-12 mx-auto mb-2 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Upload className="w-5 sm:w-6 h-5 sm:h-6 text-muted-foreground group-hover:text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-1">Clique para selecionar</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Suporta MP3, WAV, AIFF (até 500MB)
+                  <h3 className="text-sm sm:text-base font-semibold mb-0.5">Clique para selecionar</h3>
+                  <p className="text-xs text-muted-foreground">
+                    MP3, WAV, AIFF (500MB máx)
                   </p>
                 </div>
               ) : (
-                <div className="flex items-center gap-4 p-4 border border-primary/20 bg-primary/5 rounded-xl">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Music className="text-primary w-5 h-5" />
+                <div className="flex items-center gap-3 p-3 border border-primary/20 bg-primary/5 rounded-lg">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Music className="text-primary w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{file.name}</p>
+                    <p className="font-medium text-sm truncate">{file.name}</p>
                     <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                   <Button
-                    size="icon"
+                    size="sm"
                     variant="ghost"
                     onClick={() => setFile(null)}
                     type="button"
-                    className="hover:bg-destructive/10 hover:text-destructive"
+                    className="hover:bg-destructive/10 hover:text-destructive h-8 w-8 p-0"
                   >
-                    <X className="w-5 h-5" />
+                    <X className="w-4 h-4" />
                   </Button>
                 </div>
               )}
@@ -202,26 +203,26 @@ export function UploadTrackModal({
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="space-y-4"
+                  className="space-y-3"
                 >
-                  <div className="space-y-2">
-                    <Label>Título da Faixa</Label>
+                  <div className="space-y-1">
+                    <Label className="text-xs">Título da Faixa</Label>
                     <Input
                       placeholder="Ex: Toca Toca"
                       {...form.register("title")}
-                      className="bg-muted/30"
+                      className="bg-muted/30 text-xs h-8"
                     />
                     {form.formState.errors.title && (
                         <p className="text-red-500 text-xs">{form.formState.errors.title.message}</p>
                     )}
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                        <Label>Gênero</Label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                        <Label className="text-xs">Gênero</Label>
                         <select
                             {...form.register("genre")}
-                            className="w-full h-10 bg-muted/30 border border-input rounded-md px-3 text-sm focus:ring-1 focus:ring-primary"
+                            className="w-full h-8 bg-muted/30 border border-input rounded-md px-2 text-xs focus:ring-1 focus:ring-primary"
                         >
                             <option value="">Selecione...</option>
                             {GENRES.map((g) => (
@@ -234,13 +235,13 @@ export function UploadTrackModal({
                             <p className="text-red-500 text-xs">{form.formState.errors.genre.message}</p>
                         )}
                     </div>
-                    
-                    <div className="space-y-2">
-                        <Label>Colaborações (Feat)</Label>
+
+                    <div className="space-y-1">
+                        <Label className="text-xs">Colaborações (Feat)</Label>
                         <Input
                             placeholder="Ex: MC Fulano"
                             {...form.register("collaborations")}
-                            className="bg-muted/30"
+                            className="bg-muted/30 text-xs h-8"
                         />
                     </div>
                   </div>
@@ -248,12 +249,12 @@ export function UploadTrackModal({
                   <Button
                     type="submit"
                     disabled={uploadMutation.isPending}
-                    className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90"
+                    className="w-full h-9 text-xs font-bold bg-primary hover:bg-primary/90"
                   >
                     {uploadMutation.isPending ? (
                       <>
-                        <Loader2 className="mr-2 animate-spin" />
-                        Enviando... {uploadProgress}%
+                        <Loader2 className="mr-1 animate-spin" size={14} />
+                        <span className="hidden sm:inline">Enviando...</span>
                       </>
                     ) : (
                       "Publicar Música"
@@ -265,36 +266,36 @@ export function UploadTrackModal({
           </TabsContent>
 
           {/* ================= BROWSE ================= */}
-          <TabsContent value="browse" className="space-y-4 mt-6">
+          <TabsContent value="browse" className="space-y-2 mt-3">
             <div className="relative">
-              <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-2 w-4 h-4 text-muted-foreground" />
               <Input
-                className="pl-9 bg-muted/30 h-10"
-                placeholder="Buscar por nome, artista ou gênero..."
+                className="pl-9 bg-muted/30 h-8 text-xs"
+                placeholder="Buscar..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             {tracksLoading ? (
-              <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>
+              <div className="py-4 flex justify-center"><Loader2 className="animate-spin text-primary" size={20} /></div>
             ) : (
-              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-1 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
                 {tracks.length === 0 ? (
                     <p className="text-center text-muted-foreground py-8">Nenhuma música encontrada.</p>
                 ) : (
                     tracks.map((track: any) => (
                     <div
                         key={track.id}
-                        className="flex items-center justify-between p-3 border border-white/5 rounded-lg bg-card/50 hover:border-primary/30 transition-colors"
+                        className="flex items-center justify-between p-2 border border-white/5 rounded-md bg-card/50 hover:border-primary/30 transition-colors"
                     >
-                        <div className="flex gap-3 items-center overflow-hidden">
-                        <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Music className="text-primary w-5 h-5" />
+                        <div className="flex gap-2 items-center overflow-hidden">
+                        <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Music className="text-primary w-4 h-4" />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-sm font-bold truncate">{track.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">
+                            <p className="text-xs font-bold truncate">{track.title}</p>
+                            <p className="text-[10px] text-muted-foreground truncate">
                                 {track.artist}
                                 {track.collaborations && <span className="text-primary/70"> feat. {track.collaborations}</span>}
                             </p>
@@ -303,11 +304,11 @@ export function UploadTrackModal({
                         <Button
                         size="sm"
                         variant="ghost"
-                        className="hover:bg-primary/10 hover:text-primary"
+                        className="hover:bg-primary/10 hover:text-primary h-7 w-7 p-0"
                         disabled={addToLibraryMutation.isPending}
                         onClick={() => handleSelectTrack(track.id)}
                         >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3 h-3" />
                         </Button>
                     </div>
                     ))

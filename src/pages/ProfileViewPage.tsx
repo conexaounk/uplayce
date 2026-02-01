@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { useDJ } from "@/hooks/use-djs";
-import { useUserTracks } from "@/hooks/use-tracks";
+import { useMusicApi } from "@/hooks/use-music-api";
 import { useCart } from "@/hooks/use-cart";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -14,9 +14,11 @@ import { useState, useRef, useEffect } from "react";
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
-  
+  const { useTracks } = useMusicApi();
+
   // Buscamos as músicas diretamente do banco pelo ID do usuário logado
-  const { data: allUserTracks = [], isLoading: tracksLoading } = useUserTracks(user?.id || "");
+  const { data: tracksData, isLoading: tracksLoading } = useTracks(user?.id || "");
+  const allUserTracks = Array.isArray(tracksData) ? tracksData : [];
   
   const { addItem } = useCart();
   const [, setLocation] = useLocation();
