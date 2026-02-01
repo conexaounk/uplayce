@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -50,9 +50,14 @@ const KEYS = [
   "7A", "7B", "8A", "8B", "9A", "9B", "10A", "10B", "11A", "11B", "12A", "12B"
 ];
 
+
+
 const metadataSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
   genre: z.string().min(1, "Gênero é obrigatório"),
+  track_type: z.enum(["mashup", "remix"]),
+  // aceita valores vindos de inputs como string e converte para number
+  price_cents: z.coerce.number().optional(),
   collaborations: z.string().optional(),
   bpm: z.string()
     .optional()
@@ -91,11 +96,46 @@ export function UploadTrackModal({
     defaultValues: {
       title: "",
       genre: "",
+      track_type: "mashup",
+      price_cents: undefined,
       collaborations: "",
       bpm: "",
       key: "",
     },
   });
+
+  // Observa mudanças de tipo e preço para atualizar a UI condicional
+  const trackType = form.watch("track_type");
+  const priceCents = form.watch("price_cents");
+
+  // Preço do Mashup vindo do D1 (em reais)
+  const [mashupPrice, setMashupPrice] = useState<number>(15);
+
+  useEffect(() => {
+    // Busca o preço do D1 quando o modal abrir
+    if (!open) return;
+    fetch('https://api.conexaounk.com/settings')
+      .then((res) => res.json())
+      .then((data) => {
+        try {
+          const raw = data?.settings?.mashup_unit_price;
+          if (raw !== undefined && raw !== null) {
+            // Suporta tanto valor em centavos (ex: 1500) quanto string '15.00'
+            const num = Number(raw);
+            if (!isNaN(num)) {
+              // Se o número parecer grande (>100), assumimos que veio em centavos
+              const value = num > 100 ? (num / 100) : num;
+              setMashupPrice(value);
+            }
+          }
+        } catch (e) {
+          console.warn('Erro ao processar settings:', e);
+        }
+      })
+      .catch((e) => {
+        console.warn('Erro ao buscar settings:', e);
+      });
+  }, [open]);
 
   function processFile(file: File) {
     if (file.size > MAX_FILE_SIZE) {
@@ -121,12 +161,12 @@ export function UploadTrackModal({
       title: data.title,
       artist: mainArtist,
       genre: data.genre,
+      track_type: data.track_type,
+      price_cents: data.track_type === "mashup" ? Math.round(mashupPrice * 100) : (data.price_cents !== undefined && data.price_cents !== null ? Number(data.price_cents) : undefined),
       ...(data.collaborations && data.collaborations.trim() !== "" && { 
         collaborations: data.collaborations.trim() 
       }),
-      ...(data.bpm && data.bpm.trim() !== "" && { 
-        bpm: Number(data.bpm) 
-      }),
+      bpm: data.bpm ? Number(data.bpm) : undefined,
       ...(data.key && data.key.trim() !== "" && { 
         key: data.key 
       }),
@@ -313,10 +353,73 @@ export function UploadTrackModal({
                     {form.formState.errors.genre && (
                       <p className="text-red-500 text-xs">{form.formState.errors.genre.message}</p>
                     )}
+
+                    <div className="space-y-1.5 mt-2">
+                      <Label className="text-xs sm:text-sm font-medium">Tipo de Produção</Label>
+                      <div className="grid grid-cols-2 gap-2 mt-1">
+                        <Button
+                          type="button"
+                          variant={trackType === "mashup" ? "default" : "outline"}
+                          onClick={() => form.setValue("track_type", "mashup")}
+                          className="h-9 text-xs"
+                        >
+                          Mashup (Preço Fixo)
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={trackType === "remix" ? "default" : "outline"}
+                          onClick={() => form.setValue("track_type", "remix")}
+                          className="h-9 text-xs"
+                        >
+                          Remix (Preço Livre)
+                        </Button>
+                      </div>
+                      {form.formState.errors.track_type && (
+                        <p className="text-red-500 text-xs">{form.formState.errors.track_type.message}</p>
+                      )}
+
+                      {/* Lógica de preço condicional */}
+                      <div className="p-4 rounded-lg border border-white/10 bg-muted/20 mt-3">
+                        {trackType === "mashup" ? (
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <p className="text-xs font-bold uppercase text-primary">Preço Tabelado</p>
+                              <p className="text-sm text-muted-foreground italic">Incluso no Pack de 10</p>
+                            </div>
+                            <div className="text-xl font-black">R$ {mashupPrice.toFixed(2).replace('.', ',')}</div>
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <Label className="text-xs font-bold uppercase">Valor do Remix (R$)</Label>
+                            <div className="relative">
+                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">R$</span>
+                              <Input
+                                type="number"
+                                placeholder="0,00"
+                                className="pl-9 bg-background"
+                                value={priceCents !== undefined && priceCents !== null ? (priceCents / 100) : ''}
+                                onChange={(e) => {
+                                  const v = e.target.value;
+                                  const n = Number(v);
+                                  if (isNaN(n)) {
+                                    form.setValue("price_cents", undefined);
+                                  } else {
+                                    form.setValue("price_cents", Math.round(n * 100));
+                                  }
+                                }}
+                              />
+                            </div>
+                            <p className="text-[10px] text-muted-foreground">
+                              *Remixes individuais não entram no pacote promocional de Mashups.
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div> 
                   </div>
 
                   {/* BPM e Key - OPCIONAIS */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
                     <div className="space-y-1.5">
                       <Label className="text-xs sm:text-sm font-medium flex items-center gap-1.5">
                         <Activity className="w-3.5 h-3.5" />
@@ -351,6 +454,23 @@ export function UploadTrackModal({
                           <option key={k} value={k}>{k}</option>
                         ))}
                       </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label className="text-xs sm:text-sm font-medium">
+                        Preço (centavos) <span className="text-muted-foreground text-xs">(opcional)</span>
+                      </Label>
+                      <Input
+                        type="number"
+                        placeholder="Ex: 0"
+                        {...form.register("price_cents", { valueAsNumber: true })}
+                        disabled={uploadMutation.isPending}
+                        className="bg-muted/30 text-xs sm:text-sm h-9 sm:h-10"
+                        min="0"
+                      />
+                      {form.formState.errors.price_cents && (
+                        <p className="text-red-500 text-xs">{form.formState.errors.price_cents.message}</p>
+                      )}
                     </div>
                   </div>
 

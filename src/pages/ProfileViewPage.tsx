@@ -1,4 +1,5 @@
 import { useAuth } from "@/hooks/use-auth";
+import { EditTrackModal } from "@/components/EditTrackModal";
 import { useDJ } from "@/hooks/use-djs";
 import { useMusicApi } from "@/hooks/use-music-api";
 import { useCart } from "@/hooks/use-cart";
@@ -14,7 +15,7 @@ import { useState, useRef, useEffect } from "react";
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
-  const { useTracks, updateTrackPublicityMutation } = useMusicApi();
+  const { useTracks, updateTrackPublicityMutation, removeFromProfileMutation } = useMusicApi();
 
   // Buscamos as músicas diretamente do banco pelo ID do usuário logado
   const { data: allUserTracks = [], isLoading: tracksLoading } = useTracks(user?.id || "");
@@ -26,6 +27,9 @@ export default function ProfileViewPage() {
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<any | null>(null);
 
   // Redirecionar se usuário não está autenticado
   useEffect(() => {
@@ -171,7 +175,7 @@ export default function ProfileViewPage() {
                     )}
                   </div>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 items-center">
                     <Button
                       variant="ghost"
                       size="icon"
@@ -182,6 +186,17 @@ export default function ProfileViewPage() {
                     >
                       {track.is_public ? <Globe size={20} /> : <Lock size={20} />}
                     </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => { setSelectedTrack(track); setEditModalOpen(true); }}
+                      className="text-muted-foreground hover:text-primary"
+                      title="Editar"
+                    >
+                      <Edit size={18} />
+                    </Button>
+
                     <Button
                       variant="ghost"
                       size="icon"
@@ -189,6 +204,20 @@ export default function ProfileViewPage() {
                       className="text-muted-foreground hover:text-primary"
                     >
                       <ShoppingCart size={20} />
+                    </Button>
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        if (confirm('Remover essa música do seu perfil? Ela não será deletada do banco.')) {
+                          removeFromProfileMutation.mutate(track.id as string);
+                        }
+                      }}
+                      className="text-destructive hover:text-destructive/80"
+                      title="Remover do perfil"
+                    >
+                      <Trash2 size={16} />
                     </Button>
                   </div>
                 </div>
@@ -217,6 +246,7 @@ export default function ProfileViewPage() {
         djId={user?.id || ""}
         allTracks={allUserTracks}
       />
+      <EditTrackModal track={selectedTrack} open={editModalOpen} onOpenChange={(v) => { setEditModalOpen(v); if (!v) setSelectedTrack(null); }} />
       <audio ref={audioRef} crossOrigin="anonymous" />
     </div>
   );

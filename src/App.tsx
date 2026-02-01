@@ -1,4 +1,7 @@
 import { Switch, Route, Link, useLocation } from "wouter";
+import { PackProvider } from "@/context/packContext";
+import { FloatingFolder } from "@/components/FloatingFolder";
+import { CreatePackModal } from "@/components/CreatePackModal";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -19,6 +22,7 @@ import ProfileViewPage from "@/pages/ProfileViewPage";
 import ProfileEditPage from "@/pages/ProfileEditPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
+import AdminPage from "@/pages/AdminPage";
 function Navbar() {
   const {
     setIsOpen,
@@ -29,6 +33,7 @@ function Navbar() {
     logout
   } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [createPackOpen, setCreatePackOpen] = useState(false);
   const [location, setLocation] = useLocation();
   const navLinks = [{
     href: "/",
@@ -71,6 +76,11 @@ function Navbar() {
                   <span>{user.email?.split("@")[0]}</span>
                 </Button>
               </Link>
+
+              <Button variant="ghost" size="sm" className="hidden sm:flex" onClick={() => setCreatePackOpen(true)}>
+                Criar Pack
+              </Button>
+
               <Button variant="ghost" size="icon" onClick={logout} title="Logout" className="hover:text-destructive">
                 <LogOut size={18} />
               </Button>
@@ -104,6 +114,7 @@ function Navbar() {
           </Sheet>
         </div>
       </div>
+      <CreatePackModal open={createPackOpen} onOpenChange={setCreatePackOpen} />
     </nav>;
 }
 function Router() {
@@ -114,6 +125,8 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/profile/edit" component={ProfileEditPage} />
       <Route path="/profile" component={ProfileViewPage} />
+      {/* Nova Rota de Admin */}
+      <Route path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>;
 }
@@ -136,15 +149,18 @@ function AuthRedirect() {
 function App() {
   return <QueryClientProvider client={queryClient}>
       <CartProvider>
-        <TooltipProvider>
-          <AuthRedirect />
-          <div className="bg-background min-h-screen text-foreground font-body">
-            <Navbar />
-            <Router />
-            <CartSidebar />
-            <Toaster />
-          </div>
-        </TooltipProvider>
+        <PackProvider>
+          <TooltipProvider>
+            <AuthRedirect />
+            <div className="bg-background min-h-screen text-foreground font-body">
+              <Navbar />
+              <Router />
+              <CartSidebar />
+              <Toaster />
+              <FloatingFolder />
+            </div>
+          </TooltipProvider>
+        </PackProvider>
       </CartProvider>
     </QueryClientProvider>;
 }

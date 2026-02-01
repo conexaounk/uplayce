@@ -40,9 +40,43 @@ export function useMusicApi() {
   const uploadMutation = useMutation({
     mutationFn: ({ file, metadata, onProgress }: { file: File, metadata: any, onProgress: any }) => 
       api.uploadTrack(file, metadata, onProgress),
-    onSuccess: () => {
+    onSuccess: async (data, variables: any) => {
+      // Invalida cache e notifica envio concluído
       queryClient.invalidateQueries({ queryKey: ['tracks'] });
       toast.success("Música enviada com sucesso!");
+
+      // Se a resposta já contém o registro (id/track), nada a fazer
+      if (data?.id || data?.track?.id) return;
+
+      // Caso o endpoint tenha apenas gravado no R2 e retornado publicUrl/r2_key, tentar criar o registro no D1
+      try {
+        const meta = variables?.metadata || {};
+        const payload: any = {
+          title: meta.title || 'Untitled',
+          genre: meta.genre || 'Outro',
+          artist: meta.artist || null,
+          collaborations: meta.collaborations || null,
+          is_public: !!meta.is_public,
+          audio_url: data?.publicUrl || data?.public_url || null,
+          r2_key_full: data?.r2_key || null,
+        };
+
+        if (!payload.audio_url) {
+          console.warn('Sem audio_url retornada pelo /upload — não será criado registro automático.');
+          return;
+        }
+
+        await api.fetch('/tracks', {
+          method: 'POST',
+          body: JSON.stringify(payload),
+        });
+
+        queryClient.invalidateQueries({ queryKey: ['tracks'] });
+        toast.success('Registro da música criado automaticamente.');
+      } catch (error: any) {
+        console.error('Erro ao criar registro da música:', error);
+        toast.error('Erro ao criar registro da música: ' + (error?.message || error));
+      }
     },
     onError: (error: any) => {
       toast.error("Erro no upload: " + error.message);
@@ -79,5 +113,31 @@ export function useMusicApi() {
     }
   });
 
-  return { useTracks, uploadMutation, addTrackToProfileMutation, updateTrackPublicityMutation };
+  // Atualizar campos da track (título, gênero, price_cents, etc.)
+  const updateTrackMutation = useMutation({
+    mutationFn: ({ trackId, payload }: { trackId: string; payload: any }) =>
+      api.fetch(`/tracks/${trackId}`, { method: 'PATCH', body: JSON.stringify(payload) }),
+    onSuccess: () => {
+      toast.success('Música atualizada com sucesso');
+      queryClient.invalidateQueries({ queryKey: ['tracks'] });
+    },
+    onError: (error: any) => {
+      toast.error('Erro ao atualizar música: ' + error.message);
+    }
+  });
+
+  // Remover música do perfil do usuário (sem deletar do DB)
+  const removeFromProfileMutation = useMutation({
+    mutationFn: (trackId: string) =>
+      api.fetch('/user-library', { method: 'DELETE', body: JSON.stringify({ track_id: trackId }) }),
+    onSuccess: () => {
+      toast.success('Música removida do seu perfil');
+      queryClient.invalidateQueries({ queryKey: ['tracks'] });
+    },
+    onError: (error: any) => {
+      toast.error('Erro ao remover música do perfil: ' + error.message);
+    }
+  });
+
+  return { useTracks, uploadMutation, addTrackToProfileMutation, updateTrackPublicityMutation, updateTrackMutation, removeFromProfileMutation };
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import type { Track } from "@/types/supabase";
 import { SelectTracksStep } from "./BuyPack/SelectTracksStep";
 import { ConfirmPackStep } from "./BuyPack/ConfirmPackStep";
@@ -56,6 +56,10 @@ export function BuyPackModal({ isOpen, onClose, djName, djId, allTracks }: BuyPa
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-2xl w-full bg-card border-white/10 p-0 overflow-hidden">
+        <DialogHeader className="sr-only">
+          <DialogTitle>Comprar Pack</DialogTitle>
+          <DialogDescription>Fluxo para selecionar tracks e finalizar a compra</DialogDescription>
+        </DialogHeader>
         {step === "select" && (
           <SelectTracksStep
             tracks={allTracks}
