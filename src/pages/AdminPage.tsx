@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Save, Loader2, ShieldCheck, Lock, Edit, Trash2, EyeOff, Eye } from "lucide-react";
 import { useToast } from "@/hooks/use-notification";
-import { api } from "@/lib/apiService";
 import { getSettings, setSetting } from "@/lib/settingsService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
@@ -37,7 +36,15 @@ export default function AdminPage() {
   const fetchTracks = async () => {
     setLoadingTracks(true);
     try {
-      const res = await api.fetch('/tracks');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Login necessário');
+
+      const response = await fetch('https://api.conexaounk.com/tracks', {
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+      });
+
+      if (!response.ok) throw new Error('Erro ao buscar tracks');
+      const res = await response.json();
       const list = Array.isArray(res) ? res : (res?.tracks || res?.data || []);
       setTracks(list as any[]);
     } catch (e) {
@@ -155,10 +162,19 @@ export default function AdminPage() {
 
   const handleSaveEdit = async (updated: any) => {
     try {
-      const res = await api.fetch(`/tracks/${updated.id}`, {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Login necessário');
+
+      const res = await fetch(`https://api.conexaounk.com/tracks/${updated.id}`, {
         method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
         body: JSON.stringify(updated),
       });
+
+      if (!res.ok) throw new Error('Erro ao atualizar');
       toast.success('Atualizado', 'Música atualizada com sucesso');
       setEditTrack(null);
       fetchTracks();
