@@ -249,7 +249,7 @@ export function UploadTrackModal({
 
           {/* ================= UPLOAD ================= */}
           <TabsContent value="upload" className="flex-1 overflow-y-auto p-6 space-y-6">
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {!file ? (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
