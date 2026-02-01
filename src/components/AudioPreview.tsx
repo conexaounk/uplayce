@@ -34,10 +34,15 @@ export function AudioPreview({
   const [previewStart, setPreviewStart] = useState(startTime);
 
   useEffect(() => {
+    setPreviewStart(startTime);
+  }, [startTime]);
+
+  useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     if (isPlaying) {
+      audio.currentTime = previewStart;
       audio.play().catch(e => console.error("Play failed", e));
     } else {
       audio.pause();
@@ -46,7 +51,7 @@ export function AudioPreview({
     return () => {
       audio?.pause();
     };
-  }, [isPlaying, url]);
+  }, [isPlaying, url, previewStart]);
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
