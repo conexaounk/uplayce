@@ -24,6 +24,9 @@ import ProfileEditPage from "@/pages/ProfileEditPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
 import AdminPage from "@/pages/AdminPage";
+import SearchPage from "@/pages/SearchPage";
+import SettingsPage from "@/pages/SettingsPage";
+import MyTracksPage from "@/pages/MyTracksPage";
 
 function Sidebar() {
   const [location] = useLocation();
