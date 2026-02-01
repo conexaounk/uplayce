@@ -179,12 +179,12 @@ export function UploadTrackModal({
                   </p>
                 </div>
               ) : (
-                <div className="flex items-center gap-4 p-4 border border-primary/20 bg-primary/5 rounded-xl">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <Music className="text-primary w-5 h-5" />
+                <div className="flex items-center gap-3 p-3 border border-primary/20 bg-primary/5 rounded-lg">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <Music className="text-primary w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{file.name}</p>
+                    <p className="font-medium text-sm truncate">{file.name}</p>
                     <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
                   </div>
                   <Button
