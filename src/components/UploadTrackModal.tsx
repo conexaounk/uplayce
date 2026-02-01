@@ -287,15 +287,15 @@ export function UploadTrackModal({
                     tracks.map((track: any) => (
                     <div
                         key={track.id}
-                        className="flex items-center justify-between p-3 border border-white/5 rounded-lg bg-card/50 hover:border-primary/30 transition-colors"
+                        className="flex items-center justify-between p-2 border border-white/5 rounded-md bg-card/50 hover:border-primary/30 transition-colors"
                     >
-                        <div className="flex gap-3 items-center overflow-hidden">
-                        <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
-                            <Music className="text-primary w-5 h-5" />
+                        <div className="flex gap-2 items-center overflow-hidden">
+                        <div className="w-8 h-8 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Music className="text-primary w-4 h-4" />
                         </div>
                         <div className="min-w-0">
-                            <p className="text-sm font-bold truncate">{track.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">
+                            <p className="text-xs font-bold truncate">{track.title}</p>
+                            <p className="text-[10px] text-muted-foreground truncate">
                                 {track.artist}
                                 {track.collaborations && <span className="text-primary/70"> feat. {track.collaborations}</span>}
                             </p>
@@ -304,11 +304,11 @@ export function UploadTrackModal({
                         <Button
                         size="sm"
                         variant="ghost"
-                        className="hover:bg-primary/10 hover:text-primary"
+                        className="hover:bg-primary/10 hover:text-primary h-7 w-7 p-0"
                         disabled={addToLibraryMutation.isPending}
                         onClick={() => handleSelectTrack(track.id)}
                         >
-                        <Plus className="w-4 h-4" />
+                        <Plus className="w-3 h-3" />
                         </Button>
                     </div>
                     ))
