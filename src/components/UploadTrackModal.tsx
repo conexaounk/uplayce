@@ -116,7 +116,8 @@ export function UploadTrackModal({
           display_artist: displayArtist,
           genre: data.genre,
           collaborations: data.collaborations, // Salvando o campo separado
-          userId: user.id,
+          user_id: user.id,
+          is_public: false, // Música começa como privada
         },
         onProgress: setUploadProgress,
       });
