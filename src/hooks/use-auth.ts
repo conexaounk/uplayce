@@ -11,19 +11,16 @@ export function useAuth() {
   const fetchUserRole = useCallback(async (userId: string) => {
     console.log("Fetching role for user:", userId);
     try {
-      // TEMP: Se o user_id é "af2b2fe3-5301-447e-9794-b5daee3c287e", retorna admin para teste
-      if (userId === "af2b2fe3-5301-447e-9794-b5daee3c287e") {
-        console.log("Hardcoded admin user detected");
-        setUserRole("admin");
-        return;
-      }
+      // TEMP: Retorna admin = true para todos para testes
+      console.log("TEMPORARY: Setting all users as admin");
+      setUserRole("admin");
+      return;
 
-      // Query simples sem .single() para evitar RLS issues
+      // TODO: Remover depois de testar - código original abaixo:
+      /*
       const { data, error } = await supabase
         .from("user_roles")
         .select("*");
-
-      console.log("All roles result:", { data, error });
 
       if (error) {
         console.log("Erro ao buscar roles:", error.message);
@@ -31,12 +28,10 @@ export function useAuth() {
         return;
       }
 
-      // Encontrar o role do usuário atual na lista
       const userRoleRecord = data?.find((r: any) => r.user_id === userId);
       const role = userRoleRecord?.role || null;
-
-      console.log("Found role for user:", { userId, role });
       setUserRole(role);
+      */
     } catch (err) {
       console.error("Erro ao buscar user role:", err);
       setUserRole(null);
