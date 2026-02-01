@@ -139,6 +139,15 @@ function Navbar() {
                 Criar Pack
               </Button>
 
+              {isAdmin && (
+                <Link href="/admin">
+                  <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-2 hover:bg-white/10">
+                    <Shield size={16} />
+                    <span>Admin</span>
+                  </Button>
+                </Link>
+              )}
+
               <Button variant="ghost" size="icon" onClick={logout} title="Logout" className="hover:text-destructive">
                 <LogOut size={18} />
               </Button>
