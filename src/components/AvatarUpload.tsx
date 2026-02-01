@@ -71,11 +71,11 @@ export function AvatarUpload({ currentAvatarUrl, onUploadComplete, userId }: Ava
 
       if (urlData?.publicUrl) {
         onUploadComplete(urlData.publicUrl);
-        toast.success("Avatar atualizado com sucesso!");
+        toast.success("Avatar atualizado", "Sua foto de perfil foi alterada");
       }
     } catch (error) {
       console.error("Erro ao fazer upload:", error);
-      toast.error("Erro ao fazer upload da imagem");
+      toast.error("Erro no upload", "Não foi possível enviar a imagem");
       setPreview(null);
     } finally {
       setIsUploading(false);
