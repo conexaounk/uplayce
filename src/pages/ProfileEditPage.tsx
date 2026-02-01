@@ -291,12 +291,16 @@ export default function ProfileEditPage() {
                     <div>
                       <span className="text-xs text-muted-foreground uppercase tracking-wider">Avatar</span>
                       <div className="mt-2">
-                        {avatarEmoji ? (
+                        {avatarUrl ? (
+                          <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10">
+                            <img src={avatarUrl} alt="Avatar preview" className="w-full h-full object-cover" />
+                          </div>
+                        ) : avatarEmoji ? (
                           <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
                             <span className="text-2xl">{avatarEmoji}</span>
                           </div>
                         ) : (
-                          <p className="text-sm text-muted-foreground">Nenhum emoji selecionado</p>
+                          <p className="text-sm text-muted-foreground">Nenhum avatar selecionado</p>
                         )}
                       </div>
                     </div>
