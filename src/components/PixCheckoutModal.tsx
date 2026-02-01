@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { api } from '@/lib/apiService';
+import { supabase } from '@/integrations/supabase/client';
 
 export type OrderData = {
   id: string;
@@ -26,10 +26,19 @@ export function PixCheckoutModal({ open, onOpenChange, orderData, onPaymentConfi
 
     const interval = setInterval(async () => {
       try {
-        const res = await api.fetch(`/orders/${orderData.id}/status`);
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) return;
+
+        const res = await fetch(`https://api.conexaounk.com/orders/${orderData.id}/status`, {
+          headers: { 'Authorization': `Bearer ${session.access_token}` },
+        });
+
+        if (!res.ok) return;
+        const data = await res.json();
+
         // Espera resposta do servidor: { status: 'pending' | 'paid' }
         if (!mounted) return;
-        if (res?.status === 'paid') {
+        if (data?.status === 'paid') {
           clearInterval(interval);
           onPaymentConfirmed();
           onOpenChange(false);
