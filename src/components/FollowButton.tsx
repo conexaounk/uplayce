@@ -22,9 +22,15 @@ export function FollowButton({ userId, className, size = "sm", variant = "outlin
     <Button
       onClick={handleToggleFollow}
       disabled={isLoading}
-      className={`rounded-full gap-1.5 !min-h-[26px] !px-1.5 !py-0 !leading-[13px] ${className}`}
+      className={`rounded-full ${className}`}
       variant={isFollowing ? "outline" : variant === "default" ? "default" : "outline"}
       size={size === "sm" ? "sm" : size === "md" ? "default" : "lg"}
+      style={{
+        gap: "6px",
+        minHeight: "26px",
+        padding: "0 4px 0 6px",
+        lineHeight: "13px",
+      }}
     >
       {isLoading ? (
         <Loader2 size={16} className="animate-spin mr-2" />
