@@ -371,7 +371,8 @@ export function UploadTrackModal({
                         <select
                           {...form.register("genre")}
                           disabled={uploadMutation.isPending}
-                          className="h-11 sm:h-12 w-full text-sm font-medium bg-white/5 border border-white/10 rounded-lg px-4 pr-10 focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
+                          className="h-11 sm:h-12 w-full text-sm font-medium bg-white/5 border border-white/10 rounded-lg focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
+                          style={{ padding: "0 19px 0 15px" }}
                         >
                           <option value="" className="bg-background">Selecione um gênero...</option>
                           {GENRES.map((g) => (
