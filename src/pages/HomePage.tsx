@@ -119,50 +119,52 @@ export default function HomePage() {
       </section>
     </div>
 
-    {/* Right Sidebar */}
-    <div className="hidden lg:flex lg:w-80 flex-col gap-6 overflow-y-auto scrollbar-hide pb-32 pr-2">
-      {/* Artists to Follow Card */}
-      <div className="glass-panel p-6 rounded-3xl border border-white/10">
-        <div className="flex items-center justify-between mb-6">
-          <h3 className="font-bold text-white text-lg">Artistas para Seguir</h3>
-          <a href="/djs" className="text-xs text-accent-purple hover:text-accent-purple/80">Ver Todos</a>
-        </div>
-        <div className="space-y-4">
-          {djs?.slice(0, 3).map((dj) => (
-            <div key={dj.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors">
-              <div className="flex items-center gap-3">
-                {dj.avatar_url && (
-                  <img src={dj.avatar_url} alt={dj.name} className="w-10 h-10 rounded-full object-cover" />
-                )}
-                <div>
-                  <p className="text-sm font-semibold text-white">{dj.name}</p>
-                  <p className="text-xs text-gray-400">{dj.followers || 0} Seguidores</p>
+    {/* Right Sidebar - Apenas para usuários logados */}
+    {user && (
+      <div className="hidden lg:flex lg:w-80 flex-col gap-6 overflow-y-auto scrollbar-hide pb-32 pr-2">
+        {/* Artists to Follow Card */}
+        <div className="glass-panel p-6 rounded-3xl border border-white/10">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-bold text-white text-lg">Artistas para Seguir</h3>
+            <a href="/djs" className="text-xs text-accent-purple hover:text-accent-purple/80">Ver Todos</a>
+          </div>
+          <div className="space-y-4">
+            {djsWithTracks.slice(0, 3).map((dj) => (
+              <div key={dj.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors">
+                <div className="flex items-center gap-3">
+                  {dj.avatar_url && (
+                    <img src={dj.avatar_url} alt={dj.name} className="w-10 h-10 rounded-full object-cover" />
+                  )}
+                  <div>
+                    <p className="text-sm font-semibold text-white">{dj.name}</p>
+                    <p className="text-xs text-gray-400">{dj.followers || 0} Seguidores</p>
+                  </div>
                 </div>
+                <button className="border border-white/20 rounded-full px-4 py-1 text-xs text-white hover:bg-white hover:text-black transition">
+                  Seguir
+                </button>
               </div>
-              <button className="border border-white/20 rounded-full px-4 py-1 text-xs text-white hover:bg-white hover:text-black transition">
-                Seguir
-              </button>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Trending Card */}
-      <div className="glass-panel p-6 rounded-3xl border border-white/10">
-        <h3 className="font-bold text-white text-lg mb-4">Tendências</h3>
-        <div className="space-y-3">
-          {["Deep House", "Techno", "House", "Trance", "Drum & Bass"].map((genre, i) => (
-            <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
-              <div>
-                <p className="text-sm font-medium text-white group-hover:text-accent-purple transition">{genre}</p>
-                <p className="text-xs text-gray-400">1.2K packs</p>
+        {/* Trending Card */}
+        <div className="glass-panel p-6 rounded-3xl border border-white/10">
+          <h3 className="font-bold text-white text-lg mb-4">Tendências</h3>
+          <div className="space-y-3">
+            {["Deep House", "Techno", "House", "Trance", "Drum & Bass"].map((genre, i) => (
+              <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
+                <div>
+                  <p className="text-sm font-medium text-white group-hover:text-accent-purple transition">{genre}</p>
+                  <p className="text-xs text-gray-400">1.2K packs</p>
+                </div>
+                <Play size={16} className="text-gray-400 group-hover:text-accent-purple transition" />
               </div>
-              <Play size={16} className="text-gray-400 group-hover:text-accent-purple transition" />
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    )}
 
     <PackDetailsModal pack={selectedPack} isOpen={!!selectedPack} onClose={() => setSelectedPack(null)} />
   </div>;
