@@ -75,6 +75,8 @@ export const api = {
     const cleanedPayload = cleanPayload({
       ...metadata,
       audio_url: uploadResult.url, // Link que veio do R2
+      bpm: metadata.bpm,
+      key: metadata.key,
     });
 
     console.log('📝 Payload limpo para /tracks:', cleanedPayload);
