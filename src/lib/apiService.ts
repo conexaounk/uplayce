@@ -43,13 +43,18 @@ export const api = {
       throw new Error("Usuário não autenticado");
     }
 
-    // 1. Upload do arquivo para o R2 (Retorna apenas a URL)
+    // 1. Upload do arquivo para o R2 (usando FormData)
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("filename", file.name);
+    formData.append("type", "audio");
+
     const headers = new Headers();
     headers.set("Authorization", `Bearer ${session.access_token}`);
-    // Enviamos o arquivo puro (body: file) para o Worker ler com arrayBuffer()
+
     const uploadResponse = await fetch(`${API_BASE}/upload`, {
       method: "POST",
-      body: file,
+      body: formData,
       headers,
     });
 
@@ -69,8 +74,7 @@ export const api = {
     // Chamamos a rota /tracks com os metadados completos
     const cleanedPayload = cleanPayload({
       ...metadata,
-      audio_url: uploadResult.publicUrl, // Link que veio do R2
-      r2_key_full: uploadResult.r2_key,
+      audio_url: uploadResult.url, // Link que veio do R2
     });
 
     console.log('📝 Payload limpo para /tracks:', cleanedPayload);
