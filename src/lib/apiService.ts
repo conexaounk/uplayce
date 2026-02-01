@@ -28,9 +28,12 @@ export const api = {
     const formData = new FormData();
     formData.append("file", file);
 
-    // Adicionar campos de metadata como itens separados no FormData
+    // Apenas adicionar campos que a API espera
+    // Evitar enviar campos que podem causar validação
+    const allowedFields = ["title", "genre", "artist", "collaborations"];
+
     Object.entries(metadata).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
+      if (allowedFields.includes(key) && value !== undefined && value !== null) {
         formData.append(key, String(value));
       }
     });
