@@ -2,6 +2,7 @@ import type { Tables } from "@/integrations/supabase/types";
 
 // Re-export database types for convenience
 export type Profile = Tables<"profiles">;
+export type DJ = Tables<"djs">;
 export type Pack = Tables<"packs">;
 export type Track = Tables<"tracks">;
 export type Follow = Tables<"follows">;
