@@ -52,5 +52,13 @@ export const api = {
 
     if (!response.ok) throw new Error(await response.text());
     return response.json();
-  }
+  },
+
+  // Atualizar status de publicação de uma track (privado/público)
+  async updateTrackPublicity(trackId: string, isPublic: boolean) {
+    return this.fetch(`/tracks/${trackId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ is_public: isPublic }),
+    });
+  },
 };
