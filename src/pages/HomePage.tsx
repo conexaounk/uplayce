@@ -35,7 +35,7 @@ export default function HomePage() {
     {/* Main Content */}
     <div className="flex-1 overflow-y-auto scrollbar-hide pb-12 space-y-10 pr-2">
       {/* Hero Section */}
-      <section className="relative h-[400px] flex items-center overflow-hidden glass-panel rounded-3xl border border-white/10">
+      <section className="relative h-[280px] sm:h-[350px] md:h-[400px] flex items-center overflow-hidden glass-panel rounded-2xl sm:rounded-3xl border border-white/10">
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-r from-accent-purple/20 to-accent-blue/20" />
           <div className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-overlay bg-[url('/lovable-uploads/ae781f05-9686-49ca-8aef-db5575a7283a.png')]" />
