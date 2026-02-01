@@ -102,12 +102,6 @@ export default function MyTracksPage() {
           <Music className="w-12 h-12 text-gray-500 mx-auto mb-4" />
           <p className="text-gray-400 text-lg">Você não tem nenhuma track ainda</p>
           <p className="text-gray-500 text-sm mt-2">Comece criando um novo pack com suas tracks</p>
-          <Button
-            className="mt-6 bg-accent-purple hover:bg-purple-600 text-white"
-            onClick={() => setLocation("/")}
-          >
-            Ir para Home
-          </Button>
         </div>
       )}
     </div>
