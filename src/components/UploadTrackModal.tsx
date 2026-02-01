@@ -14,6 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Label } from "@/components/ui/label"; // Adicionei Label para ficar mais bonito
 
 import {
   Upload,
@@ -61,17 +62,18 @@ export function UploadTrackModal({
 }: UploadTrackModalProps) {
   const { user } = useAuth();
   const { data: djProfile } = useDJ(user?.id || "");
-  const {
-    uploadMutation,
-    tracks,
-    tracksLoading,
-    addToLibraryMutation,
-  } = useMusicApi();
-
+  
+  // 1. AJUSTE AQUI: Pegamos as funções do hook
+  const { uploadMutation, useTracks, addToLibraryMutation } = useMusicApi();
+  
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [activeTab, setActiveTab] = useState("upload");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // 2. AJUSTE AQUI: Chamamos o hook useTracks passando a busca
+  // Passamos undefined no primeiro argumento (userId) para buscar no banco geral
+  const { data: tracks = [], isLoading: tracksLoading } = useTracks(undefined, searchQuery);
 
   const form = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),
@@ -88,12 +90,18 @@ export function UploadTrackModal({
       return;
     }
     setFile(file);
+    // Tenta preencher o título automaticamente baseado no nome do arquivo
+    const fileName = file.name.replace(/\.[^/.]+$/, "");
+    if (!form.getValues("title")) {
+        form.setValue("title", fileName);
+    }
   }
 
   async function onSubmit(data: MetadataForm) {
     if (!file || !user || !djProfile) return;
 
     const mainArtist = djProfile.dj_name;
+    // Lógica para montar o display artist para players antigos
     const feat = data.collaborations
       ? ` (feat. ${data.collaborations})`
       : "";
@@ -107,18 +115,18 @@ export function UploadTrackModal({
           artist: mainArtist,
           display_artist: displayArtist,
           genre: data.genre,
-          collaborations: data.collaborations,
+          collaborations: data.collaborations, // Salvando o campo separado
           userId: user.id,
         },
         onProgress: setUploadProgress,
       });
 
-      toast.success("Música publicada com sucesso!");
+      // Sucesso
       setFile(null);
       form.reset();
       onOpenChange(false);
     } catch {
-      toast.error("Erro ao fazer upload");
+      // Erro é tratado no hook, mas podemos deixar seguro aqui
     }
   }
 
@@ -128,29 +136,29 @@ export function UploadTrackModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card border-white/10">
         <DialogHeader>
-          <DialogTitle>Adicionar Música</DialogTitle>
+          <DialogTitle className="text-2xl font-bold">Gerenciar Músicas</DialogTitle>
           <DialogDescription>
-            Upload para o R2 ou selecione do banco
+            Faça upload de uma nova produção ou adicione da biblioteca global.
           </DialogDescription>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="upload">Upload Novo</TabsTrigger>
-            <TabsTrigger value="browse">Buscar Existente</TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
+          <TabsList className="grid w-full grid-cols-2 bg-muted/20">
+            <TabsTrigger value="upload">Novo Upload</TabsTrigger>
+            <TabsTrigger value="browse">Banco Global</TabsTrigger>
           </TabsList>
 
           {/* ================= UPLOAD ================= */}
-          <TabsContent value="upload" className="space-y-6">
+          <TabsContent value="upload" className="space-y-6 mt-6">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               {!file ? (
                 <div
                   onClick={() =>
                     document.getElementById("audio-input")?.click()
                   }
-                  className="border-2 border-dashed rounded-2xl p-8 text-center cursor-pointer border-white/10 hover:bg-white/5"
+                  className="border-2 border-dashed rounded-2xl p-10 text-center cursor-pointer border-white/10 hover:bg-primary/5 hover:border-primary/50 transition-all group"
                 >
                   <input
                     id="audio-input"
@@ -161,62 +169,91 @@ export function UploadTrackModal({
                       e.target.files && processFile(e.target.files[0])
                     }
                   />
-                  <Upload className="w-10 h-10 mx-auto mb-4 text-zinc-500" />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Upload className="w-8 h-8 text-muted-foreground group-hover:text-primary" />
+                  </div>
+                  <h3 className="text-lg font-semibold mb-1">Clique para selecionar</h3>
                   <p className="text-sm text-muted-foreground">
-                    Clique para enviar (até 500MB)
+                    Suporta MP3, WAV, AIFF (até 500MB)
                   </p>
                 </div>
               ) : (
-                <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <Music className="text-primary" />
-                  <p className="flex-1 truncate">{file.name}</p>
+                <div className="flex items-center gap-4 p-4 border border-primary/20 bg-primary/5 rounded-xl">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <Music className="text-primary w-5 h-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-medium truncate">{file.name}</p>
+                    <p className="text-xs text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+                  </div>
                   <Button
                     size="icon"
                     variant="ghost"
                     onClick={() => setFile(null)}
+                    type="button"
+                    className="hover:bg-destructive/10 hover:text-destructive"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-5 h-5" />
                   </Button>
                 </div>
               )}
 
               {file && (
                 <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className="space-y-4"
                 >
-                  <Input
-                    placeholder="Título"
-                    {...form.register("title")}
-                  />
+                  <div className="space-y-2">
+                    <Label>Título da Faixa</Label>
+                    <Input
+                      placeholder="Ex: Toca Toca"
+                      {...form.register("title")}
+                      className="bg-muted/30"
+                    />
+                    {form.formState.errors.title && (
+                        <p className="text-red-500 text-xs">{form.formState.errors.title.message}</p>
+                    )}
+                  </div>
 
-                  <select
-                    {...form.register("genre")}
-                    className="w-full h-10 bg-background border rounded-md px-3"
-                  >
-                    <option value="">Selecione o gênero</option>
-                    {GENRES.map((g) => (
-                      <option key={g} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                  </select>
-
-                  <Input
-                    placeholder="Colaborações (opcional)"
-                    {...form.register("collaborations")}
-                  />
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <Label>Gênero</Label>
+                        <select
+                            {...form.register("genre")}
+                            className="w-full h-10 bg-muted/30 border border-input rounded-md px-3 text-sm focus:ring-1 focus:ring-primary"
+                        >
+                            <option value="">Selecione...</option>
+                            {GENRES.map((g) => (
+                            <option key={g} value={g}>
+                                {g}
+                            </option>
+                            ))}
+                        </select>
+                         {form.formState.errors.genre && (
+                            <p className="text-red-500 text-xs">{form.formState.errors.genre.message}</p>
+                        )}
+                    </div>
+                    
+                    <div className="space-y-2">
+                        <Label>Colaborações (Feat)</Label>
+                        <Input
+                            placeholder="Ex: MC Fulano"
+                            {...form.register("collaborations")}
+                            className="bg-muted/30"
+                        />
+                    </div>
+                  </div>
 
                   <Button
                     type="submit"
                     disabled={uploadMutation.isPending}
-                    className="w-full"
+                    className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90"
                   >
                     {uploadMutation.isPending ? (
                       <>
                         <Loader2 className="mr-2 animate-spin" />
-                        {uploadProgress}%
+                        Enviando... {uploadProgress}%
                       </>
                     ) : (
                       "Publicar Música"
@@ -228,48 +265,53 @@ export function UploadTrackModal({
           </TabsContent>
 
           {/* ================= BROWSE ================= */}
-          <TabsContent value="browse" className="space-y-4">
+          <TabsContent value="browse" className="space-y-4 mt-6">
             <div className="relative">
-              <Search className="absolute left-3 top-3 w-4 h-4" />
+              <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
               <Input
-                className="pl-9"
-                placeholder="Buscar no banco..."
+                className="pl-9 bg-muted/30 h-10"
+                placeholder="Buscar por nome, artista ou gênero..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             {tracksLoading ? (
-              <Loader2 className="mx-auto animate-spin" />
+              <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>
             ) : (
-              <div className="space-y-2 max-h-[300px] overflow-y-auto">
-                {tracks.map((track: any) => (
-                  <div
-                    key={track.id}
-                    className="flex items-center justify-between p-3 border rounded-lg"
-                  >
-                    <div className="flex gap-3">
-                      <Music className="text-primary" />
-                      <div>
-                        <p className="text-sm font-medium">
-                          {track.title}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {track.artist}
-                        </p>
-                      </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={addToLibraryMutation.isPending}
-                      onClick={() => handleSelectTrack(track.id)}
+              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+                {tracks.length === 0 ? (
+                    <p className="text-center text-muted-foreground py-8">Nenhuma música encontrada.</p>
+                ) : (
+                    tracks.map((track: any) => (
+                    <div
+                        key={track.id}
+                        className="flex items-center justify-between p-3 border border-white/5 rounded-lg bg-card/50 hover:border-primary/30 transition-colors"
                     >
-                      <Plus className="w-4 h-4 mr-1" />
-                      Adicionar
-                    </Button>
-                  </div>
-                ))}
+                        <div className="flex gap-3 items-center overflow-hidden">
+                        <div className="w-10 h-10 rounded bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <Music className="text-primary w-5 h-5" />
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-sm font-bold truncate">{track.title}</p>
+                            <p className="text-xs text-muted-foreground truncate">
+                                {track.artist}
+                                {track.collaborations && <span className="text-primary/70"> feat. {track.collaborations}</span>}
+                            </p>
+                        </div>
+                        </div>
+                        <Button
+                        size="sm"
+                        variant="ghost"
+                        className="hover:bg-primary/10 hover:text-primary"
+                        disabled={addToLibraryMutation.isPending}
+                        onClick={() => handleSelectTrack(track.id)}
+                        >
+                        <Plus className="w-4 h-4" />
+                        </Button>
+                    </div>
+                    ))
+                )}
               </div>
             )}
           </TabsContent>
