@@ -4,6 +4,7 @@ import { Folder, Music, CheckCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { PixCheckoutModal, OrderData } from '@/components/PixCheckoutModal';
 import { usePack } from '@/context/packContext';
+import { useToast } from '@/hooks/use-notification';
 
 export function FloatingFolder() {
   const { currentPack, removeTrack, finalize } = usePack();
