@@ -34,7 +34,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 }
 
 export function usePlayer() {
-  const context = React.useContext(PlayerContext);
+  const context = useContext(PlayerContext);
   if (!context) {
     throw new Error("usePlayer must be used within PlayerProvider");
   }
