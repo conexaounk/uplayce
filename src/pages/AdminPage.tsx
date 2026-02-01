@@ -148,12 +148,12 @@ export default function AdminPage() {
         method: 'PATCH',
         body: JSON.stringify(updated),
       });
-      toast.success('Track atualizada');
+      toast.success('Atualizado', 'Música atualizada com sucesso');
       setEditTrack(null);
       fetchTracks();
     } catch (e) {
       console.error('Erro ao atualizar track', e);
-      toast.error('Erro ao atualizar track');
+      toast.error('Erro ao atualizar', 'Não foi possível salvar as alterações');
     }
   };
 
