@@ -44,7 +44,7 @@ export function useMusicApi() {
     onSuccess: async (data, variables: any) => {
       // Invalida cache e notifica envio concluído
       queryClient.invalidateQueries({ queryKey: ['tracks'] });
-      toast.success("Música enviada com sucesso!");
+      toast.success("Música enviada com sucesso!", "Sua música foi publicada na plataforma");
 
       // Se a resposta já contém o registro (id/track), nada a fazer
       if (data?.id || data?.track?.id) return;
@@ -73,14 +73,14 @@ export function useMusicApi() {
         });
 
         queryClient.invalidateQueries({ queryKey: ['tracks'] });
-        toast.success('Registro da música criado automaticamente.');
+        toast.success('Registro criado', 'A música foi registrada no banco de dados');
       } catch (error: any) {
         console.error('Erro ao criar registro da música:', error);
-        toast.error('Erro ao criar registro da música: ' + (error?.message || error));
+        toast.error('Erro ao registrar música', error?.message || 'Tente novamente');
       }
     },
     onError: (error: any) => {
-      toast.error("Erro no upload: " + error.message);
+      toast.error("Erro no upload", error.message);
     }
   });
 
@@ -92,11 +92,11 @@ export function useMusicApi() {
         body: JSON.stringify({ track_id: trackId })
       }),
     onSuccess: () => {
-      toast.success("Música adicionada ao seu perfil!");
+      toast.success("Música adicionada", "Agora está no seu perfil");
       queryClient.invalidateQueries({ queryKey: ['tracks'] });
     },
     onError: (error: any) => {
-      toast.error("Erro ao adicionar: " + error.message);
+      toast.error("Erro ao adicionar", error.message);
     }
   });
 
@@ -106,11 +106,11 @@ export function useMusicApi() {
       api.updateTrackPublicity(trackId, isPublic),
     onSuccess: (_, { isPublic }) => {
       const status = isPublic ? "pública" : "privada";
-      toast.success(`Música marcada como ${status}`);
+      toast.success(`Marcado como ${status}`, `A música agora é ${status}`);
       queryClient.invalidateQueries({ queryKey: ['tracks'] });
     },
     onError: (error: any) => {
-      toast.error("Erro ao atualizar música: " + error.message);
+      toast.error("Erro ao atualizar", error.message);
     }
   });
 
@@ -119,11 +119,11 @@ export function useMusicApi() {
     mutationFn: ({ trackId, payload }: { trackId: string; payload: any }) =>
       api.fetch(`/tracks/${trackId}`, { method: 'PATCH', body: JSON.stringify(payload) }),
     onSuccess: () => {
-      toast.success('Música atualizada com sucesso');
+      toast.success('Atualizado', 'Mudanças salvas com sucesso');
       queryClient.invalidateQueries({ queryKey: ['tracks'] });
     },
     onError: (error: any) => {
-      toast.error('Erro ao atualizar música: ' + error.message);
+      toast.error('Erro ao atualizar', error.message);
     }
   });
 
@@ -132,11 +132,11 @@ export function useMusicApi() {
     mutationFn: (trackId: string) =>
       api.fetch(`/tracks/${trackId}`, { method: 'DELETE' }),
     onSuccess: () => {
-      toast.success('Música removida do seu perfil');
+      toast.success('Removida', 'Música removida do seu perfil');
       queryClient.invalidateQueries({ queryKey: ['tracks'] });
     },
     onError: (error: any) => {
-      toast.error('Erro ao remover música do perfil: ' + error.message);
+      toast.error('Erro ao remover', error.message);
     }
   });
 
