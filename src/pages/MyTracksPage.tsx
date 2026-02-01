@@ -32,6 +32,8 @@ export default function MyTracksPage() {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const playerContext = useContext(PlayerContext);
 
   const fetchUserTracks = async () => {
