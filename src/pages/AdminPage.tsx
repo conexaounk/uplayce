@@ -37,7 +37,7 @@ export default function AdminPage() {
       toast.error("Acesso negado", "Apenas administradores podem acessar");
       setLocation("/");
     }
-  }, [isAdmin, authLoading, setLocation, toast]);
+  }, [isAdmin, authLoading, setLocation, toast.error]);
 
   if (authLoading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
 
