@@ -35,20 +35,12 @@ export const api = {
     return response.json();
   },
 
-  // Upload simples para arquivos até 50MB
+  // Upload simples para arquivos
   async uploadTrack(file: File, metadata: any, onProgress?: (p: number) => void) {
     const { data: { session } } = await supabase.auth.getSession();
-    
+
     if (!session?.access_token) {
       throw new Error("Usuário não autenticado");
-    }
-
-    // Escolher endpoint baseado no tamanho do arquivo
-    const maxSimpleUpload = 50 * 1024 * 1024; // 50MB
-    const useChunked = file.size > maxSimpleUpload;
-
-    if (useChunked) {
-      return this.uploadTrackChunked(file, metadata, onProgress);
     }
 
     // 1. Upload do arquivo para o R2 (Retorna apenas a URL)
@@ -65,8 +57,13 @@ export const api = {
       const errorText = await uploadResponse.text();
       throw new Error(`Upload para R2 falhou (${uploadResponse.status}): ${errorText}`);
     }
-    
+
     const uploadResult = await uploadResponse.json();
+
+    // Simular progresso durante upload (já completado)
+    if (onProgress) {
+      onProgress(100);
+    }
 
     // 2. AGORA O PULO DO GATO: Salvar no D1
     // Chamamos a rota /tracks com os metadados completos
@@ -75,9 +72,9 @@ export const api = {
       audio_url: uploadResult.publicUrl, // Link que veio do R2
       r2_key_full: uploadResult.r2_key,
     });
-    
+
     console.log('📝 Payload limpo para /tracks:', cleanedPayload);
-    
+
     return this.fetch("/tracks", {
       method: "POST",
       body: JSON.stringify(cleanedPayload),
