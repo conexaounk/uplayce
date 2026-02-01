@@ -94,7 +94,7 @@ export default function ProfileViewPage() {
       <div className="mt-8">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-2xl font-bold flex items-center gap-2">
-            <Music className="text-primary" /> Minhas Tracks
+            Minhas Tracks
           </h3>
           <Button onClick={() => setUploadModalOpen(true)} className="rounded-full">
             <Plus size={18} className="mr-2" /> Nova Track
