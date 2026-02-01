@@ -9,6 +9,8 @@ import { EditTrackModal } from "@/components/EditTrackModal";
 import { PlayerContext } from "@/context/PlayerContext";
 import { supabase } from "@/integrations/supabase/client";
 
+const API_BASE = import.meta.env.VITE_API_URL || "https://api.conexaounk.com";
+
 // Interface exata do seu D1
 interface Track {
   id: string;
@@ -45,7 +47,7 @@ export default function MyTracksPage() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error('Login necessário');
 
-      const response = await fetch('https://api.conexaounk.com/tracks', {
+      const response = await fetch(`${API_BASE}/tracks`, {
         headers: { 'Authorization': `Bearer ${session.access_token}` },
       });
 
