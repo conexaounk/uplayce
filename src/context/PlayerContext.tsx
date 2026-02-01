@@ -1,5 +1,4 @@
 import { createContext, useState, ReactNode, useContext } from "react";
-import React from "react";
 
 export interface PlayerTrack {
   id: string;
