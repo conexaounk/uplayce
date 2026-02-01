@@ -288,6 +288,9 @@ export default function MyTracksPage() {
           </motion.div>
         </motion.div>
       )}
+
+      {/* Upload Track Modal */}
+      <UploadTrackModal open={uploadModalOpen} onOpenChange={setUploadModalOpen} />
     </div>
   );
 }
