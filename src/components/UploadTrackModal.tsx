@@ -451,7 +451,8 @@ export function UploadTrackModal({
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-4 sm:p-5 backdrop-blur-sm"
+                      className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm"
+                      style={{ margin: "20px 0 0 -4px", padding: "20px 106px 20px 48px" }}
                     >
                       {trackType === "mashup" ? (
                         <div className="flex justify-between items-center">
@@ -464,8 +465,13 @@ export function UploadTrackModal({
                             </p>
                           </div>
                           <div className="text-right">
-                            <div className="text-3xl sm:text-4xl font-black bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                              R$ {mashupPrice.toFixed(2).replace('.', ',')}
+                            <div className="bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent" style={{ fontWeight: "100", lineHeight: "40px", marginLeft: "-2px" }}>
+                              <div style={{ fontWeight: "400", fontSize: "22px", lineHeight: "43px" }}>
+                                R${" "}
+                              </div>
+                              <div style={{ fontWeight: "500", lineHeight: "15px", fontSize: "24px" }}>
+                                {mashupPrice.toFixed(2).replace('.', ',')}
+                              </div>
                             </div>
                           </div>
                         </div>
