@@ -232,8 +232,9 @@ function App() {
   return <QueryClientProvider client={queryClient}>
       <NotificationProvider>
         <CartProvider>
-          <PackProvider>
-            <TooltipProvider>
+          <PlayerProvider>
+            <PackProvider>
+              <TooltipProvider>
               <AuthRedirect />
               <div className="min-h-screen text-foreground font-body flex flex-col overflow-x-hidden">
                 <Sidebar />
@@ -244,9 +245,11 @@ function App() {
                 <CartSidebar />
                 <NotificationCenter />
                 <FloatingFolder />
+                <MiniPlayer />
               </div>
-            </TooltipProvider>
-          </PackProvider>
+              </TooltipProvider>
+            </PackProvider>
+          </PlayerProvider>
         </CartProvider>
       </NotificationProvider>
     </QueryClientProvider>;
