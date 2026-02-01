@@ -132,7 +132,7 @@ export function UploadTrackModal({
   }
 
   function handleSelectTrack(trackId: string) {
-    addToLibraryMutation.mutate(trackId);
+    addTrackToProfileMutation.mutate(trackId);
   }
 
   return (
