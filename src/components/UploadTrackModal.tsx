@@ -531,8 +531,7 @@ export function UploadTrackModal({
                           <select
                             {...form.register("key")}
                             disabled={uploadMutation.isPending}
-                            className="h-11 sm:h-12 w-full text-sm font-medium bg-white/5 border border-white/10 rounded-lg focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
-                            style={{ padding: "0 6px 0 11px" }}
+                            className="h-11 sm:h-12 w-full px-4 pr-10 text-sm font-medium bg-white/5 border border-white/10 rounded-lg focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer hover:bg-white/10"
                           >
                             <option value="" className="bg-background">Selecione...</option>
                             {KEYS.map((k) => (
