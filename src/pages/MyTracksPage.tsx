@@ -161,11 +161,12 @@ export default function MyTracksPage() {
                     variant="secondary"
                     size="icon"
                     className="h-9 w-9 rounded-full bg-white/5 hover:bg-primary hover:text-white transition-colors"
-                    onClick={() => window.open(track.audio_url, '_blank')}
+                    onClick={() => setSelectedTrack(track)}
+                    title="Ouvir prévia (30 segundos)"
                   >
                     <Play size={16} fill="currentColor" />
                   </Button>
-                  
+
                   <Button
                     variant="ghost"
                     size="icon"
