@@ -205,11 +205,69 @@ export function AudioPreview({
         </motion.button>
       </div>
 
-      {/* Preview Label */}
-      <div className="text-xs text-muted-foreground mt-1.5 px-1">
-        <span className="inline-block px-2 py-0.5 bg-primary/20 text-primary/80 rounded text-xs font-medium">
-          Prévia • 30 segundos
-        </span>
+      {/* Preview Label & Time Selector */}
+      <div className="text-xs text-muted-foreground mt-1.5 px-1 space-y-2">
+        <div className="flex items-center justify-between">
+          <span className="inline-block px-2 py-0.5 bg-primary/20 text-primary/80 rounded text-xs font-medium">
+            Prévia • 30 segundos {editable && `(início: ${formatTime(previewStart)})`}
+          </span>
+          {editable && musicDuration > PREVIEW_DURATION && (
+            <button
+              onClick={() => setShowTimeSelector(!showTimeSelector)}
+              className="text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+              title="Ajustar tempo inicial da prévia"
+            >
+              {showTimeSelector ? (
+                <ChevronUp size={16} />
+              ) : (
+                <ChevronDown size={16} />
+              )}
+            </button>
+          )}
+        </div>
+
+        {/* Time Selector */}
+        {editable && showTimeSelector && musicDuration > PREVIEW_DURATION && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="bg-white/5 rounded-lg p-3 space-y-3"
+          >
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                Início da prévia: <span className="text-primary font-semibold">{formatTime(previewStart)}</span>
+              </label>
+              <input
+                type="range"
+                min="0"
+                max={Math.max(0, musicDuration - PREVIEW_DURATION)}
+                value={previewStart}
+                onChange={(e) => handlePreviewStartChange(parseFloat(e.target.value))}
+                className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-primary"
+              />
+              <div className="flex justify-between text-xs text-muted-foreground/60">
+                <span>0s</span>
+                <span>{formatTime(Math.max(0, musicDuration - PREVIEW_DURATION))}</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-xs font-medium text-muted-foreground">
+                Ou insira o tempo em segundos:
+              </label>
+              <input
+                type="number"
+                min="0"
+                max={Math.max(0, musicDuration - PREVIEW_DURATION)}
+                value={Math.floor(previewStart)}
+                onChange={(e) => handlePreviewStartChange(Math.floor(parseFloat(e.target.value) || 0))}
+                className="w-full px-3 py-1.5 bg-white/10 border border-white/20 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/15 transition-all"
+                placeholder="Segundos"
+              />
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   );
