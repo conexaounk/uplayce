@@ -12,6 +12,8 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    // Fallback para index.html em rotas SPA (sem extensão de arquivo)
+    // O dev server do Vite já faz isso automaticamente
   },
   plugins: [
     react(),

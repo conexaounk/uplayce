@@ -8,17 +8,31 @@ export function useMusicApi() {
   // MUDANÇA AQUI: Agora aceita userId e search como parâmetros opcionais
   const useTracks = (userId?: string, search?: string) => useQuery({
     queryKey: ['tracks', userId, search],
-    queryFn: () => {
+    queryFn: async () => {
       // Constrói a URL corretamente baseada nos filtros
       let url = '/tracks';
       const params = new URLSearchParams();
-      
+
       if (userId) params.append('user_id', userId);
       if (search) params.append('search', search);
-      
+
       const queryString = params.toString();
       // Retorna /tracks?user_id=123 ou apenas /tracks
-      return api.fetch(queryString ? `${url}?${queryString}` : url);
+      const response = await api.fetch(queryString ? `${url}?${queryString}` : url);
+
+      // Garantir que sempre retorna um array
+      // API retorna { success, count, tracks: [...] }
+      if (Array.isArray(response)) {
+        return response;
+      }
+      if (response?.tracks && Array.isArray(response.tracks)) {
+        return response.tracks;
+      }
+      if (response?.data && Array.isArray(response.data)) {
+        return response.data;
+      }
+      // Se ainda não é array, retorna array vazio
+      return [];
     }
   });
 
@@ -35,15 +49,35 @@ export function useMusicApi() {
     }
   });
 
-  // Adicionar à biblioteca
-  const addToLibraryMutation = useMutation({
-    mutationFn: (trackId: string) => 
+  // Adicionar track do banco global ao perfil do DJ
+  const addTrackToProfileMutation = useMutation({
+    mutationFn: (trackId: string) =>
       api.fetch("/user-library", {
         method: "POST",
         body: JSON.stringify({ track_id: trackId })
       }),
-    onSuccess: () => toast.success("Adicionado à sua biblioteca!")
+    onSuccess: () => {
+      toast.success("Música adicionada ao seu perfil!");
+      queryClient.invalidateQueries({ queryKey: ['tracks'] });
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao adicionar: " + error.message);
+    }
   });
 
-  return { useTracks, uploadMutation, addToLibraryMutation };
+  // Controlar publicidade de uma track (privada/pública)
+  const updateTrackPublicityMutation = useMutation({
+    mutationFn: ({ trackId, isPublic }: { trackId: string; isPublic: boolean }) =>
+      api.updateTrackPublicity(trackId, isPublic),
+    onSuccess: (_, { isPublic }) => {
+      const status = isPublic ? "pública" : "privada";
+      toast.success(`Música marcada como ${status}`);
+      queryClient.invalidateQueries({ queryKey: ['tracks'] });
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao atualizar música: " + error.message);
+    }
+  });
+
+  return { useTracks, uploadMutation, addTrackToProfileMutation, updateTrackPublicityMutation };
 }

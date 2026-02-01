@@ -64,7 +64,7 @@ export function UploadTrackModal({
   const { data: djProfile } = useDJ(user?.id || "");
   
   // 1. AJUSTE AQUI: Pegamos as funções do hook
-  const { uploadMutation, useTracks, addToLibraryMutation } = useMusicApi();
+  const { uploadMutation, useTracks, addTrackToProfileMutation } = useMusicApi();
   
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -73,8 +73,7 @@ export function UploadTrackModal({
 
   // 2. AJUSTE AQUI: Chamamos o hook useTracks passando a busca
   // Passamos undefined no primeiro argumento (userId) para buscar no banco geral
-  const { data: tracksData, isLoading: tracksLoading } = useTracks(undefined, searchQuery);
-  const tracks = Array.isArray(tracksData) ? tracksData : [];
+  const { data: tracks = [], isLoading: tracksLoading } = useTracks(undefined, searchQuery);
 
   const form = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),
@@ -116,8 +115,9 @@ export function UploadTrackModal({
           artist: mainArtist,
           display_artist: displayArtist,
           genre: data.genre,
-          collaborations: data.collaborations, // Salvando o campo separado
+          collaborations: data.collaborations,
           userId: user.id,
+          is_public: "false", // String porque vai no FormData
         },
         onProgress: setUploadProgress,
       });
@@ -132,7 +132,7 @@ export function UploadTrackModal({
   }
 
   function handleSelectTrack(trackId: string) {
-    addToLibraryMutation.mutate(trackId);
+    addTrackToProfileMutation.mutate(trackId);
   }
 
   return (
@@ -305,8 +305,9 @@ export function UploadTrackModal({
                         size="sm"
                         variant="ghost"
                         className="hover:bg-primary/10 hover:text-primary h-7 w-7 p-0"
-                        disabled={addToLibraryMutation.isPending}
+                        disabled={addTrackToProfileMutation.isPending}
                         onClick={() => handleSelectTrack(track.id)}
+                        title="Adicionar ao seu perfil"
                         >
                         <Plus className="w-3 h-3" />
                         </Button>

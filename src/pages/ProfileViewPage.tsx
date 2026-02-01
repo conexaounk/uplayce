@@ -5,7 +5,7 @@ import { useCart } from "@/hooks/use-cart";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Edit, Plus, Play, Pause, ShoppingCart, Music } from "lucide-react";
+import { Loader2, Edit, Plus, Play, Pause, ShoppingCart, Music, Lock, Globe } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { UploadTrackModal } from "@/components/UploadTrackModal";
 import { BuyPackModal } from "@/components/BuyPackModal";
@@ -14,11 +14,10 @@ import { useState, useRef, useEffect } from "react";
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
-  const { useTracks } = useMusicApi();
+  const { useTracks, updateTrackPublicityMutation } = useMusicApi();
 
   // Buscamos as músicas diretamente do banco pelo ID do usuário logado
-  const { data: tracksData, isLoading: tracksLoading } = useTracks(user?.id || "");
-  const allUserTracks = Array.isArray(tracksData) ? tracksData : [];
+  const { data: allUserTracks = [], isLoading: tracksLoading } = useTracks(user?.id || "");
   
   const { addItem } = useCart();
   const [, setLocation] = useLocation();
@@ -172,14 +171,26 @@ export default function ProfileViewPage() {
                     )}
                   </div>
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handleAddTrackToCart(track)}
-                    className="text-muted-foreground hover:text-primary"
-                  >
-                    <ShoppingCart size={20} />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => updateTrackPublicityMutation.mutate({ trackId: track.id, isPublic: !track.is_public })}
+                      disabled={updateTrackPublicityMutation.isPending}
+                      title={track.is_public ? "Tornar privada" : "Publicar"}
+                      className={track.is_public ? "text-primary hover:text-destructive" : "text-muted-foreground hover:text-primary"}
+                    >
+                      {track.is_public ? <Globe size={20} /> : <Lock size={20} />}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleAddTrackToCart(track)}
+                      className="text-muted-foreground hover:text-primary"
+                    >
+                      <ShoppingCart size={20} />
+                    </Button>
+                  </div>
                 </div>
               );
             })}
