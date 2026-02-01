@@ -14,7 +14,7 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ["Poppins", "sans-serif"],
+        sans: ["Inter", "Poppins", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -59,6 +59,20 @@ export default {
           dark: "hsl(var(--dark-surface))",
           darker: "hsl(var(--darker-surface))",
         },
+        glass: {
+          100: "rgba(255, 255, 255, 0.05)",
+          200: "rgba(255, 255, 255, 0.1)",
+          300: "rgba(255, 255, 255, 0.2)",
+          border: "rgba(255, 255, 255, 0.15)",
+        },
+        accent: {
+          purple: "#A855F7",
+          blue: "#3B82F6",
+          pink: "#EC4899",
+        }
+      },
+      backdropBlur: {
+        xs: "2px",
       },
       borderRadius: {
         lg: "var(--radius)",
