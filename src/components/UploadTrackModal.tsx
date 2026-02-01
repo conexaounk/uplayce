@@ -159,7 +159,7 @@ export function UploadTrackModal({
                   onClick={() =>
                     document.getElementById("audio-input")?.click()
                   }
-                  className="border-2 border-dashed rounded-2xl p-6 sm:p-10 text-center cursor-pointer border-white/10 hover:bg-primary/5 hover:border-primary/50 transition-all group"
+                  className="border-2 border-dashed rounded-2xl p-4 sm:p-6 text-center cursor-pointer border-white/10 hover:bg-primary/5 hover:border-primary/50 transition-all group"
                 >
                   <input
                     id="audio-input"
