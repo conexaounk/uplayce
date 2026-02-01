@@ -225,14 +225,32 @@ export default function ProfileEditPage() {
 
               {/* Sidebar */}
               <div className="space-y-6">
-                {/* Avatar Picker */}
+                {/* Avatar Upload */}
                 <Card className="bg-card/50 border-white/10 backdrop-blur-sm p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <Music2 className="text-primary" size={20} />
-                    <h3 className="font-bold text-lg">Avatar</h3>
+                    <h3 className="font-bold text-lg">Foto do Perfil</h3>
                   </div>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Escolha um emoji para personalizar seu perfil
+                    Faça upload de uma imagem para seu avatar
+                  </p>
+                  {user && (
+                    <AvatarUpload
+                      currentAvatarUrl={avatarUrl}
+                      onUploadComplete={handleAvatarUploadComplete}
+                      userId={user.id}
+                    />
+                  )}
+                </Card>
+
+                {/* Emoji Avatar (Alternativa) */}
+                <Card className="bg-card/50 border-white/10 backdrop-blur-sm p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Music2 className="text-primary" size={20} />
+                    <h3 className="font-bold text-lg">Avatar Emoji</h3>
+                  </div>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Ou escolha um emoji como alternativa
                   </p>
                   <FormField
                     control={form.control}
