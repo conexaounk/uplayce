@@ -80,7 +80,8 @@ export function UploadTrackModal({
 }: UploadTrackModalProps) {
   const { user } = useAuth();
   const { data: djProfile } = useDJ(user?.id || "");
-  
+  const toast = useToast();
+
   const { uploadMutation, useTracks, addTrackToProfileMutation } = useMusicApi();
   
   const [file, setFile] = useState<File | null>(null);
