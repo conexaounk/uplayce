@@ -69,9 +69,9 @@ export default function AdminPage() {
         throw new Error(failed.error || 'Erro ao salvar alguma configuração');
       }
 
-      toast.success('Configurações atualizadas no D1!');
+      toast.success('Configurações salvas', 'Alterações aplicadas com sucesso');
     } catch (error: any) {
-      toast.error('Erro ao salvar: ' + (error?.message || error));
+      toast.error('Erro ao salvar', error?.message || 'Tente novamente');
     } finally {
       setSaving(false);
     }
