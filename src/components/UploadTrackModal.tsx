@@ -249,12 +249,13 @@ export function UploadTrackModal({
                   <Button
                     type="submit"
                     disabled={uploadMutation.isPending}
-                    className="w-full h-12 text-lg font-bold bg-primary hover:bg-primary/90"
+                    className="w-full h-10 sm:h-12 text-sm sm:text-lg font-bold bg-primary hover:bg-primary/90"
                   >
                     {uploadMutation.isPending ? (
                       <>
-                        <Loader2 className="mr-2 animate-spin" />
-                        Enviando... {uploadProgress}%
+                        <Loader2 className="mr-2 animate-spin" size={18} />
+                        <span className="hidden sm:inline">Enviando... {uploadProgress}%</span>
+                        <span className="sm:hidden">Enviando...</span>
                       </>
                     ) : (
                       "Publicar Música"
