@@ -12,6 +12,7 @@ import { api } from "@/lib/apiService";
 import { getSettings, setSetting } from "@/lib/settingsService";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
+
 export default function AdminPage() {
   const { user, isLoading: authLoading, isAdmin } = useAuth();
   const [, setLocation] = useLocation();
@@ -31,65 +32,12 @@ export default function AdminPage() {
   const [hiddenTrackIds, setHiddenTrackIds] = useState<string[]>([]);
   const [showHidden, setShowHidden] = useState(false);
 
-  // Mostrar loading enquanto carrega
-  if (authLoading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin" /></div>;
-
-  // Proteção: checar role no banco de dados DEPOIS de carregar
-  if (!isAdmin) {
-    return (
-      <div className="h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Acesso Negado</h1>
-          <p className="text-muted-foreground mb-6">Apenas administradores podem acessar esta página</p>
-          <Button onClick={() => setLocation("/")} className="bg-primary hover:bg-primary/80">
-            Voltar para Home
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  // Função para salvar no backend (POST /settings para cada chave)
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) {
-        throw new Error('Usuário não autenticado');
-      }
-
-      const entries = Object.entries(prices);
-      const results = await Promise.all(entries.map(async ([key, value]) => {
-        const response = await fetch('https://api.conexaounk.com/settings', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.access_token}`,
-          },
-          body: JSON.stringify({ key, value })
-        });
-        return response.json();
-      }));
-
-      const failed = results.find(r => !r || r.success === false);
-      if (failed) {
-        throw new Error(failed.error || 'Erro ao salvar alguma configuração');
-      }
-
-      toast.success('Configurações salvas', 'Alterações aplicadas com sucesso');
-    } catch (error: any) {
-      toast.error('Erro ao salvar', error?.message || 'Tente novamente');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  // ======================= Tracks management =======================
+  // ✅ TODOS OS HOOKS DEVEM VIR ANTES DE QUALQUER RETURN CONDICIONAL
+  
   const fetchTracks = async () => {
     setLoadingTracks(true);
     try {
       const res = await api.fetch('/tracks');
-      // API pode retornar { tracks: [...] } ou array
       const list = Array.isArray(res) ? res : (res?.tracks || res?.data || []);
       setTracks(list as any[]);
     } catch (e) {
@@ -120,6 +68,64 @@ export default function AdminPage() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // ✅ AGORA SIM: returns condicionais DEPOIS de todos os hooks
+  if (authLoading) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Acesso Negado</h1>
+          <p className="text-muted-foreground mb-6">Apenas administradores podem acessar esta página</p>
+          <Button onClick={() => setLocation("/")} className="bg-primary hover:bg-primary/80">
+            Voltar para Home
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Função para salvar no backend
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('Usuário não autenticado');
+      }
+
+      const entries = Object.entries(prices);
+      const results = await Promise.all(entries.map(async ([key, value]) => {
+        const response = await fetch('https://api.conexaounk.com/settings', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({ key, value } )
+        });
+        return response.json();
+      }));
+
+      const failed = results.find(r => !r || r.success === false);
+      if (failed) {
+        throw new Error(failed.error || 'Erro ao salvar alguma configuração');
+      }
+
+      toast.success('Configurações salvas', 'Alterações aplicadas com sucesso');
+    } catch (error: any) {
+      toast.error('Erro ao salvar', error?.message || 'Tente novamente');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   const saveHiddenList = async (arr: string[]) => {
     try {
       await setSetting('hidden_tracks', JSON.stringify(arr));
@@ -133,7 +139,6 @@ export default function AdminPage() {
 
   const handleHide = (id: string) => {
     const next = Array.from(new Set([...hiddenTrackIds, id]));
-    // Remove from UI immediately
     setTracks((prev) => prev.filter(t => t.id !== id));
     saveHiddenList(next);
   };
@@ -141,7 +146,6 @@ export default function AdminPage() {
   const handleUnhide = (id: string) => {
     const next = hiddenTrackIds.filter(x => x !== id);
     saveHiddenList(next);
-    // Refetch tracks to include it back
     fetchTracks();
   };
 
@@ -165,10 +169,8 @@ export default function AdminPage() {
   };
 
   const handleDeleteFromView = (id: string) => {
-    // Apenas remove da visualização (sem excluir do DB)
     handleHide(id);
   };
-
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -254,6 +256,52 @@ export default function AdminPage() {
           </Card>
         </div>
       </div>
+
+      {/* ✅ DIALOG DE EDIÇÃO (estava faltando) */}
+      <Dialog open={!!editTrack} onOpenChange={(open) => !open && setEditTrack(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Track</DialogTitle>
+            <DialogDescription>Altere as informações da música</DialogDescription>
+          </DialogHeader>
+          {editTrack && (
+            <div className="space-y-4">
+              <div>
+                <Label>Título</Label>
+                <Input 
+                  value={editTrack.title} 
+                  onChange={(e) => setEditTrack({...editTrack, title: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label>Artista</Label>
+                <Input 
+                  value={editTrack.artist} 
+                  onChange={(e) => setEditTrack({...editTrack, artist: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label>Gênero</Label>
+                <Input 
+                  value={editTrack.genre} 
+                  onChange={(e) => setEditTrack({...editTrack, genre: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label>Preço (centavos)</Label>
+                <Input 
+                  type="number"
+                  value={editTrack.price_cents} 
+                  onChange={(e) => setEditTrack({...editTrack, price_cents: parseInt(e.target.value)})}
+                />
+              </div>
+              <Button onClick={() => handleSaveEdit(editTrack)} className="w-full">
+                Salvar Alterações
+              </Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
