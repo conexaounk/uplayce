@@ -50,14 +50,14 @@ export default function SearchPage() {
               transition={{ duration: 0.3 }}
             >
               <Link href={`/djs/${dj.id}`}>
-                <div className="glass-panel p-6 rounded-2xl border border-white/10 hover:border-accent-purple/50 transition-all hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] cursor-pointer group">
+                <div className="glass-panel p-6 rounded-[35px] border border-white/10 hover:border-accent-purple/50 transition-all hover:shadow-[0_0_20px_rgba(168,85,247,0.2)] cursor-pointer group flex flex-col w-[259.1px] overflow-hidden">
                   {/* Avatar */}
                   {dj.avatar_url && (
-                    <div className="mb-4 overflow-hidden rounded-xl">
+                    <div className="rounded-[36px] overflow-hidden pr-[3px] h-[147px] w-[245.5px] max-w-[470px] flex flex-col overflow-hidden mx-auto mb-4 -ml-[15px]">
                       <img
                         src={dj.avatar_url}
                         alt={dj.artist_name}
-                        className="w-full h-40 object-cover group-hover:scale-105 transition-transform"
+                        className="h-[184px] object-cover group-hover:scale-105 transition-transform w-1/2 max-w-[107%] rounded-[48px] overflow-hidden mx-auto mt-[1px]"
                       />
                     </div>
                   )}
