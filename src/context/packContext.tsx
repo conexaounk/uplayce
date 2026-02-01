@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { generateCover } from '@/components/PackFolder';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-notification';
 
 export type Track = {
   id: string;
