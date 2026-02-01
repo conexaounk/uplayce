@@ -206,11 +206,11 @@ export function UploadTrackModal({
                   className="space-y-4"
                 >
                   <div className="space-y-2">
-                    <Label>Título da Faixa</Label>
+                    <Label className="text-xs sm:text-sm">Título da Faixa</Label>
                     <Input
                       placeholder="Ex: Toca Toca"
                       {...form.register("title")}
-                      className="bg-muted/30"
+                      className="bg-muted/30 text-sm"
                     />
                     {form.formState.errors.title && (
                         <p className="text-red-500 text-xs">{form.formState.errors.title.message}</p>
