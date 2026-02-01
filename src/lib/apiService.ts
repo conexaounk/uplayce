@@ -30,7 +30,7 @@ export const api = {
 
     // Apenas adicionar campos que a API espera
     // Evitar enviar campos que podem causar validação
-    const allowedFields = ["title", "genre", "artist", "collaborations"];
+    const allowedFields = ["title", "genre", "artist", "collaborations", "is_public"];
 
     Object.entries(metadata).forEach(([key, value]) => {
       if (allowedFields.includes(key) && value !== undefined && value !== null) {
