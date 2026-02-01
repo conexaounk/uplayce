@@ -56,9 +56,10 @@ export function AudioPreview({
   const handleTimeUpdate = () => {
     if (audioRef.current) {
       const current = audioRef.current.currentTime;
-      
-      // Parar no limite de 30 segundos
-      if (current >= PREVIEW_DURATION) {
+      const relativeTime = current - previewStart;
+
+      // Parar no limite de 30 segundos após o ponto inicial
+      if (relativeTime >= PREVIEW_DURATION) {
         audioRef.current.pause();
         setIsPlaying(false);
         setProgress(100);
@@ -66,8 +67,19 @@ export function AudioPreview({
         return;
       }
 
-      setCurrentTime(current);
-      setProgress((current / PREVIEW_DURATION) * 100);
+      // Se ainda não chegou no ponto inicial, não atualiza
+      if (relativeTime < 0) {
+        return;
+      }
+
+      setCurrentTime(relativeTime);
+      setProgress((relativeTime / PREVIEW_DURATION) * 100);
+    }
+  };
+
+  const handleLoadedMetadata = () => {
+    if (audioRef.current) {
+      setMusicDuration(audioRef.current.duration);
     }
   };
 
