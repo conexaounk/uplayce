@@ -31,9 +31,15 @@ export default function HomePage() {
     login
   } = useAuth();
 
-  return <div className="h-full overflow-hidden flex flex-col lg:flex-row gap-8 p-6">
+  // Filtrar DJs que têm packs/tracks
+  const djsWithTracks = djs?.filter(dj => {
+    // Procura se existe algum pack que pertence a este DJ
+    return packs?.some(pack => pack.dj_id === dj.id);
+  }) ?? [];
+
+  return <div className={`h-full overflow-hidden flex flex-col ${user ? 'lg:flex-row' : 'flex-col'} gap-8 p-6`}>
     {/* Main Content */}
-    <div className="flex-1 lg:col-span-8 overflow-y-auto scrollbar-hide pb-32 space-y-10 pr-2">
+    <div className={`${user ? 'flex-1 lg:col-span-8' : 'w-full'} overflow-y-auto scrollbar-hide pb-32 space-y-10 pr-2`}>
       {/* Hero Section */}
       <section className="relative h-[400px] flex items-center overflow-hidden glass-panel rounded-3xl border border-white/10">
         <div className="absolute inset-0">
