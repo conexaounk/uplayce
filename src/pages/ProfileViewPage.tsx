@@ -201,10 +201,17 @@ export default function ProfileViewPage() {
                       startTime={track.preview_start_time || 0}
                       editable={true}
                       onStartTimeChange={(newStartTime) => {
-                        updateTrackMutation.mutate({
-                          trackId: cleanTrackId,
-                          payload: { preview_start_time: newStartTime }
-                        });
+                        updateTrackMutation.mutate(
+                          {
+                            trackId: cleanTrackId,
+                            payload: { preview_start_time: newStartTime }
+                          },
+                          {
+                            onSuccess: () => {
+                              toast.success('Prévia ajustada', `Início em ${Math.floor(newStartTime)}s`);
+                            }
+                          }
+                        );
                       }}
                     />
                   )}
