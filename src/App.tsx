@@ -235,18 +235,18 @@ function App() {
           <PlayerProvider>
             <PackProvider>
               <TooltipProvider>
-              <AuthRedirect />
-              <div className="min-h-screen text-foreground font-body flex flex-col overflow-x-hidden">
-                <Sidebar />
-                <Navbar />
-                <div className={`flex-1 pt-16 overflow-hidden px-4 transition-all ${user ? 'md:ml-[110px] md:mt-[4px]' : 'pb-6'}`}>
-                  <Router />
+                <AuthRedirect />
+                <div className="min-h-screen text-foreground font-body flex flex-col overflow-x-hidden">
+                  <Sidebar />
+                  <Navbar />
+                  <div className={`flex-1 pt-16 overflow-hidden px-4 transition-all ${user ? 'md:ml-[110px] md:mt-[4px]' : 'pb-6'}`}>
+                    <Router />
+                  </div>
+                  <CartSidebar />
+                  <NotificationCenter />
+                  <FloatingFolder />
+                  <MiniPlayer />
                 </div>
-                <CartSidebar />
-                <NotificationCenter />
-                <FloatingFolder />
-                <MiniPlayer />
-              </div>
               </TooltipProvider>
             </PackProvider>
           </PlayerProvider>
