@@ -79,5 +79,5 @@ export function useMusicApi() {
     }
   });
 
-  return { useTracks, uploadMutation, addToLibraryMutation, updateTrackPublicityMutation };
+  return { useTracks, uploadMutation, addTrackToProfileMutation, updateTrackPublicityMutation };
 }
