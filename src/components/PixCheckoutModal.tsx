@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'https://api.conexaounk.com';
+
 export type OrderData = {
   id: string;
   qrcode: string; // copia e cola
@@ -29,7 +31,7 @@ export function PixCheckoutModal({ open, onOpenChange, orderData, onPaymentConfi
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.access_token) return;
 
-        const res = await fetch(`https://api.conexaounk.com/orders/${orderData.id}/status`, {
+        const res = await fetch(`${API_BASE}/orders/${orderData.id}/status`, {
           headers: { 'Authorization': `Bearer ${session.access_token}` },
         });
 
