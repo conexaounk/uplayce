@@ -170,12 +170,12 @@ export function UploadTrackModal({
                       e.target.files && processFile(e.target.files[0])
                     }
                   />
-                  <div className="w-12 sm:w-16 h-12 sm:h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Upload className="w-6 sm:w-8 h-6 sm:h-8 text-muted-foreground group-hover:text-primary" />
+                  <div className="w-10 sm:w-12 h-10 sm:h-12 mx-auto mb-2 rounded-full bg-muted flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Upload className="w-5 sm:w-6 h-5 sm:h-6 text-muted-foreground group-hover:text-primary" />
                   </div>
-                  <h3 className="text-base sm:text-lg font-semibold mb-1">Clique para selecionar</h3>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    Suporta MP3, WAV, AIFF (até 500MB)
+                  <h3 className="text-sm sm:text-base font-semibold mb-0.5">Clique para selecionar</h3>
+                  <p className="text-xs text-muted-foreground">
+                    MP3, WAV, AIFF (500MB máx)
                   </p>
                 </div>
               ) : (
