@@ -63,7 +63,7 @@ export function PackBuilderDrawer({
     // gerar capa e retornar via callback
     const cover = generateCover(packName, userName, packColor);
     if (onFinalize) onFinalize(selectedTracks, cover);
-    alert("Pack finalizado — capa gerada (data URI retornada via callback)");
+    toast.success("Pack finalizado", "Capa gerada e pronta para download");
   }
 
   return (
