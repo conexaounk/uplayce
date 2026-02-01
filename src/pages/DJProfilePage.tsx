@@ -1,30 +1,27 @@
 import { useDJ } from "@/hooks/use-djs";
-import { useProfileTracks } from "@/hooks/use-profile-tracks";
-import { useUserTracks } from "@/hooks/use-tracks";
+import { useUserTracks } from "@/hooks/use-tracks"; // Hook que busca do seu Worker/D1
 import { useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, MapPin, ShoppingCart, Play, Pause } from "lucide-react";
+import { Loader2, MapPin, ShoppingCart, Play, Pause, Music2 } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { useState, useRef, useEffect } from "react";
 import { BuyPackModal } from "@/components/BuyPackModal";
 
 export default function DJProfilePage() {
   const { id } = useParams<{ id: string }>();
-  const { data: djProfile, isLoading } = useDJ(id || "");
-  const { data: profileTrackIds = [], isLoading: profileTracksLoading } = useProfileTracks(id);
-  const { data: allUserTracks = [] } = useUserTracks(id);
+  
+  // 1. Hooks de Dados
+  const { data: djProfile, isLoading: djLoading } = useDJ(id || "");
+  // Buscamos as músicas onde o user_id é o ID do DJ da página
+  const { data: tracks = [], isLoading: tracksLoading } = useUserTracks(id || "");
+
   const [buyPackModalOpen, setBuyPackModalOpen] = useState(false);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const [currentTime, setCurrentTime] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Filtrar apenas as tracks que foram adicionadas ao perfil
-  const profileTracks = allUserTracks.filter((track) =>
-    profileTrackIds.some((pt) => pt.track_id === track.id)
-  );
-
-  // Play/Pause preview
+  // 2. Lógica de Áudio (Preview de 30s)
   const handlePlayPreview = (trackId: string, audioUrl: string) => {
     if (playingTrackId === trackId && audioRef.current && !audioRef.current.paused) {
       audioRef.current.pause();
@@ -32,14 +29,12 @@ export default function DJProfilePage() {
     } else {
       if (audioRef.current) {
         audioRef.current.src = audioUrl;
-        audioRef.current.currentTime = 0;
         audioRef.current.play();
         setPlayingTrackId(trackId);
       }
     }
   };
 
-  // Parar quando terminar 30 segundos
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -57,211 +52,145 @@ export default function DJProfilePage() {
     return () => audio.removeEventListener("timeupdate", handleTimeUpdate);
   }, []);
 
-  if (isLoading) {
+  // 3. Estados de Carregamento/Erro
+  if (djLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin" />
+        <Loader2 className="animate-spin text-primary" />
       </div>
     );
   }
 
   if (!djProfile) {
     return (
-      <div className="min-h-screen pt-24 pb-20 container max-w-4xl mx-auto px-4">
-        <Card className="bg-card border-white/10 shadow-2xl">
-          <CardContent className="pt-8 text-center">
-            <p className="text-muted-foreground">Artista não encontrado.</p>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen pt-24 flex items-center justify-center">
+        <p className="text-muted-foreground">Artista não encontrado.</p>
       </div>
     );
   }
 
   const avatarUrl = getStorageUrl(djProfile.avatar_url, "avatars") || "/placeholder.svg";
-  const avatarEmoji = (djProfile as any)?.avatar_emoji;
 
   return (
     <div className="min-h-screen pt-24 pb-20 container max-w-4xl mx-auto px-4">
-      <Card
-        className="bg-card overflow-hidden"
-        style={{
-          borderRadius: "28px",
-          boxShadow: "0 0 5px 0 rgba(95, 49, 143, 0.77)",
-          border: "1px solid rgba(107, 30, 161, 0.85)",
-        }}
-      >
-        <CardHeader
-          className="pb-8 overflow-hidden"
-          style={{
-            borderRadius: "1px",
-            border: "1px solid rgba(144, 19, 254, 0.15)",
-          }}
-        >
-          <div className="flex items-center gap-6">
-            <div className="w-24 h-24 rounded-full overflow-hidden bg-white/5 border border-white/10 flex items-center justify-center">
-              {avatarEmoji ? (
-                <span className="text-6xl">{avatarEmoji}</span>
-              ) : (
-                <img
-                  src={avatarUrl}
-                  alt="Avatar"
-                  className="object-cover block"
-                  style={{
-                    width: "105%",
-                    height: "104%",
-                    margin: "0 20px 14px 1px",
-                  }}
-                />
-              )}
+      {/* Card de Perfil */}
+      <Card className="bg-card/50 backdrop-blur border-white/10 rounded-[28px] overflow-hidden shadow-2xl shadow-primary/5">
+        <CardHeader className="border-b border-white/5 pb-8">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/20 bg-muted flex-shrink-0">
+              <img src={avatarUrl} alt={djProfile.dj_name} className="w-full h-full object-cover" />
             </div>
-            <div>
-              <CardTitle className="text-3xl font-bold mb-2">
-                {djProfile.dj_name || "Artista"}
+            <div className="text-center md:text-left">
+              <CardTitle className="text-4xl font-black tracking-tighter mb-2">
+                {djProfile.dj_name}
               </CardTitle>
               {djProfile.city && (
-                <p className="text-muted-foreground flex items-center gap-2 mb-2">
-                  <MapPin size={16} />
+                <p className="text-muted-foreground flex items-center justify-center md:justify-start gap-2">
+                  <MapPin size={16} className="text-primary" />
                   {djProfile.city}
                 </p>
               )}
             </div>
           </div>
         </CardHeader>
-        <CardContent
-          className="pt-8 overflow-hidden"
-          style={{
-            border: "1px solid rgba(144, 19, 254, 0.06)",
-          }}
-        >
-          {djProfile.bio ? (
-            <div>
-              <h3 className="text-lg font-semibold mb-3">Bio</h3>
-              <p className="text-muted-foreground whitespace-pre-wrap">{djProfile.bio}</p>
-            </div>
-          ) : (
-            <p className="text-muted-foreground italic">
-              Este artista não adicionou uma bio ainda.
-            </p>
-          )}
+        <CardContent className="pt-8">
+          <h3 className="text-sm uppercase tracking-widest font-bold text-primary mb-3">Bio</h3>
+          <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+            {djProfile.bio || "Este DJ prefere que sua música fale por ele."}
+          </p>
         </CardContent>
       </Card>
 
-      {/* Tracks Section */}
-      {profileTracks.length > 0 && (
-        <Card
-          className="bg-card overflow-hidden mt-6"
-          style={{
-            borderRadius: "28px",
-            boxShadow: "0 0 5px 0 rgba(95, 49, 143, 0.77)",
-            border: "1px solid rgba(107, 30, 161, 0.85)",
-          }}
-        >
-          <CardHeader
-            style={{
-              borderRadius: "1px",
-              border: "1px solid rgba(144, 19, 254, 0.15)",
-            }}
-          >
-            <CardTitle className="text-2xl font-bold">Suas Tracks</CardTitle>
-          </CardHeader>
-          <CardContent className="pt-8">
-            {profileTracksLoading ? (
-              <div className="flex justify-center py-8">
-                <Loader2 className="animate-spin text-primary" />
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {profileTracks.map((track) => {
-                  const isPlaying = playingTrackId === track.id;
+      {/* Seção de Músicas */}
+      <div className="mt-12 space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Music2 className="text-primary" /> Tracks Disponíveis
+          </h2>
+          <span className="text-sm text-muted-foreground">{tracks.length} músicas</span>
+        </div>
 
-                  return (
-                    <div
-                      key={track.id}
-                      className="bg-muted/30 border border-white/10 rounded-lg p-4 flex items-center gap-3 hover:border-primary/50 transition-all"
-                    >
-                      {/* Play Button */}
-                      <button
-                        onClick={() => handlePlayPreview(track.id, track.audio_url)}
-                        className="w-10 h-10 rounded bg-primary/20 flex items-center justify-center text-primary hover:bg-primary/30 transition-colors flex-shrink-0"
-                      >
-                        {isPlaying ? (
-                          <Pause className="w-5 h-5" />
-                        ) : (
-                          <Play className="w-5 h-5" />
-                        )}
-                      </button>
+        {tracksLoading ? (
+          <div className="flex justify-center py-12"><Loader2 className="animate-spin" /></div>
+        ) : (
+          <div className="grid gap-3">
+            {tracks.map((track) => {
+              const isPlaying = playingTrackId === track.id;
+              
+              return (
+                <div 
+                  key={track.id}
+                  className="group bg-card/40 border border-white/5 p-4 rounded-2xl flex items-center gap-4 hover:border-primary/40 transition-all"
+                >
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handlePlayPreview(track.id, track.audio_url)}
+                    className="w-12 h-12 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all flex-shrink-0"
+                  >
+                    {isPlaying ? <Pause /> : <Play className="ml-1" />}
+                  </Button>
 
-                      {/* Track Info */}
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-semibold truncate">{track.title}</h4>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          {track.artist && <span>{track.artist}</span>}
-                          {track.artist && track.genre && <span>•</span>}
-                          <span className="capitalize">{track.genre}</span>
-                        </div>
-                        {isPlaying && (
-                          <div className="mt-2 flex items-center gap-2">
-                            <div className="h-1 flex-1 bg-primary/30 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-primary transition-all"
-                                style={{ width: `${(currentTime / 30) * 100}%` }}
-                              />
-                            </div>
-                            <span className="text-xs text-primary">
-                              {Math.floor(currentTime)}s / 30s
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Duration */}
-                      {track.duration && (
-                        <span className="text-sm text-muted-foreground flex-shrink-0">
-                          {Math.floor(track.duration / 1000 / 60)}:{String(Math.floor((track.duration / 1000) % 60)).padStart(2, "0")}
+                  <div className="flex-1 min-w-0">
+                    <h4 className="font-bold text-lg truncate">{track.title}</h4>
+                    <p className="text-sm text-muted-foreground truncate">
+                      <span className="text-primary font-medium">{track.artist}</span>
+                      {/* EXIBIÇÃO AUTOMÁTICA DO FEAT SE EXISTIR NO BANCO */}
+                      {track.collaborations && (
+                        <span className="text-xs italic ml-1 opacity-80">
+                          (feat. {track.collaborations})
                         </span>
                       )}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      )}
+                      <span className="mx-2">•</span>
+                      <span className="capitalize">{track.genre}</span>
+                    </p>
+                    
+                    {isPlaying && (
+                      <div className="mt-3 flex items-center gap-3">
+                        <div className="h-1.5 flex-1 bg-white/10 rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-primary shadow-[0_0_10px_rgba(144,19,254,0.5)] transition-all duration-300" 
+                            style={{ width: `${(currentTime / 30) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-[10px] font-mono text-primary">0:{Math.floor(currentTime).toString().padStart(2, '0')} / 0:30</span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
 
-      {/* Buy Pack Button */}
-      {profileTracks.length >= 10 && (
+      {/* Lógica do Pack */}
+      {tracks.length >= 10 ? (
         <Button
           onClick={() => setBuyPackModalOpen(true)}
-          size="lg"
-          className="w-full mt-6 bg-primary hover:bg-primary/90 h-12 text-lg font-bold"
+          className="w-full mt-10 h-16 text-xl font-black uppercase tracking-tighter shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
         >
-          <ShoppingCart className="mr-2 w-5 h-5" />
-          Comprar Pack
+          <ShoppingCart className="mr-3" /> Adquirir Pack do DJ
         </Button>
+      ) : (
+        tracks.length > 0 && (
+          <div className="mt-8 p-6 rounded-3xl bg-primary/5 border border-primary/10 text-center">
+            <p className="text-sm text-muted-foreground">
+              A liberação do pack requer <span className="text-white font-bold">10 músicas</span>. 
+              Faltam <span className="text-primary font-bold">{10 - tracks.length}</span>.
+            </p>
+          </div>
+        )
       )}
 
-      {profileTracks.length > 0 && profileTracks.length < 10 && (
-        <div className="mt-6 p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-center text-sm text-amber-100">
-          Este DJ precisa de no mínimo 10 músicas para criar um pack. Atualmente tem {profileTracks.length}.
-        </div>
-      )}
-
-      {profileTracks.length === 0 && (
-        <div className="mt-6 p-4 rounded-lg bg-muted/50 border border-white/10 text-center text-muted-foreground">
-          Este DJ não adicionou músicas ainda.
-        </div>
-      )}
-
+      {/* Modal e Audio */}
       <BuyPackModal
         isOpen={buyPackModalOpen}
         onClose={() => setBuyPackModalOpen(false)}
-        djName={djProfile.dj_name || "DJ"}
+        djName={djProfile.dj_name}
         djId={djProfile.id}
-        allTracks={profileTracks}
+        allTracks={tracks}
       />
-
-      {/* Hidden audio element para preview */}
       <audio ref={audioRef} crossOrigin="anonymous" />
     </div>
   );
