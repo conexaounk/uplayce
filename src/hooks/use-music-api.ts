@@ -49,14 +49,20 @@ export function useMusicApi() {
     }
   });
 
-  // Adicionar à biblioteca
-  const addToLibraryMutation = useMutation({
+  // Adicionar track do banco global ao perfil do DJ
+  const addTrackToProfileMutation = useMutation({
     mutationFn: (trackId: string) =>
       api.fetch("/user-library", {
         method: "POST",
         body: JSON.stringify({ track_id: trackId })
       }),
-    onSuccess: () => toast.success("Adicionado à sua biblioteca!")
+    onSuccess: () => {
+      toast.success("Música adicionada ao seu perfil!");
+      queryClient.invalidateQueries({ queryKey: ['tracks'] });
+    },
+    onError: (error: any) => {
+      toast.error("Erro ao adicionar: " + error.message);
+    }
   });
 
   // Controlar publicidade de uma track (privada/pública)
