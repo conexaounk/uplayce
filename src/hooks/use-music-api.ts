@@ -6,6 +6,30 @@ import { supabase } from "@/integrations/supabase/client";
 const API_BASE = import.meta.env.VITE_API_URL || "https://api.conexaounk.com";
 console.log('🔌 API_BASE inicializado:', API_BASE);
 
+// Helper function para retry com exponential backoff
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 2): Promise<Response> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      const response = await fetch(url, options);
+      return response;
+    } catch (error) {
+      lastError = error as Error;
+      console.warn(`⚠️ Tentativa ${attempt + 1} falhou:`, lastError.message);
+
+      // Se não é a última tentativa, espera antes de retentar
+      if (attempt < maxRetries) {
+        const delay = Math.min(1000 * Math.pow(2, attempt), 5000); // 1s, 2s, 4s
+        console.log(`⏳ Retentando em ${delay}ms...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+
+  throw lastError || new Error('Fetch failed after retries');
+}
+
 export function useMusicApi() {
   const queryClient = useQueryClient();
   const toast = useToast();
@@ -13,6 +37,8 @@ export function useMusicApi() {
   // Fetch tracks com filtros opcionais
   const useTracks = (userId?: string, search?: string) => useQuery({
     queryKey: ['tracks', userId, search],
+    retry: 2, // Retry automático do React Query
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
     queryFn: async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) {
