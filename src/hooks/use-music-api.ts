@@ -8,17 +8,27 @@ export function useMusicApi() {
   // MUDANÇA AQUI: Agora aceita userId e search como parâmetros opcionais
   const useTracks = (userId?: string, search?: string) => useQuery({
     queryKey: ['tracks', userId, search],
-    queryFn: () => {
+    queryFn: async () => {
       // Constrói a URL corretamente baseada nos filtros
       let url = '/tracks';
       const params = new URLSearchParams();
-      
+
       if (userId) params.append('user_id', userId);
       if (search) params.append('search', search);
-      
+
       const queryString = params.toString();
       // Retorna /tracks?user_id=123 ou apenas /tracks
-      return api.fetch(queryString ? `${url}?${queryString}` : url);
+      const response = await api.fetch(queryString ? `${url}?${queryString}` : url);
+
+      // Garantir que sempre retorna um array
+      if (Array.isArray(response)) {
+        return response;
+      }
+      if (response?.data && Array.isArray(response.data)) {
+        return response.data;
+      }
+      // Se ainda não é array, retorna array vazio
+      return [];
     }
   });
 
