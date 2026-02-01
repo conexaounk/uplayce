@@ -3,7 +3,6 @@ import { usePacks } from "@/hooks/use-packs";
 import { useDJs } from "@/hooks/use-djs";
 import { PackCard } from "@/components/PackCard";
 import { PackDetailsModal } from "@/components/PackDetailsModal";
-import { FollowButton } from "@/components/FollowButton";
 import { Input } from "@/components/ui/input";
 import { Search, Play, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
