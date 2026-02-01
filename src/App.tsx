@@ -192,7 +192,9 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/profile/edit" component={ProfileEditPage} />
       <Route path="/profile" component={ProfileViewPage} />
-      {/* Nova Rota de Admin */}
+      <Route path="/buscar" component={SearchPage} />
+      <Route path="/minhas-tracks" component={MyTracksPage} />
+      <Route path="/configuracoes" component={SettingsPage} />
       <Route path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>;
