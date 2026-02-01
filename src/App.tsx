@@ -11,7 +11,7 @@ import { CartProvider, useCart } from "@/hooks/use-cart";
 import { useAuth } from "@/hooks/use-auth";
 import { CartSidebar } from "@/components/CartSidebar";
 import { Button } from "@/components/ui/button";
-import { ShoppingBag, User, LogOut, Menu, Home, Search, Music, Settings, Bell } from "lucide-react";
+import { ShoppingBag, User, LogOut, Menu, Home, Search, Music, Settings, Bell, Shield } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useState, useEffect, useRef } from "react";
 
