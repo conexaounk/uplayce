@@ -60,7 +60,7 @@ export default function ProfileViewPage() {
   const avatarUrl = getStorageUrl(myProfile?.avatar_url, "avatars") || "/placeholder.svg";
 
   return (
-    <div className="min-h-screen pt-24 pb-20 container max-w-4xl mx-auto px-4">
+    <div className="min-h-screen pt-[21px] pb-20 container max-w-4xl mx-auto px-4">
       {/* Header do Perfil */}
       <Card className="bg-card border-primary/20 rounded-[28px] overflow-hidden shadow-xl shadow-black/50">
         <CardHeader className="pb-8 border-b border-white/5">

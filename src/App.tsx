@@ -2,10 +2,9 @@ import { Switch, Route, Link, useLocation } from "wouter";
 import { PackProvider } from "@/context/packContext";
 import { FloatingFolder } from "@/components/FloatingFolder";
 import { CreatePackModal } from "@/components/CreatePackModal";
-import { MusicPlayer } from "@/components/MusicPlayer";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { CartProvider, useCart } from "@/hooks/use-cart";
@@ -25,6 +24,9 @@ import ProfileEditPage from "@/pages/ProfileEditPage";
 import LoginPage from "@/pages/LoginPage";
 import NotFound from "@/pages/not-found";
 import AdminPage from "@/pages/AdminPage";
+import SearchPage from "@/pages/SearchPage";
+import SettingsPage from "@/pages/SettingsPage";
+import MyTracksPage from "@/pages/MyTracksPage";
 
 function Sidebar() {
   const [location] = useLocation();
@@ -32,9 +34,9 @@ function Sidebar() {
 
   const navItems = [
     { href: "/", icon: Home, label: "Home" },
-    { href: "/djs", icon: Search, label: "Artists" },
-    { href: "#library", icon: Music, label: "Library" },
-    { href: "#settings", icon: Settings, label: "Settings" },
+    { href: "/buscar", icon: Search, label: "Buscar" },
+    { href: "/minhas-tracks", icon: Music, label: "Minhas Tracks" },
+    { href: "/configuracoes", icon: Settings, label: "Configurações" },
   ];
 
   if (!user) return null;
@@ -42,34 +44,38 @@ function Sidebar() {
   return (
     <aside className="fixed left-5 top-[76px] bottom-5 w-[95px] hidden md:flex flex-col items-center py-6 glass-panel rounded-[40px] z-50 border border-white/10">
       <nav className="flex-1 flex flex-col gap-8 w-full items-center">
+        <Bell className="w-5 h-5 text-gray-500 ml-[42px]" />
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.href;
 
           return (
-            <Link key={item.href} href={item.href}>
-              <div className="relative w-full flex justify-center group cursor-pointer">
-                {isActive && (
-                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-purple-500 rounded-r-full shadow-[0_0_10px_#a855f7]"></div>
-                )}
-                <div className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all ${
-                  isActive
-                    ? "bg-white/10 border border-white/20"
-                    : "bg-white/5 border border-white/5 group-hover:bg-white/10"
-                }`}>
-                  <Icon className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
-                </div>
-              </div>
-            </Link>
+            <Tooltip key={item.href}>
+              <TooltipTrigger asChild>
+                <Link href={item.href}>
+                  <div className="relative w-full flex justify-center group cursor-pointer">
+                    {isActive && (
+                      <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-[20px] bg-purple-500 rounded-r-full shadow-[0_0_10px_#a855f7]"></div>
+                    )}
+                    <div className={`w-12 h-12 flex items-center justify-center rounded-2xl transition-all ${
+                      isActive
+                        ? "bg-white/10 border border-white/20"
+                        : "bg-white/5 border border-white/5 group-hover:bg-white/10"
+                    }`}>
+                      <Icon className="w-6 h-6 text-white/70 group-hover:text-white transition-colors" />
+                    </div>
+                  </div>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="ml-2">
+                {item.label}
+              </TooltipContent>
+            </Tooltip>
           );
         })}
       </nav>
 
-      <div className="mt-auto">
-        <div className="w-12 h-12 flex items-center justify-center rounded-xl text-gray-500 hover:text-white transition-colors cursor-pointer group">
-          <Bell className="w-5 h-5" />
-        </div>
-      </div>
+      <div className="mt-auto -mt-[3px]" />
     </aside>
   );
 }
@@ -176,7 +182,9 @@ function Router() {
       <Route path="/login" component={LoginPage} />
       <Route path="/profile/edit" component={ProfileEditPage} />
       <Route path="/profile" component={ProfileViewPage} />
-      {/* Nova Rota de Admin */}
+      <Route path="/buscar" component={SearchPage} />
+      <Route path="/minhas-tracks" component={MyTracksPage} />
+      <Route path="/configuracoes" component={SettingsPage} />
       <Route path="/admin" component={AdminPage} />
       <Route component={NotFound} />
     </Switch>;
@@ -198,7 +206,6 @@ function AuthRedirect() {
   return null;
 }
 function App() {
-  const [isPlaying, setIsPlaying] = useState(false);
   const { user } = useAuth();
 
   return <QueryClientProvider client={queryClient}>
@@ -210,10 +217,9 @@ function App() {
               <div className="min-h-screen text-foreground font-body flex flex-col overflow-x-hidden">
                 <Sidebar />
                 <Navbar />
-                <div className={`flex-1 pt-16 overflow-hidden px-4 transition-all ${user ? 'md:ml-[110px] pb-24' : 'pb-6'}`}>
+                <div className={`flex-1 pt-16 overflow-hidden px-4 transition-all ${user ? 'md:ml-[110px] md:mt-[4px]' : 'pb-6'}`}>
                   <Router />
                 </div>
-                {user && <MusicPlayer isPlaying={isPlaying} onPlayPause={() => setIsPlaying(!isPlaying)} />}
                 <CartSidebar />
                 <NotificationCenter />
                 <FloatingFolder />

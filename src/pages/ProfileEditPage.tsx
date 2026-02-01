@@ -107,9 +107,6 @@ export default function ProfileEditPage() {
               <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
                 Editar Perfil
               </h1>
-              <p className="text-muted-foreground mt-1">
-                Atualize suas informações públicas
-              </p>
             </div>
           </div>
         </div>
@@ -243,90 +240,6 @@ export default function ProfileEditPage() {
                   )}
                 </Card>
 
-                {/* Emoji Avatar (Alternativa) */}
-                <Card className="bg-card/50 border-white/10 backdrop-blur-sm p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Music2 className="text-primary" size={20} />
-                    <h3 className="font-bold text-lg">Avatar Emoji</h3>
-                  </div>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Ou escolha um emoji como alternativa
-                  </p>
-                  <FormField
-                    control={form.control}
-                    name="avatar_emoji"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <EmojiAvatarPicker
-                            value={field.value}
-                            onChange={field.onChange}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </Card>
-
-                {/* Preview Card */}
-                <Card className="bg-gradient-to-br from-primary/10 to-primary/5 border-primary/20 backdrop-blur-sm p-6">
-                  <h3 className="font-bold text-lg mb-4">Preview do Perfil</h3>
-                  <div className="space-y-3">
-                    <div className="pb-3 border-b border-white/10">
-                      <span className="text-xs text-muted-foreground uppercase tracking-wider">Nome</span>
-                      <p className="font-semibold mt-1">
-                        {form.watch("dj_name") || "Seu nome artístico"}
-                      </p>
-                    </div>
-                    <div className="pb-3 border-b border-white/10">
-                      <span className="text-xs text-muted-foreground uppercase tracking-wider">Localização</span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <MapPin size={14} className="text-muted-foreground" />
-                        <p className="text-sm">
-                          {form.watch("city") || "Não informado"}
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="text-xs text-muted-foreground uppercase tracking-wider">Avatar</span>
-                      <div className="mt-2">
-                        {avatarUrl ? (
-                          <div className="w-10 h-10 rounded-full overflow-hidden border border-white/10">
-                            <img src={avatarUrl} alt="Avatar preview" className="w-full h-full object-cover" />
-                          </div>
-                        ) : avatarEmoji ? (
-                          <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                            <span className="text-2xl">{avatarEmoji}</span>
-                          </div>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">Nenhum avatar selecionado</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-
-                {/* Help Card */}
-                <Card className="bg-card/30 border-white/5 backdrop-blur-sm p-6">
-                  <h3 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wider">
-                    Dicas de Edição
-                  </h3>
-                  <ul className="space-y-2 text-sm text-muted-foreground">
-                    <li className="flex gap-2">
-                      <span className="text-primary">•</span>
-                      <span>Todas as mudanças são salvas automaticamente</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-primary">•</span>
-                      <span>O avatar emoji é completamente opcional</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-primary">•</span>
-                      <span>Use uma bio descritiva para se destacar</span>
-                    </li>
-                  </ul>
-                </Card>
               </div>
             </div>
           </form>

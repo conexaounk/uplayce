@@ -4,7 +4,7 @@ import { useDJs } from "@/hooks/use-djs";
 import { PackCard } from "@/components/PackCard";
 import { PackDetailsModal } from "@/components/PackDetailsModal";
 import { Input } from "@/components/ui/input";
-import { Search, Play } from "lucide-react";
+import { Search, Play, Loader2 } from "lucide-react";
 import { motion } from "framer-motion";
 import type { PackWithTracks } from "@/types/supabase";
 import { useAuth } from "@/hooks/use-auth";
@@ -110,11 +110,11 @@ export default function HomePage() {
             <div key={dj.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors">
               <div className="flex items-center gap-3">
                 {dj.avatar_url && (
-                  <img src={dj.avatar_url} alt={dj.name} className="w-10 h-10 rounded-full object-cover" />
+                  <img src={dj.avatar_url} alt={dj.artist_name} className="w-10 h-10 rounded-full object-cover" />
                 )}
                 <div>
-                  <p className="text-sm font-semibold text-white">{dj.name}</p>
-                  <p className="text-xs text-gray-400">{dj.followers || 0} Seguidores</p>
+                  <p className="text-sm font-semibold text-white">{dj.artist_name}</p>
+                  <p className="text-xs text-gray-400">{dj.city || 'Artista'}</p>
                 </div>
               </div>
               <button className="border border-white/20 rounded-full px-4 py-1 text-xs text-white hover:bg-white hover:text-black transition">

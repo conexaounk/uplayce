@@ -1,22 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import type { Profile, InsertProfile } from "@/types/supabase";
+import type { DJ, Profile, InsertProfile } from "@/types/supabase";
 
 export function useDJs() {
   return useQuery({
     queryKey: ["djs"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("profiles")
+        .from("djs")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error('Supabase profiles query error:', error);
+        console.error('Supabase djs query error:', error);
         throw new Error(`Failed to fetch DJs: ${error.message}`);
       }
-      return data as Profile[];
+      return data as DJ[];
     },
   });
 }
