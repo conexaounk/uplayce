@@ -5,7 +5,7 @@ import { useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FollowButton } from "@/components/FollowButton";
-import { Loader2, MapPin, ShoppingCart, Music2 } from "lucide-react";
+import { Loader2, MapPin, ShoppingCart, Music2, Heart } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { useState } from "react";
 import { BuyPackModal } from "@/components/BuyPackModal";
