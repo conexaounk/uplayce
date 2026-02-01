@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import type { PackWithTracks } from "@/types/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
