@@ -512,8 +512,7 @@ export function UploadTrackModal({
                           placeholder="128"
                           {...form.register("bpm")}
                           disabled={uploadMutation.isPending}
-                          className="text-sm font-medium bg-white/5 border-white/10 focus:border-primary/50"
-                          style={{ height: "35px", padding: "8px 0" }}
+                          className="h-11 sm:h-12 text-sm font-medium bg-white/5 border-white/10 focus:border-primary/50"
                           min="1"
                           max="300"
                         />
