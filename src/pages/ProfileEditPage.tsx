@@ -7,16 +7,18 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Loader2, Save, ArrowLeft, Music2, MapPin, User, X } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { EmojiAvatarPicker } from "@/components/EmojiAvatarPicker";
+import { AvatarUpload } from "@/components/AvatarUpload";
 
 interface ProfileFormData {
   dj_name: string;
   bio: string;
   city: string;
   avatar_emoji?: string;
+  avatar_url?: string | null;
 }
 
 export default function ProfileEditPage() {
