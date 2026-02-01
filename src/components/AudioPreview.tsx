@@ -207,79 +207,31 @@ export function AudioPreview({
 
       {/* Preview Label & Time Selector */}
       {editable && musicDuration > PREVIEW_DURATION && (
-        <div className="mt-4 space-y-3 bg-white/5 rounded-lg p-4">
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground block">
-              Selecione o início da prévia: <span className="text-primary font-semibold">{formatTime(previewStart)}</span> - <span className="text-primary font-semibold">{formatTime(previewStart + PREVIEW_DURATION)}</span>
-            </label>
+        <div className="mt-3 space-y-2">
+          <label className="text-xs font-medium text-muted-foreground block">
+            Selecione o início da prévia: <span className="text-primary font-semibold">{formatTime(previewStart)}</span> - <span className="text-primary font-semibold">{formatTime(previewStart + PREVIEW_DURATION)}</span>
+          </label>
 
-            {/* Visual Timeline with 30s preview window */}
-            <div className="relative space-y-2">
-              {/* Background timeline */}
-              <div className="relative h-12 bg-white/5 rounded-lg overflow-hidden border border-white/10">
-                {/* Full duration indicator */}
-                <div className="absolute inset-0 flex">
-                  {Array.from({ length: Math.ceil(musicDuration / 10) }).map((_, i) => (
-                    <div
-                      key={i}
-                      className="flex-1 border-r border-white/10 text-[8px] text-muted-foreground/50 flex items-center justify-center"
-                    >
-                      {i * 10}s
-                    </div>
-                  ))}
-                </div>
-
-                {/* Preview window highlight */}
-                <div
-                  className="absolute top-0 bottom-0 bg-primary/20 border-l-2 border-r-2 border-primary transition-all"
-                  style={{
-                    left: `${(previewStart / musicDuration) * 100}%`,
-                    width: `${(PREVIEW_DURATION / musicDuration) * 100}%`,
-                  }}
-                />
-
-                {/* Draggable handle */}
-                <input
-                  type="range"
-                  min="0"
-                  max={Math.max(0, musicDuration - PREVIEW_DURATION)}
-                  value={previewStart}
-                  onChange={(e) => handlePreviewStartChange(parseFloat(e.target.value))}
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
-                  style={{ cursor: 'pointer' }}
-                />
-
-                {/* Visual handle indicator */}
-                <div
-                  className="absolute top-1/2 -translate-y-1/2 w-0.5 h-8 bg-primary rounded-full pointer-events-none transition-all"
-                  style={{
-                    left: `${(previewStart / musicDuration) * 100}%`,
-                  }}
-                />
-              </div>
-
-              {/* Timeline labels */}
-              <div className="flex justify-between text-xs text-muted-foreground/60 px-1">
-                <span>0s</span>
-                <span>{formatTime(musicDuration)}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Alternative input method */}
-          <div className="space-y-2">
-            <label className="text-xs font-medium text-muted-foreground">
-              Ou insira o tempo inicial em segundos:
-            </label>
+          {/* Visual Timeline with 30s preview window */}
+          <div className="relative">
+            {/* Draggable handle */}
             <input
-              type="number"
+              type="range"
               min="0"
               max={Math.max(0, musicDuration - PREVIEW_DURATION)}
-              value={Math.floor(previewStart)}
-              onChange={(e) => handlePreviewStartChange(Math.floor(parseFloat(e.target.value) || 0))}
-              className="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:bg-white/15 transition-all"
-              placeholder="Segundos"
+              value={previewStart}
+              onChange={(e) => handlePreviewStartChange(parseFloat(e.target.value))}
+              className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-primary"
+              style={{
+                background: `linear-gradient(to right, rgba(99, 20, 235, 0.3) 0%, rgba(99, 20, 235, 0.3) ${(previewStart / (musicDuration - PREVIEW_DURATION)) * 100}%, rgba(255, 255, 255, 0.1) ${(previewStart / (musicDuration - PREVIEW_DURATION)) * 100}%, rgba(255, 255, 255, 0.1) 100%)`
+              }}
             />
+
+            {/* Timeline labels */}
+            <div className="flex justify-between text-xs text-muted-foreground/60 mt-1">
+              <span>0s</span>
+              <span>{formatTime(musicDuration)}</span>
+            </div>
           </div>
         </div>
       )}
