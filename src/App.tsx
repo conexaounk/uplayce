@@ -198,6 +198,7 @@ function Router() {
       <Route path="/minhas-tracks" component={MyTracksPage} />
       <Route path="/configuracoes" component={SettingsPage} />
       <Route path="/admin" component={AdminPage} />
+      <Route path="/admin-setup" component={AdminSetupPage} />
       <Route component={NotFound} />
     </Switch>;
 }
