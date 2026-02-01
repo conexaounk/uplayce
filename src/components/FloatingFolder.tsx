@@ -57,16 +57,16 @@ export function FloatingFolder() {
                     // Se o pack for gratuito (somatório 0), baixa diretamente
                     const total = currentPack.tracks.reduce((s, t) => s + (t.price_cents ?? 0), 0);
                     if (total === 0) {
-                      (await import('sonner')).toast.info('Pack gratuito — iniciando download...');
+                      toast.info('Preparando download', 'Pack gratuito — iniciando download');
                       const { downloadPack } = await import('@/lib/packDownload');
                       const userName = currentPack.userName || 'artist';
                       await downloadPack(currentPack.name, userName, currentPack.color, currentPack.tracks);
-                      (await import('sonner')).toast.success('Download iniciado!');
+                      toast.success('Download iniciado', 'Seu pack está sendo baixado');
                       return;
                     }
 
                     // Cria ordem no backend e abre modal de pagamento com QR
-                    (await import('sonner')).toast.info('Criando pedido para pagamento...', { description: 'Aguarde enquanto prepararmos seu QR Code.' });
+                    toast.info('Processando pedido', 'Aguarde enquanto prepararmos seu QR Code');
                     const { api } = await import('@/lib/apiService');
                     const payload = {
                       amount_cents: total,
@@ -80,7 +80,7 @@ export function FloatingFolder() {
                     setCheckoutOpen(true);
                   } catch (e) {
                     console.error('Erro ao criar pedido do pack', e);
-                    (await import('sonner')).toast.error('Não foi possível iniciar o pagamento. Tente novamente.');
+                    toast.error('Erro ao processar pedido', 'Tente novamente');
                   }
                 }}
                 variant="secondary"
