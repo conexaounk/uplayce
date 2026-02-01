@@ -55,7 +55,7 @@ export default function DJProfilePage() {
             <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-primary/20 bg-muted flex-shrink-0">
               <img src={avatarUrl} alt={djProfile.dj_name} className="w-full h-full object-cover" />
             </div>
-            <div className="text-center md:text-left">
+            <div className="text-center md:text-left flex-1">
               <CardTitle className="text-4xl font-black tracking-tighter mb-2">
                 {djProfile.dj_name}
               </CardTitle>
@@ -65,6 +65,24 @@ export default function DJProfilePage() {
                   {djProfile.city}
                 </p>
               )}
+              <div className="mt-4 flex items-center gap-4 justify-center md:justify-start">
+                <span className="text-sm text-muted-foreground">
+                  {followerCount} {followerCount === 1 ? "seguidor" : "seguidores"}
+                </span>
+                <Button
+                  onClick={handleToggleFollow}
+                  disabled={isLoadingFollow}
+                  className={isFollowing ? "rounded-full" : "rounded-full bg-primary hover:bg-primary/90"}
+                  variant={isFollowing ? "outline" : "default"}
+                >
+                  {isLoadingFollow ? (
+                    <Loader2 size={16} className="animate-spin mr-2" />
+                  ) : (
+                    <Heart size={16} className={`mr-2 ${isFollowing ? "fill-current" : ""}`} />
+                  )}
+                  {isFollowing ? "Deixar de Seguir" : "Seguir"}
+                </Button>
+              </div>
             </div>
           </div>
         </CardHeader>
