@@ -16,7 +16,7 @@ import { useState, useEffect } from "react";
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
   const { data: myProfile, isLoading: profileLoading } = useDJ(user?.id || "");
-  const { useTracks, updateTrackPublicityMutation, removeFromProfileMutation } = useMusicApi();
+  const { useTracks, updateTrackPublicityMutation, removeFromProfileMutation, updateTrackMutation } = useMusicApi();
 
   // Buscamos as músicas diretamente do banco pelo ID do usuário logado
   const { data: allUserTracks = [], isLoading: tracksLoading } = useTracks(user?.id || "");
