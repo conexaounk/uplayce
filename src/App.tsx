@@ -191,17 +191,23 @@ function Router() {
 }
 
 function AuthRedirect() {
-  const { user } = useAuth();
+  const { user, isAdmin, isLoading } = useAuth();
   const [, setLocation] = useLocation();
   const previousUserRef = useRef<typeof user>(null);
 
   useEffect(() => {
-    // Se o usuário estava deslogado e agora está logado, redireciona para /profile
+    // Se o usuário estava deslogado e agora está logado
     if (!previousUserRef.current && user) {
-      setLocation("/profile");
+      // Se é admin, redireciona para /admin
+      if (isAdmin) {
+        setLocation("/admin");
+      } else {
+        // Caso contrário, redireciona para /profile
+        setLocation("/profile");
+      }
     }
     previousUserRef.current = user;
-  }, [user, setLocation]);
+  }, [user, isAdmin, setLocation]);
 
   return null;
 }
