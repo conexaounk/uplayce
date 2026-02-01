@@ -8,18 +8,14 @@ import { useToast } from '@/hooks/use-notification';
 
 export function FloatingFolder() {
   const { currentPack, removeTrack, finalize } = usePack();
+  const toast = useToast();
+  const [orderData, setOrderData] = useState<{ id: string; qrcode: string; amount_cents: number } | null>(null);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+
   if (!currentPack) return null;
 
   const slots = Array.from({ length: 10 });
   const isFull = currentPack.tracks.length === 10;
-
-    function setOrderData(arg0: { id: any; qrcode: any; amount_cents: any; }) {
-        throw new Error('Function not implemented.');
-    }
-
-    function setCheckoutOpen(arg0: boolean) {
-        throw new Error('Function not implemented.');
-    }
 
   return (
     <div className="fixed bottom-6 right-6 z-50 w-72 shadow-2xl overflow-hidden rounded-2xl border border-white/10 bg-black/90 backdrop-blur-xl">
