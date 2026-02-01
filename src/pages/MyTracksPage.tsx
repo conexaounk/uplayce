@@ -6,6 +6,7 @@ import { Music, Loader2, Edit, Play, ExternalLink, Plus } from "lucide-react";
 import { api } from "@/lib/apiService";
 import { useToast } from "@/hooks/use-notification";
 import { UploadTrackModal } from "@/components/UploadTrackModal";
+import { EditTrackModal } from "@/components/EditTrackModal";
 import { PlayerContext } from "@/context/PlayerContext";
 
 // Interface exata do seu D1
@@ -31,6 +32,8 @@ export default function MyTracksPage() {
   const [tracks, setTracks] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
   const playerContext = useContext(PlayerContext);
 
   const fetchUserTracks = async () => {
@@ -110,9 +113,7 @@ export default function MyTracksPage() {
           <h1 className="text-4xl font-black text-white">Minhas Tracks</h1>
         </div>
         <div className="flex items-center gap-4">
-          <div className="text-right">
-            <span className="text-2xl font-bold text-primary">{tracks.length}</span>
-          </div>
+          <div className="text-right" />
           <Button
             onClick={() => setUploadModalOpen(true)}
             className="rounded-full"
@@ -177,6 +178,10 @@ export default function MyTracksPage() {
                     variant="ghost"
                     size="icon"
                     className="h-9 w-9 rounded-full text-gray-500 hover:text-white"
+                    onClick={() => {
+                      setSelectedTrack(track);
+                      setEditModalOpen(true);
+                    }}
                   >
                     <Edit size={16} />
                   </Button>
@@ -199,6 +204,9 @@ export default function MyTracksPage() {
 
       {/* Upload Track Modal */}
       <UploadTrackModal open={uploadModalOpen} onOpenChange={setUploadModalOpen} />
+
+      {/* Edit Track Modal */}
+      <EditTrackModal open={editModalOpen} onOpenChange={setEditModalOpen} track={selectedTrack} />
     </div>
   );
 }

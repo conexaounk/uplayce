@@ -10,7 +10,6 @@ import { motion } from "framer-motion";
 import type { PackWithTracks } from "@/types/supabase";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
 
 export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -110,7 +109,7 @@ export default function HomePage() {
         <div className="space-y-4">
           {djs?.slice(0, 3).map((dj) => (
             <div key={dj.id} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3" style={{ paddingTop: "18px" }}>
                 {dj.avatar_url && (
                   <img src={dj.avatar_url} alt={dj.artist_name} className="w-10 h-10 rounded-full object-cover" />
                 )}

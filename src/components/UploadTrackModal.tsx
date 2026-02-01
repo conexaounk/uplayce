@@ -83,13 +83,13 @@ export function UploadTrackModal({
   const toast = useToast();
 
   const { uploadMutation, useTracks, addTrackToProfileMutation } = useMusicApi();
-  
+
   const [file, setFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [activeTab, setActiveTab] = useState("upload");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: tracks = [], isLoading: tracksLoading } = useTracks(undefined, searchQuery);
+  const { data: tracks = [], isLoading: tracksLoading } = useTracks(user?.id || "", searchQuery);
 
   const form = useForm<MetadataForm>({
     resolver: zodResolver(metadataSchema),

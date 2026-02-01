@@ -25,6 +25,13 @@ export function FollowButton({ userId, className, size = "sm", variant = "outlin
       className={`rounded-full ${className}`}
       variant={isFollowing ? "outline" : variant === "default" ? "default" : "outline"}
       size={size === "sm" ? "sm" : size === "md" ? "default" : "lg"}
+      style={{
+        gap: "-8px",
+        minHeight: "26px",
+        paddingLeft: "1px",
+        lineHeight: "13px",
+        margin: "0 -15px 63px auto",
+      }}
     >
       {isLoading ? (
         <Loader2 size={16} className="animate-spin mr-2" />
