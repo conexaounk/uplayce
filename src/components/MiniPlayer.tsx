@@ -19,10 +19,11 @@ export function MiniPlayer() {
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       exit={{ y: 100, opacity: 0 }}
-      className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] to-[#1a1a1a] border-t border-white/10 backdrop-blur-md z-40"
+      className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a0a0a] to-[#1a1a1a] backdrop-blur-md z-40"
+      style={{ border: "0.8px 0px 0px solid rgba(255, 255, 255, 0.18)" }}
     >
-      <div className="max-w-full mx-auto px-6 py-4">
-        <div className="flex items-center gap-4">
+      <div className="max-w-full mx-auto flex flex-col" style={{ margin: "0 auto 0 111px", padding: "16px 24px 16px 175px" }}>
+        <div className="flex items-center gap-4" style={{ margin: "0 auto 0 -22px" }}>
           {/* Cover Image */}
           {currentTrack.cover_url && (
             <div className="relative w-16 h-16 rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900 flex-shrink-0">
