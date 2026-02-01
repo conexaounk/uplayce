@@ -22,7 +22,10 @@ export function usePacks(filters?: { genre?: string; search?: string }) {
 
       const { data, error } = await query;
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase packs query error:', error);
+        throw new Error(`Failed to fetch packs: ${error.message}`);
+      }
       return data as PackWithTracks[];
     },
   });

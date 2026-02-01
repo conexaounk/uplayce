@@ -12,7 +12,10 @@ export function useDJs() {
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase profiles query error:', error);
+        throw new Error(`Failed to fetch DJs: ${error.message}`);
+      }
       return data as Profile[];
     },
   });

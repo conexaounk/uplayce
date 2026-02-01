@@ -14,13 +14,15 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const {
     data: packs,
-    isLoading: packsLoading
+    isLoading: packsLoading,
+    error: packsError
   } = usePacks({
     search: searchTerm
   });
   const {
     data: djs,
-    isLoading: djsLoading
+    isLoading: djsLoading,
+    error: djsError
   } = useDJs();
   const [selectedPack, setSelectedPack] = useState<PackWithTracks | null>(null);
   const {
@@ -78,6 +80,11 @@ export default function HomePage() {
               <span>{packs?.length || 0} RESULTADOS</span>
             </div>
           </div>
+
+          {packsError && <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 mb-8 text-red-300">
+              <p className="font-semibold">Erro ao carregar packs:</p>
+              <p className="text-sm">{packsError.message}</p>
+            </div>}
 
           {packsLoading ? <div className="h-64 flex items-center justify-center">
               <Loader2 className="animate-spin text-primary w-10 h-10" />
