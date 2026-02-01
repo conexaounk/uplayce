@@ -34,60 +34,104 @@ export function useMusicApi() {
       console.log('📡 useTracks: userId=', userId, 'search=', search);
 
       try {
-        const response = await fetch(fullApiUrl, {
-          method: 'GET',
-          headers: {
-            'Authorization': `Bearer ${session.access_token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        console.log('🔐 Token presente:', !!session.access_token);
 
-        console.log('📡 useTracks: Response status:', response.status);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout
 
-        if (!response.ok) {
-          console.warn(`⚠️ useTracks: Erro HTTP ${response.status}:`, response.statusText);
-          return [];
-        }
-
-        const data = await response.json();
-        console.log('✅ useTracks: Dados recebidos:', data);
-
-        // 1. Tenta encontrar a lista de tracks em diferentes formatos possíveis
-        let allTracks: any[] = [];
-
-        if (Array.isArray(data)) {
-          allTracks = data;
-        } else if (data && typeof data === 'object') {
-          // Tenta chaves comuns: data, tracks, results
-          allTracks = data.data || data.tracks || data.results || [];
-        }
-
-        console.log('📊 Total de tracks recebidas (bruto):', allTracks.length);
-
-        if (allTracks.length > 0) {
-          console.log('🔍 Exemplo de user_id na primeira track:', allTracks[0].user_id);
-        }
-
-        // 2. Se userId foi fornecido, filtra apenas as tracks desse usuário
-        if (userId) {
-          const filteredTracks = allTracks.filter((t: any) => {
-            // Tratamento de strings: case insensitive e trim
-            const trackUserId = String(t.user_id || '').trim().toLowerCase();
-            const currentUserId = String(userId).trim().toLowerCase();
-            return trackUserId === currentUserId;
+        try {
+          const response = await fetch(fullApiUrl, {
+            method: 'GET',
+            headers: {
+              'Authorization': `Bearer ${session.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            signal: controller.signal,
           });
 
-          console.log('✅ Total após filtrar pelo userId:', filteredTracks.length);
-          return filteredTracks;
-        }
+          clearTimeout(timeoutId);
+          console.log('📡 useTracks: Response status:', response.status);
 
-        return allTracks;
+          if (!response.ok) {
+            const errorText = await response.text().catch(() => response.statusText);
+            console.warn(`⚠️ useTracks: Erro HTTP ${response.status}:`, errorText);
+
+            // Tenta fazer parse como JSON para mensagem de erro da API
+            try {
+              const errorJson = JSON.parse(errorText);
+              console.warn('⚠️ Erro da API:', errorJson);
+            } catch (e) {
+              // Ignorar se não for JSON
+            }
+
+            return [];
+          }
+
+          const data = await response.json();
+          console.log('✅ useTracks: Dados recebidos:', data);
+
+          // 1. Tenta encontrar a lista de tracks em diferentes formatos possíveis
+          let allTracks: any[] = [];
+
+          if (Array.isArray(data)) {
+            allTracks = data;
+          } else if (data && typeof data === 'object') {
+            // Tenta chaves comuns: data, tracks, results
+            allTracks = data.data || data.tracks || data.results || [];
+          }
+
+          console.log('📊 Total de tracks recebidas (bruto):', allTracks.length);
+
+          if (allTracks.length > 0) {
+            console.log('🔍 Exemplo de user_id na primeira track:', allTracks[0].user_id);
+          }
+
+          // 2. Se userId foi fornecido, filtra apenas as tracks desse usuário
+          if (userId) {
+            const filteredTracks = allTracks.filter((t: any) => {
+              // Tratamento de strings: case insensitive e trim
+              const trackUserId = String(t.user_id || '').trim().toLowerCase();
+              const currentUserId = String(userId).trim().toLowerCase();
+              return trackUserId === currentUserId;
+            });
+
+            console.log('✅ Total após filtrar pelo userId:', filteredTracks.length);
+            return filteredTracks;
+          }
+
+          return allTracks;
+        } catch (fetchError) {
+          clearTimeout(timeoutId);
+
+          if (fetchError instanceof Error && fetchError.name === 'AbortError') {
+            console.error('❌ Timeout na requisição (>10s)');
+            toast.error('Timeout', 'A requisição demorou muito tempo. Tente novamente.');
+          } else if (fetchError instanceof TypeError) {
+            // TypeError geralmente é CORS ou rede indisponível
+            console.error('❌ Erro de conexão (CORS ou rede):', fetchError.message);
+            toast.error(
+              'Erro de Conexão',
+              'Não foi possível conectar à API. Verifique sua conexão ou tente mais tarde.'
+            );
+          } else {
+            throw fetchError;
+          }
+
+          return [];
+        }
       } catch (error) {
         const errorMsg = error instanceof Error ? error.message : String(error);
         console.error('❌ Erro ao buscar tracks:', errorMsg);
         console.error('❌ API_BASE:', API_BASE);
         console.error('❌ Full URL:', fullApiUrl);
         console.error('❌ Stack:', error);
+
+        // Mostrar toast de erro genérico
+        toast.error(
+          'Erro ao carregar tracks',
+          'Ocorreu um erro ao buscar suas tracks. Tente novamente.'
+        );
+
         return [];
       }
     }
