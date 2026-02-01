@@ -125,25 +125,5 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Trending Card - Apenas para usuários logados */}
-      {user && (
-        <div className="glass-panel p-6 rounded-3xl border border-white/10">
-          <h3 className="font-bold text-white text-lg mb-4">Tendências</h3>
-          <div className="space-y-3">
-            {["Deep House", "Techno", "House", "Trance", "Drum & Bass"].map((genre, i) => (
-              <div key={i} className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors cursor-pointer group">
-                <div>
-                  <p className="text-sm font-medium text-white group-hover:text-accent-purple transition">{genre}</p>
-                  <p className="text-xs text-gray-400">1.2K packs</p>
-                </div>
-                <Play size={16} className="text-gray-400 group-hover:text-accent-purple transition" />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-
-    <PackDetailsModal pack={selectedPack} isOpen={!!selectedPack} onClose={() => setSelectedPack(null)} />
   </div>;
 }
