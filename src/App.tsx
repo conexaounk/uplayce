@@ -4,7 +4,7 @@ import { FloatingFolder } from "@/components/FloatingFolder";
 import { CreatePackModal } from "@/components/CreatePackModal";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { TooltipProvider, Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationProvider } from "@/context/NotificationContext";
 import { NotificationCenter } from "@/components/NotificationCenter";
 import { CartProvider, useCart } from "@/hooks/use-cart";
