@@ -39,7 +39,7 @@ export default function HomePage() {
 
   return <div className={`h-full overflow-hidden flex flex-col ${user ? 'lg:flex-row' : 'flex-col'} gap-8 p-6`}>
     {/* Main Content */}
-    <div className={`${user ? 'flex-1 lg:col-span-8' : 'w-full'} overflow-y-auto scrollbar-hide pb-32 space-y-10 pr-2`}>
+    <div className={`${user ? 'flex-1' : 'w-full'} overflow-y-auto scrollbar-hide pb-12 space-y-10 pr-2`}>
       {/* Hero Section */}
       <section className="relative h-[400px] flex items-center overflow-hidden glass-panel rounded-3xl border border-white/10">
         <div className="absolute inset-0">
