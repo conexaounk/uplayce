@@ -29,6 +29,7 @@ export default function MyTracksPage() {
   
   const [tracks, setTracks] = useState<Track[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedTrack, setSelectedTrack] = useState<Track | null>(null);
 
   const fetchUserTracks = async () => {
     if (!user?.id) return;
