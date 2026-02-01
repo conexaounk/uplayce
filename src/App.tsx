@@ -44,6 +44,7 @@ function Sidebar() {
   return (
     <aside className="fixed left-5 top-[76px] bottom-5 w-[95px] hidden md:flex flex-col items-center py-6 glass-panel rounded-[40px] z-50 border border-white/10">
       <nav className="flex-1 flex flex-col gap-8 w-full items-center">
+        <Bell className="w-5 h-5 text-gray-500 ml-[42px]" />
         {navItems.map((item) => {
           const Icon = item.icon;
           const isActive = location === item.href;
