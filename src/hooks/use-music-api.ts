@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-notification";
 
 export function useMusicApi() {
   const queryClient = useQueryClient();
+  const toast = useToast();
 
   // MUDANÇA AQUI: Agora aceita userId e search como parâmetros opcionais
   const useTracks = (userId?: string, search?: string) => useQuery({
