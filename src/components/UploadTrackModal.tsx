@@ -134,7 +134,7 @@ export function UploadTrackModal({
 
   function processFile(file: File) {
     if (file.size > MAX_FILE_SIZE) {
-      toast.error("Arquivo muito grande (máx. 500MB)");
+      toast.error("Arquivo muito grande", "Máximo 500MB permitido");
       return;
     }
     setFile(file);
