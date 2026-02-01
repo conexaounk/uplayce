@@ -19,6 +19,9 @@ export interface TrackFromDB1 {
   cover_url: string | null;
   bpm_confidence: number;
   bpm: number | null;
+  key: string | null;
+  track_type: string | null;
+  collaborations: string | null;
   is_exclusive: boolean;
 }
 
