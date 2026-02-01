@@ -41,7 +41,7 @@ export default function HomePage() {
           <div className="absolute inset-0 bg-cover bg-center opacity-10 mix-blend-overlay bg-[url('/lovable-uploads/ae781f05-9686-49ca-8aef-db5575a7283a.png')]" />
         </div>
 
-        <div className="relative z-10 px-8 max-w-2xl">
+        <div className="relative z-10 px-4 sm:px-8 max-w-2xl w-full">
           <motion.div initial={{
             opacity: 0,
             x: -50
@@ -51,18 +51,18 @@ export default function HomePage() {
           }} transition={{
             duration: 0.8
           }}>
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter text-white mb-4 leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-black tracking-tighter text-white mb-2 sm:mb-4 leading-tight">
               TRACKS <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-purple to-accent-blue">DJs UNK</span>
             </h1>
-            <p className="text-gray-300 mb-6 text-lg">
+            <p className="text-gray-300 mb-4 sm:mb-6 text-sm sm:text-base md:text-lg">
               Packs, tracks exclusivas e stems direto dos DJs UNK
             </p>
 
             <div className="relative max-w-sm">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
               <Input
                 placeholder="Buscar packs..."
-                className="pl-12 h-12 rounded-full bg-white/10 border-white/20 text-base placeholder:text-gray-400 focus:ring-accent-purple"
+                className="pl-12 h-10 sm:h-12 rounded-full bg-white/10 border-white/20 text-sm sm:text-base placeholder:text-gray-400 focus:ring-accent-purple"
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
               />
