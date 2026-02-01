@@ -22,14 +22,10 @@ export default function HomePage() {
   });
   const {
     data: djs,
-    isLoading: djsLoading,
-    error: djsError
+    isLoading: djsLoading
   } = useDJs();
   const [selectedPack, setSelectedPack] = useState<PackWithTracks | null>(null);
-  const {
-    user,
-    login
-  } = useAuth();
+  const { user } = useAuth();
 
   // Filtrar DJs que têm packs/tracks
   const djsWithTracks = djs?.filter(dj => {
