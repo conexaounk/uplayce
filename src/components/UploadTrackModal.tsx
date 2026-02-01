@@ -451,8 +451,7 @@ export function UploadTrackModal({
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] backdrop-blur-sm"
-                      style={{ margin: "20px 0 0 -4px", padding: "20px 106px 20px 48px" }}
+                      className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-white/5 to-white/[0.02] p-5 backdrop-blur-sm"
                     >
                       {trackType === "mashup" ? (
                         <div className="flex justify-between items-center">
