@@ -96,11 +96,11 @@ export function EditTrackModal({ open, onOpenChange, track }: { open: boolean; o
 
         {/* Audio Preview with Editable Time Selector */}
         {track?.audio_url && (
-          <div className="my-4">
+          <div className="mb-6">
             <AudioPreview
               url={track.audio_url}
               title={track.title}
-              size="md"
+              size="sm"
               showTime={true}
               startTime={track.preview_start_time || 0}
               onStartTimeChange={(time) => form.setValue('preview_start_time', time)}
@@ -109,48 +109,53 @@ export function EditTrackModal({ open, onOpenChange, track }: { open: boolean; o
           </div>
         )}
 
-        <form className="space-y-4 mt-4" onSubmit={form.handleSubmit(onSubmit)}>
-          <div>
-            <Label>Título</Label>
-            <Input {...form.register('title')} />
+        <form className="space-y-3" onSubmit={form.handleSubmit(onSubmit)}>
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">Título</Label>
+              <Input {...form.register('title')} className="h-8 text-sm" />
+            </div>
+
+            <div>
+              <Label className="text-xs">Gênero</Label>
+              <Input {...form.register('genre')} className="h-8 text-sm" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label className="text-xs">BPM</Label>
+              <Input type="number" {...form.register('bpm', { valueAsNumber: true })} className="h-8 text-sm" />
+            </div>
+
+            <div>
+              <Label className="text-xs">Key</Label>
+              <Input {...form.register('key')} className="h-8 text-sm" />
+            </div>
           </div>
 
           <div>
-            <Label>Gênero</Label>
-            <Input {...form.register('genre')} />
+            <Label className="text-xs">Colaborações</Label>
+            <Input {...form.register('collaborations')} className="h-8 text-sm" />
           </div>
 
           <div>
-            <Label>Colaborações</Label>
-            <Input {...form.register('collaborations')} />
-          </div>
-
-          <div>
-            <Label>BPM</Label>
-            <Input type="number" {...form.register('bpm', { valueAsNumber: true })} />
-          </div>
-
-          <div>
-            <Label>Key</Label>
-            <Input {...form.register('key')} />
-          </div>
-
-          <div>
-            <Label>Tempo inicial da prévia (segundos)</Label>
+            <Label className="text-xs">Tempo inicial da prévia (segundos)</Label>
             <Input
               type="number"
               {...form.register('preview_start_time', { valueAsNumber: true })}
               placeholder="Ex: 0, 30, 60..."
               min="0"
+              className="h-8 text-sm"
             />
             <p className="text-xs text-muted-foreground mt-1">
               Define a partir de qual segundo a prévia de 30 segundos começará
             </p>
           </div>
 
-          <div className="flex justify-between items-center">
-            <Button type="submit" className="bg-primary">Salvar</Button>
-            <Button variant="destructive" onClick={handleRemoveFromProfile}><Trash2 /> Remover do perfil</Button>
+          <div className="flex gap-2 pt-2">
+            <Button type="submit" className="bg-primary flex-1 h-8 text-sm">Salvar</Button>
+            <Button variant="destructive" onClick={handleRemoveFromProfile} className="h-8 text-sm"><Trash2 size={14} className="mr-1" /> Remover</Button>
           </div>
         </form>
       </DialogContent>
