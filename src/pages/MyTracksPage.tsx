@@ -190,6 +190,98 @@ export default function MyTracksPage() {
           </p>
         </div>
       )}
+
+      {/* Miniplayer Modal */}
+      {selectedTrack && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+          onClick={() => setSelectedTrack(null)}
+        >
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.95, opacity: 0 }}
+            transition={{ type: "spring", damping: 20, stiffness: 300 }}
+            className="bg-[#0a0a0a] border border-white/10 rounded-2xl p-6 max-w-lg w-full space-y-6 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <h2 className="text-xl font-bold text-white truncate">{selectedTrack.title}</h2>
+                <p className="text-sm text-gray-400 mt-1">{selectedTrack.artist || 'Artista desconhecido'}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-gray-400 hover:text-white flex-shrink-0"
+                onClick={() => setSelectedTrack(null)}
+              >
+                <X size={20} />
+              </Button>
+            </div>
+
+            {/* Cover Image */}
+            {selectedTrack.cover_url && (
+              <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-gradient-to-br from-gray-800 to-gray-900">
+                <img
+                  src={selectedTrack.cover_url}
+                  alt={selectedTrack.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            {/* Audio Preview Player */}
+            <AudioPreview
+              url={selectedTrack.audio_url}
+              title={selectedTrack.title}
+              size="lg"
+              showTime={true}
+            />
+
+            {/* Track Info */}
+            <div className="grid grid-cols-2 gap-4 pt-4 border-t border-white/10">
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Gênero</p>
+                <p className="text-sm font-semibold text-white mt-1">{selectedTrack.genre}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Tipo</p>
+                <p className="text-sm font-semibold text-white mt-1">{selectedTrack.track_type}</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Duração</p>
+                <p className="text-sm font-semibold text-white mt-1">{Math.floor(selectedTrack.duration)}s</p>
+              </div>
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wider">Preço</p>
+                <p className="text-sm font-semibold text-primary mt-1">R$ {(selectedTrack.price_cents / 100).toFixed(2)}</p>
+              </div>
+            </div>
+
+            {/* Status */}
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-gray-400">
+                {selectedTrack.is_public ? (
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    Público
+                  </span>
+                ) : (
+                  <span className="flex items-center gap-2">
+                    <span className="w-2 h-2 bg-gray-500 rounded-full"></span>
+                    Privado
+                  </span>
+                )}
+              </span>
+            </div>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 }
