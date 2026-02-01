@@ -15,6 +15,16 @@ export default defineConfig(({ mode }) => ({
     },
     // Fallback para index.html em rotas SPA (sem extensão de arquivo)
     middlewareMode: false,
+    middleware: [
+      // Middleware para SPA routing: redirecionar rotas sem extensão para index.html
+      (req, res, next) => {
+        // Se a URL não tem extensão e não é a raiz, redirecionar para index.html
+        if (req.url && !req.url.includes('.') && !req.url.startsWith('/@')) {
+          req.url = '/index.html';
+        }
+        next();
+      }
+    ],
   },
   plugins: [
     react(),
