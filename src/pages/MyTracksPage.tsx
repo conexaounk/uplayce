@@ -109,8 +109,16 @@ export default function MyTracksPage() {
         <div>
           <h1 className="text-4xl font-black text-white">Minhas Tracks</h1>
         </div>
-        <div className="text-right">
-          <span className="text-2xl font-bold text-primary">{tracks.length}</span>
+        <div className="flex items-center gap-4">
+          <div className="text-right">
+            <span className="text-2xl font-bold text-primary">{tracks.length}</span>
+          </div>
+          <Button
+            onClick={() => setUploadModalOpen(true)}
+            className="rounded-full"
+          >
+            <Plus size={18} className="mr-2" /> Nova Track
+          </Button>
         </div>
       </header>
 
