@@ -71,7 +71,7 @@ export default function ProfileViewPage() {
                 <CardTitle className="text-3xl font-bold mb-1">
                   {myProfile?.dj_name || "Meu Perfil"}
                 </CardTitle>
-                <p className="text-primary text-sm font-medium">{user.username}</p>
+                <p className="text-primary text-sm font-medium">{user.email}</p>
               </div>
             </div>
             <Button 
