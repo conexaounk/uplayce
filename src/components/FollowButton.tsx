@@ -22,7 +22,7 @@ export function FollowButton({ userId, className, size = "sm", variant = "outlin
     <Button
       onClick={handleToggleFollow}
       disabled={isLoading}
-      className={`rounded-full ${className}`}
+      className={`rounded-full gap-1.5 !min-h-[26px] !px-1.5 !py-0 !leading-[13px] ${className}`}
       variant={isFollowing ? "outline" : variant === "default" ? "default" : "outline"}
       size={size === "sm" ? "sm" : size === "md" ? "default" : "lg"}
     >
