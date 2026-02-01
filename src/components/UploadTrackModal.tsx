@@ -221,10 +221,10 @@ export function UploadTrackModal({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] glass-effect w-[95vw] sm:w-[90vw] md:w-full p-0 overflow-hidden rounded-2xl" style={{ left: "58%", margin: "16px auto 50px", padding: "8px 32px 29px 21px" }}>
+      <DialogContent className="flex flex-col w-[95vw] sm:w-[90vw] md:w-[85vw] lg:w-[80vw] xl:w-[70vw] max-w-5xl max-h-[95vh] glass-effect rounded-2xl p-0 overflow-hidden">
         {/* Header com gradiente */}
-        <div className="relative overflow-hidden bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 border-b border-white/10 p-6 sm:p-8 rounded-[29px]">
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50 rounded-[29px]" />
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary/20 via-secondary/20 to-primary/20 border-b border-white/10 p-6 sm:p-8 flex-shrink-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/10 to-transparent opacity-50" />
           <div className="relative z-10">
             <DialogTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
               Gerenciar Músicas
@@ -235,8 +235,8 @@ export function UploadTrackModal({
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-0" style={{ marginLeft: "-10px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
-          <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-white/10 h-12 sm:h-14 rounded-none mx-0 p-0">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col flex-1 overflow-hidden">
+          <TabsList className="grid w-full grid-cols-2 bg-transparent border-b border-white/10 h-12 sm:h-14 rounded-none mx-0 p-0 flex-shrink-0">
             <TabsTrigger value="upload" className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent text-xs sm:text-sm font-medium transition-all">
               <Upload className="w-4 h-4 mr-2" />
               Novo Upload
@@ -248,7 +248,7 @@ export function UploadTrackModal({
           </TabsList>
 
           {/* ================= UPLOAD ================= */}
-          <TabsContent value="upload" className="space-y-4 p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-200px)]" style={{ margin: "24px 1px 0 0", padding: "24px 0 24px 24px" }}>
+          <TabsContent value="upload" className="flex-1 overflow-y-auto p-6 space-y-6">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               {!file ? (
                 <motion.div
