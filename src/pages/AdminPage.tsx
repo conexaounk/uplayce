@@ -117,10 +117,10 @@ export default function AdminPage() {
     try {
       await setSetting('hidden_tracks', JSON.stringify(arr));
       setHiddenTrackIds(arr);
-      toast.success('Lista de ocultos atualizada');
+      toast.success('Atualizado', 'Lista de ocultos alterada com sucesso');
     } catch (e) {
       console.error('Erro ao salvar hidden list', e);
-      toast.error('Erro ao atualizar ocultos');
+      toast.error('Erro ao atualizar', 'Não foi possível salvar as alterações');
     }
   };
 
