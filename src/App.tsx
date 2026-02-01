@@ -95,7 +95,6 @@ function Navbar() {
     isAdmin
   } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [createPackOpen, setCreatePackOpen] = useState(false);
   const [location, setLocation] = useLocation();
   const navLinks = [{
     href: "/",
@@ -181,7 +180,6 @@ function Navbar() {
           </Sheet>
         </div>
       </div>
-      <CreatePackModal open={createPackOpen} onOpenChange={setCreatePackOpen} />
     </nav>;
 }
 function Router() {
