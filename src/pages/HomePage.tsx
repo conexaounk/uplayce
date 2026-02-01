@@ -108,10 +108,13 @@ export default function HomePage() {
         <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
           <Users size={24} /> Artistas em Destaque
         </h2>
-        {djsLoading ? <div className="h-40 flex items-center justify-center">
+        {djsLoading || packsLoading ? <div className="h-40 flex items-center justify-center">
           <Loader2 className="animate-spin text-accent-purple w-10 h-10" />
         </div> : <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {djs?.slice(0, 8).map(dj => <DJCard key={dj.id} dj={dj} />)}
+          {djsWithTracks.slice(0, 8).map(dj => <DJCard key={dj.id} dj={dj} />)}
+          {djsWithTracks.length === 0 && <div className="col-span-full text-center py-12 text-gray-400">
+            Nenhum artista com tracks disponível no momento.
+          </div>}
         </div>}
       </section>
     </div>
