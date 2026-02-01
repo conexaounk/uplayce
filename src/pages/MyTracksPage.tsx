@@ -6,7 +6,6 @@ import { Music } from "lucide-react";
 
 export default function MyTracksPage() {
   const { user } = useAuth();
-  const [, setLocation] = useLocation();
   const {
     data: packs,
     isLoading,
