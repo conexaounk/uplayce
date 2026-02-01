@@ -103,7 +103,7 @@ function Navbar() {
 
         {/* Desktop Nav */}
         <div className="hidden md:flex items-center gap-8 flex-1 ml-12">
-          {navLinks.map(link => <Link key={link.href} href={link.href}>
+          {navLinks.slice(0, 1).map(link => <Link key={link.href} href={link.href}>
               <span className={`text-sm font-medium cursor-pointer transition-colors ${location === link.href ? "text-white" : "text-gray-400 hover:text-white"}`}>
                 {link.label}
               </span>
