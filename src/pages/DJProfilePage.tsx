@@ -1,5 +1,5 @@
 import { useDJ } from "@/hooks/use-djs";
-import { useUserTracks } from "@/hooks/use-tracks"; // Hook que busca do seu Worker/D1
+import { useMusicApi } from "@/hooks/use-music-api"; // 1. ALTERADO: Importando o hook centralizado
 import { useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -11,17 +11,20 @@ import { BuyPackModal } from "@/components/BuyPackModal";
 export default function DJProfilePage() {
   const { id } = useParams<{ id: string }>();
   
-  // 1. Hooks de Dados
+  // 2. Hooks de Dados
   const { data: djProfile, isLoading: djLoading } = useDJ(id || "");
-  // Buscamos as músicas onde o user_id é o ID do DJ da página
-  const { data: tracks = [], isLoading: tracksLoading } = useUserTracks(id || "");
+  
+  // 3. ALTERADO: Usando o hook novo para buscar as músicas deste DJ específico
+  const { useTracks } = useMusicApi();
+  // Passamos o 'id' do DJ vindo da URL para filtrar apenas as músicas dele
+  const { data: tracks = [], isLoading: tracksLoading } = useTracks(id);
 
   const [buyPackModalOpen, setBuyPackModalOpen] = useState(false);
   const [playingTrackId, setPlayingTrackId] = useState<string | null>(null);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // 2. Lógica de Áudio (Preview de 30s)
+  // 4. Lógica de Áudio (Preview de 30s)
   const handlePlayPreview = (trackId: string, audioUrl: string) => {
     if (playingTrackId === trackId && audioRef.current && !audioRef.current.paused) {
       audioRef.current.pause();
@@ -52,7 +55,7 @@ export default function DJProfilePage() {
     return () => audio.removeEventListener("timeupdate", handleTimeUpdate);
   }, []);
 
-  // 3. Estados de Carregamento/Erro
+  // Estados de Carregamento/Erro
   if (djLoading) {
     return (
       <div className="h-screen flex items-center justify-center">
@@ -114,52 +117,56 @@ export default function DJProfilePage() {
           <div className="flex justify-center py-12"><Loader2 className="animate-spin" /></div>
         ) : (
           <div className="grid gap-3">
-            {tracks.map((track) => {
-              const isPlaying = playingTrackId === track.id;
-              
-              return (
-                <div 
-                  key={track.id}
-                  className="group bg-card/40 border border-white/5 p-4 rounded-2xl flex items-center gap-4 hover:border-primary/40 transition-all"
-                >
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => handlePlayPreview(track.id, track.audio_url)}
-                    className="w-12 h-12 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all flex-shrink-0"
-                  >
-                    {isPlaying ? <Pause /> : <Play className="ml-1" />}
-                  </Button>
+            {tracks.length === 0 ? (
+                <p className="text-muted-foreground text-center py-10 italic">Nenhuma música publicada por este DJ ainda.</p>
+            ) : (
+                tracks.map((track: any) => {
+                const isPlaying = playingTrackId === track.id;
+                
+                return (
+                    <div 
+                    key={track.id}
+                    className="group bg-card/40 border border-white/5 p-4 rounded-2xl flex items-center gap-4 hover:border-primary/40 transition-all"
+                    >
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handlePlayPreview(track.id, track.audio_url)}
+                        className="w-12 h-12 rounded-xl bg-primary/10 text-primary hover:bg-primary hover:text-white transition-all flex-shrink-0"
+                    >
+                        {isPlaying ? <Pause /> : <Play className="ml-1" />}
+                    </Button>
 
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-bold text-lg truncate">{track.title}</h4>
-                    <p className="text-sm text-muted-foreground truncate">
-                      <span className="text-primary font-medium">{track.artist}</span>
-                      {/* EXIBIÇÃO AUTOMÁTICA DO FEAT SE EXISTIR NO BANCO */}
-                      {track.collaborations && (
-                        <span className="text-xs italic ml-1 opacity-80">
-                          (feat. {track.collaborations})
-                        </span>
-                      )}
-                      <span className="mx-2">•</span>
-                      <span className="capitalize">{track.genre}</span>
-                    </p>
-                    
-                    {isPlaying && (
-                      <div className="mt-3 flex items-center gap-3">
-                        <div className="h-1.5 flex-1 bg-white/10 rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary shadow-[0_0_10px_rgba(144,19,254,0.5)] transition-all duration-300" 
-                            style={{ width: `${(currentTime / 30) * 100}%` }}
-                          />
+                    <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-lg truncate">{track.title}</h4>
+                        <p className="text-sm text-muted-foreground truncate">
+                        <span className="text-primary font-medium">{track.artist}</span>
+                        {/* EXIBIÇÃO DO FEAT (Collaborations) */}
+                        {track.collaborations && (
+                            <span className="text-xs italic ml-1 opacity-80 text-white/70">
+                            (feat. {track.collaborations})
+                            </span>
+                        )}
+                        <span className="mx-2 opacity-50">•</span>
+                        <span className="capitalize opacity-70">{track.genre}</span>
+                        </p>
+                        
+                        {isPlaying && (
+                        <div className="mt-3 flex items-center gap-3">
+                            <div className="h-1.5 flex-1 bg-white/10 rounded-full overflow-hidden">
+                            <div 
+                                className="h-full bg-primary shadow-[0_0_10px_rgba(144,19,254,0.5)] transition-all duration-300" 
+                                style={{ width: `${(currentTime / 30) * 100}%` }}
+                            />
+                            </div>
+                            <span className="text-[10px] font-mono text-primary">0:{Math.floor(currentTime).toString().padStart(2, '0')} / 0:30</span>
                         </div>
-                        <span className="text-[10px] font-mono text-primary">0:{Math.floor(currentTime).toString().padStart(2, '0')} / 0:30</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                        )}
+                    </div>
+                    </div>
+                );
+                })
+            )}
           </div>
         )}
       </div>
@@ -168,15 +175,15 @@ export default function DJProfilePage() {
       {tracks.length >= 10 ? (
         <Button
           onClick={() => setBuyPackModalOpen(true)}
-          className="w-full mt-10 h-16 text-xl font-black uppercase tracking-tighter shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform"
+          className="w-full mt-10 h-16 text-xl font-black uppercase tracking-tighter shadow-xl shadow-primary/20 hover:scale-[1.02] transition-transform bg-gradient-to-r from-primary to-purple-600"
         >
-          <ShoppingCart className="mr-3" /> Adquirir Pack do DJ
+          <ShoppingCart className="mr-3" /> Adquirir Pack Completo
         </Button>
       ) : (
         tracks.length > 0 && (
           <div className="mt-8 p-6 rounded-3xl bg-primary/5 border border-primary/10 text-center">
             <p className="text-sm text-muted-foreground">
-              A liberação do pack requer <span className="text-white font-bold">10 músicas</span>. 
+              A venda do pack será liberada quando o artista completar <span className="text-white font-bold">10 músicas</span>. 
               Faltam <span className="text-primary font-bold">{10 - tracks.length}</span>.
             </p>
           </div>
