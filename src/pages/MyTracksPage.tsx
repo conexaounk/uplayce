@@ -3,11 +3,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Music, Loader2, Edit, Play, ExternalLink, Plus } from "lucide-react";
-import { api } from "@/lib/apiService";
 import { useToast } from "@/hooks/use-notification";
 import { UploadTrackModal } from "@/components/UploadTrackModal";
 import { EditTrackModal } from "@/components/EditTrackModal";
 import { PlayerContext } from "@/context/PlayerContext";
+import { supabase } from "@/integrations/supabase/client";
 
 // Interface exata do seu D1
 interface Track {
@@ -42,7 +42,15 @@ export default function MyTracksPage() {
     setIsLoading(true);
     try {
       // 1. Faz a chamada para a API
-      const res = await api.fetch('/tracks');
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) throw new Error('Login necessário');
+
+      const response = await fetch('https://api.conexaounk.com/tracks', {
+        headers: { 'Authorization': `Bearer ${session.access_token}` },
+      });
+
+      if (!response.ok) throw new Error('Erro ao buscar tracks');
+      const res = await response.json();
 
       // 2. Tenta encontrar a lista de tracks em diferentes formatos possíveis
       let allTracks: Track[] = [];
