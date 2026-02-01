@@ -26,10 +26,11 @@ export function FollowButton({ userId, className, size = "sm", variant = "outlin
       variant={isFollowing ? "outline" : variant === "default" ? "default" : "outline"}
       size={size === "sm" ? "sm" : size === "md" ? "default" : "lg"}
       style={{
-        gap: "6px",
+        gap: "-8px",
         minHeight: "26px",
-        padding: "0 4px 0 6px",
+        paddingLeft: "1px",
         lineHeight: "13px",
+        margin: "0 -15px 63px auto",
       }}
     >
       {isLoading ? (
