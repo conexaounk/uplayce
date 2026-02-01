@@ -21,7 +21,7 @@ export default function AdminPage() {
   useEffect(() => {
     const isAdmin = user?.app_metadata?.role === 'admin' || user?.user_metadata?.is_admin === true;
     if (!authLoading && !isAdmin) {
-      toast.error("Acesso negado. Apenas administradores.");
+      toast.error("Acesso negado", "Apenas administradores podem acessar");
       setLocation("/");
     }
   }, [user, authLoading, setLocation]);
