@@ -87,7 +87,8 @@ function Navbar() {
   } = useCart();
   const {
     user,
-    logout
+    logout,
+    isAdmin
   } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [createPackOpen, setCreatePackOpen] = useState(false);
