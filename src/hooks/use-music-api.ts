@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/apiService";
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-notification";
 
 export function useMusicApi() {
   const queryClient = useQueryClient();
