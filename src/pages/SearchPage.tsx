@@ -24,7 +24,7 @@ export default function SearchPage() {
         transition={{ duration: 0.4 }}
         className="space-y-4"
       >
-        <h1 className="text-4xl font-black text-white">Buscar DJs</h1>
+        <h1 className="text-4xl font-black text-white mt-[13px]">Buscar DJs</h1>
         <p className="text-gray-400">Encontre seus artistas favoritos na plataforma</p>
 
         {/* Search Input */}
