@@ -200,9 +200,12 @@ function App() {
           <PackProvider>
             <TooltipProvider>
               <AuthRedirect />
-              <div className="bg-background min-h-screen text-foreground font-body flex flex-col">
+              <div className="min-h-screen text-foreground font-body flex flex-col overflow-x-hidden">
+                <Sidebar />
                 <Navbar />
-                <Router />
+                <div className="flex-1 pt-16 md:pt-16 md:ml-[110px] overflow-hidden">
+                  <Router />
+                </div>
                 <CartSidebar />
                 <NotificationCenter />
                 <FloatingFolder />
