@@ -6,6 +6,8 @@ import { PixCheckoutModal, OrderData } from '@/components/PixCheckoutModal';
 import { usePack } from '@/context/packContext';
 import { useToast } from '@/hooks/use-notification';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'https://api.conexaounk.com';
+
 export function FloatingFolder() {
   const { currentPack, removeTrack, finalize } = usePack();
   const toast = useToast();
@@ -67,14 +69,27 @@ export function FloatingFolder() {
 
                     // Cria ordem no backend e abre modal de pagamento com QR
                     toast.info('Processando pedido', 'Aguarde enquanto prepararmos seu QR Code');
-                    const { api } = await import('@/lib/apiService');
+
+                    const { data: { session } } = await (await import('@/integrations/supabase/client')).supabase.auth.getSession();
+                    if (!session?.access_token) throw new Error('Login necessário');
+
                     const payload = {
                       amount_cents: total,
                       pack_name: currentPack.name,
                       items: currentPack.tracks.map((t) => t.id),
                     };
 
-                    const order = await api.fetch('/orders', { method: 'POST', body: JSON.stringify(payload) });
+                    const res = await fetch(`${API_BASE}/orders`, {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${session.access_token}`,
+                      },
+                      body: JSON.stringify(payload),
+                    });
+
+                    if (!res.ok) throw new Error('Erro ao criar pedido');
+                    const order = await res.json();
 
                     setOrderData({ id: order.id || order.orderId || order._id, qrcode: order.qrcode, amount_cents: order.amount_cents ?? payload.amount_cents });
                     setCheckoutOpen(true);

@@ -30,7 +30,7 @@ export default function LoginPage() {
 
   // Redireciona se já está logado
   if (user) {
-    setLocation("/profile");
+    setLocation("/");
     return null;
   }
 
@@ -43,7 +43,7 @@ export default function LoginPage() {
         setErrorMessage("Verifique seu email para confirmar o cadastro!");
       } else {
         await login(data.email, data.password);
-        setLocation("/profile");
+        setLocation("/");
       }
     } catch (error) {
       const errorMsg = error instanceof Error ? error.message : "Erro na autenticação";

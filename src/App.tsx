@@ -2,7 +2,6 @@ import { Switch, Route, Link, useLocation } from "wouter";
 import { PackProvider } from "@/context/packContext";
 import { PlayerProvider } from "@/context/PlayerContext";
 import { FloatingFolder } from "@/components/FloatingFolder";
-import { CreatePackModal } from "@/components/CreatePackModal";
 import { MiniPlayer } from "@/components/MiniPlayer";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -95,7 +94,6 @@ function Navbar() {
     isAdmin
   } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [createPackOpen, setCreatePackOpen] = useState(false);
   const [location, setLocation] = useLocation();
   const navLinks = [{
     href: "/",
@@ -139,10 +137,6 @@ function Navbar() {
                 </Button>
               </Link>
 
-              <Button variant="ghost" size="sm" className="hidden sm:flex" onClick={() => setCreatePackOpen(true)}>
-                Criar Pack
-              </Button>
-
               {isAdmin && (
                 <Link href="/admin">
                   <Button variant="ghost" size="sm" className="hidden sm:flex items-center gap-2 hover:bg-white/10">
@@ -185,7 +179,6 @@ function Navbar() {
           </Sheet>
         </div>
       </div>
-      <CreatePackModal open={createPackOpen} onOpenChange={setCreatePackOpen} />
     </nav>;
 }
 function Router() {
@@ -213,16 +206,11 @@ function AuthRedirect() {
   useEffect(() => {
     // Se o usuário estava deslogado e agora está logado
     if (!previousUserRef.current && user) {
-      // Se é admin, redireciona para /admin
-      if (isAdmin) {
-        setLocation("/admin");
-      } else {
-        // Caso contrário, redireciona para /profile
-        setLocation("/profile");
-      }
+      // Sempre redireciona para home
+      setLocation("/");
     }
     previousUserRef.current = user;
-  }, [user, isAdmin, setLocation]);
+  }, [user, setLocation]);
 
   return null;
 }
