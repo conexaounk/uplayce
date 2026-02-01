@@ -107,7 +107,7 @@ export default function SettingsPage() {
         transition={{ duration: 0.4 }}
         className="space-y-2"
       >
-        <h1 className="text-4xl font-black text-white">Configurações</h1>
+        <h1 className="text-4xl font-black text-white mt-[12px]">Configurações</h1>
         <p className="text-gray-400">Gerencie sua conta e preferências</p>
       </motion.div>
 
