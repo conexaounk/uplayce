@@ -124,6 +124,19 @@ export function EditTrackModal({ open, onOpenChange, track }: { open: boolean; o
             <Input type="number" {...form.register('price_cents', { valueAsNumber: true })} />
           </div>
 
+          <div>
+            <Label>Tempo inicial da prévia (segundos)</Label>
+            <Input
+              type="number"
+              {...form.register('preview_start_time', { valueAsNumber: true })}
+              placeholder="Ex: 0, 30, 60..."
+              min="0"
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Define a partir de qual segundo a prévia de 30 segundos começará
+            </p>
+          </div>
+
           <div className="flex justify-between items-center">
             <Button type="submit" className="bg-primary">Salvar</Button>
             <Button variant="destructive" onClick={handleRemoveFromProfile}><Trash2 /> Remover do perfil</Button>
