@@ -87,7 +87,19 @@ export function EditTrackModal({ open, onOpenChange, track }: { open: boolean; o
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent
+        className="max-w-md"
+        style={{
+          gap: "-9px",
+          left: "44%",
+          maxWidth: "654px",
+          top: "484px",
+          width: "584px",
+          minHeight: "0px",
+          margin: "-17px 13px -47px -7px",
+          padding: "28px 62px 24px 39px",
+        }}
+      >
         <DialogHeader>
           <DialogTitle>Editar Música</DialogTitle>
           <DialogDescription>Altere informações da faixa. Remover não deleta do banco.</DialogDescription>
