@@ -266,21 +266,21 @@ export function UploadTrackModal({
           </TabsContent>
 
           {/* ================= BROWSE ================= */}
-          <TabsContent value="browse" className="space-y-4 mt-6">
+          <TabsContent value="browse" className="space-y-2 mt-3">
             <div className="relative">
-              <Search className="absolute left-3 top-3 w-4 h-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-2 w-4 h-4 text-muted-foreground" />
               <Input
-                className="pl-9 bg-muted/30 h-10 text-sm"
-                placeholder="Buscar musica..."
+                className="pl-9 bg-muted/30 h-8 text-xs"
+                placeholder="Buscar..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             {tracksLoading ? (
-              <div className="py-8 flex justify-center"><Loader2 className="animate-spin text-primary" /></div>
+              <div className="py-4 flex justify-center"><Loader2 className="animate-spin text-primary" size={20} /></div>
             ) : (
-              <div className="space-y-2 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="space-y-1 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
                 {tracks.length === 0 ? (
                     <p className="text-center text-muted-foreground py-8">Nenhuma música encontrada.</p>
                 ) : (
