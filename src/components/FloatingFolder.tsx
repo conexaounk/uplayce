@@ -116,10 +116,36 @@ export function FloatingFolder() {
                 Finalizar e Baixar
               </Button>
               <Button variant="ghost" className="w-full text-[10px] hover:bg-black/10">Editar Seleção</Button>
+              <Button
+                onClick={() => {
+                  toast.info('Pack cancelado', 'Você descartou este pack');
+                  clearPack();
+                }}
+                variant="ghost"
+                className="w-full text-[10px] hover:bg-red-500/10 hover:text-red-400"
+              >
+                Cancelar
+              </Button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Botão de cancelar também para packs incompletos */}
+      {!isFull && (
+        <div className="p-3 border-t border-white/5">
+          <Button
+            onClick={() => {
+              toast.info('Pack cancelado', 'Você descartou este pack');
+              clearPack();
+            }}
+            variant="ghost"
+            className="w-full text-xs hover:bg-red-500/10 hover:text-red-400"
+          >
+            Cancelar Pack
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
