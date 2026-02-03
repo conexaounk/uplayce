@@ -277,7 +277,7 @@ export function UploadTrackModal({
                       Solte sua faixa aqui
                     </h3>
                     <p className="text-xs sm:text-sm text-muted-foreground">
-                      MP3, WAV, AIFF • até 500MB
+                      MP3, WAV, AIFF 
                     </p>
                   </div>
                 </motion.div>
