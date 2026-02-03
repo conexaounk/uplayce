@@ -3,11 +3,9 @@ import * as apiService from "@/lib/apiService";
 import { useToast } from "@/hooks/use-notification";
 import { supabase } from "@/integrations/supabase/client";
 
-// Use local proxy path in development, fall back to API_URL in production
-const API_BASE = typeof window !== 'undefined' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1'
-  ? '/api'
-  : import.meta.env.VITE_API_URL || "https://api.conexaounk.com";
+const API_BASE = import.meta.env.VITE_API_URL || "https://api.conexaounk.com";
 console.log('🔌 API_BASE inicializado:', API_BASE);
+console.log('🔌 Current origin:', typeof window !== 'undefined' ? window.location.origin : 'N/A');
 
 // Helper function para retry com exponential backoff
 async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 2): Promise<Response> {
