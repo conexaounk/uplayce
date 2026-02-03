@@ -19,6 +19,11 @@ export function FloatingFolder() {
   const slots = Array.from({ length: 10 });
   const isFull = currentPack.tracks.length === 10;
 
+  const handleCancel = () => {
+    toast.info('Pack cancelado', 'Você descartou este pack');
+    finalize(); // This will clear the pack
+  };
+
   return (
     <div className="fixed bottom-6 right-6 z-50 w-72 shadow-2xl overflow-hidden rounded-2xl border border-white/10 bg-black/90 backdrop-blur-xl">
       <div style={{ backgroundColor: currentPack.color }} className="p-4 flex items-center justify-between text-black">
@@ -26,7 +31,19 @@ export function FloatingFolder() {
           <Folder fill="currentColor" size={20} />
           <span className="font-bold text-sm truncate max-w-[120px]">{currentPack.name}</span>
         </div>
-        <span className="bg-black/20 px-2 py-0.5 rounded text-xs font-black">{currentPack.tracks.length}/10</span>
+        <div className="flex items-center gap-2">
+          <span className="bg-black/20 px-2 py-0.5 rounded text-xs font-black">{currentPack.tracks.length}/10</span>
+          <button
+            onClick={() => {
+              toast.info('Pack cancelado', 'Você descartou este pack');
+              finalize();
+            }}
+            className="bg-black/20 hover:bg-black/40 p-1 rounded transition-colors"
+            title="Cancelar pack"
+          >
+            <X size={16} />
+          </button>
+        </div>
       </div>
 
       <div className="p-3 grid grid-cols-5 gap-2 bg-white/5">
