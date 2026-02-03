@@ -160,6 +160,10 @@ export default function DJProfilePage() {
                     className="group glass-effect rounded-xl p-5 sm:p-6 space-y-4 hover:border-primary/50 transition-all cursor-grab active:cursor-grabbing hover:shadow-lg hover:shadow-primary/20"
                     >
                     <div className="flex items-start justify-between gap-4">
+                      {/* Drag indicator */}
+                      <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity pt-1">
+                        <GripVertical size={16} className="text-gray-600" />
+                      </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-lg">{track.title}</h4>
                         <p className="text-sm text-muted-foreground mt-1">
