@@ -12,6 +12,13 @@ export default defineConfig(({ mode }) => ({
     hmr: {
       overlay: false,
     },
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'https://api.conexaounk.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
     // Fallback para index.html em rotas SPA (sem extensão de arquivo)
     // O dev server do Vite já faz isso automaticamente
   },

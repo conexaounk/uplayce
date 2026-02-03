@@ -5,12 +5,14 @@ import { useParams } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FollowButton } from "@/components/FollowButton";
-import { Loader2, MapPin, ShoppingCart, Music2, Heart, Plus } from "lucide-react";
+import { Loader2, MapPin, ShoppingCart, Music2, Heart, Plus, GripVertical } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { useState, useEffect } from "react";
 import { BuyPackModal } from "@/components/BuyPackModal";
 import { CreatePackModal } from "@/components/CreatePackModal";
-import { AudioPreview } from "@/components/AudioPreview";
+import AudioPreview from "@/components/AudioPreview";
+import { motion } from "framer-motion";
+import { usePack } from "@/context/packContext";
 
 export default function DJProfilePage() {
   const { id } = useParams<{ id: string }>();
@@ -134,13 +136,34 @@ export default function DJProfilePage() {
             {tracks.length === 0 ? (
                 <p className="text-muted-foreground text-center py-10 italic">Nenhuma música publicada por este DJ ainda.</p>
             ) : (
-                tracks.map((track: any) => {
+                tracks.map((track: any, index: number) => {
                 return (
-                    <div 
+                    <motion.div
                     key={track.id}
-                    className="group glass-effect rounded-xl p-5 sm:p-6 space-y-4 hover:border-primary/50 transition-all"
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.effectAllowed = 'copy';
+                      e.dataTransfer.setData(
+                        'application/json',
+                        JSON.stringify({
+                          id: track.id,
+                          title: track.title,
+                          artist: track.artist,
+                          track_type: track.track_type,
+                          price_cents: track.price_cents,
+                        })
+                      );
+                    }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
+                    className="group glass-effect rounded-xl p-5 sm:p-6 space-y-4 hover:border-primary/50 transition-all cursor-grab active:cursor-grabbing hover:shadow-lg hover:shadow-primary/20"
                     >
                     <div className="flex items-start justify-between gap-4">
+                      {/* Drag indicator */}
+                      <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity pt-1">
+                        <GripVertical size={16} className="text-gray-600" />
+                      </div>
                       <div className="flex-1">
                         <h4 className="font-bold text-lg">{track.title}</h4>
                         <p className="text-sm text-muted-foreground mt-1">
@@ -170,7 +193,7 @@ export default function DJProfilePage() {
                         showTime={true}
                       />
                     )}
-                    </div>
+                    </motion.div>
                 );
                 })
             )}

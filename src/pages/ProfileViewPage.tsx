@@ -1,18 +1,19 @@
 import { useAuth } from "@/hooks/use-auth";
 import { EditTrackModal } from "@/components/EditTrackModal";
-import { AudioPreview } from "@/components/AudioPreview";
+import AudioPreview from "@/components/AudioPreview";
 import { useDJ } from "@/hooks/use-djs";
 import { useMusicApi } from "@/hooks/use-music-api";
 import { useCart } from "@/hooks/use-cart";
 import { useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Edit, Plus, ShoppingCart, Music, Lock, Globe, Trash2 } from "lucide-react";
+import { Loader2, Edit, Plus, ShoppingCart, Music, Lock, Globe, Trash2, GripVertical } from "lucide-react";
 import { getStorageUrl } from "@/lib/storageUtils";
 import { UploadTrackModal } from "@/components/UploadTrackModal";
 import { BuyPackModal } from "@/components/BuyPackModal";
 import { useToast } from "@/hooks/use-notification";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 
 export default function ProfileViewPage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -96,13 +97,36 @@ export default function ProfileViewPage() {
           <div className="flex justify-center py-10"><Loader2 className="animate-spin" /></div>
         ) : (
           <div className="space-y-4">
-            {allUserTracks.map((track) => {
+            {allUserTracks.map((track, index) => {
               // Sanitizar o ID removendo qualquer sufixo (ex: ":1")
               const cleanTrackId = String(track.id).split(':')[0];
               return (
-                <div key={cleanTrackId} className="glass-effect rounded-xl p-5 sm:p-6 space-y-4 hover:border-primary/50 transition-all">
+                <motion.div
+                  key={cleanTrackId}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.effectAllowed = 'copy';
+                    e.dataTransfer.setData(
+                      'application/json',
+                      JSON.stringify({
+                        id: track.id,
+                        title: track.title,
+                        artist: track.artist,
+                        track_type: track.track_type,
+                        price_cents: track.price_cents,
+                      })
+                    );
+                  }}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="glass-effect rounded-xl p-5 sm:p-6 space-y-4 hover:border-primary/50 transition-all cursor-grab active:cursor-grabbing hover:shadow-lg hover:shadow-primary/20">
                   {/* Track Info */}
                   <div className="flex items-start justify-between gap-4">
+                    {/* Drag indicator */}
+                    <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity pt-1">
+                      <GripVertical size={16} className="text-gray-600" />
+                    </div>
                     <div className="flex-1">
                       <h4 className="font-bold text-lg">{track.title}</h4>
                       <p className="text-sm text-muted-foreground mt-1">
@@ -205,7 +229,7 @@ export default function ProfileViewPage() {
                       }}
                     />
                   )}
-                </div>
+                </motion.div>
               );
             })}
             {allUserTracks.length === 0 && (
@@ -214,6 +238,9 @@ export default function ProfileViewPage() {
                 <p>Você ainda não tem nenhuma música. <br /> Clique em "Nova Track" para começar!</p>
               </div>
             )}
+            <div className="text-center py-6 text-xs text-muted-foreground">
+              <p>💡 Dica: Arraste suas tracks para a pasta flutuante para criar packs!</p>
+            </div>
           </div>
         )}
       </div>

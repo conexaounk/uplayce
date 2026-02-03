@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { PlayerContext } from "@/context/PlayerContext";
-import { AudioPreview } from "./AudioPreview";
+import AudioPreview from "./AudioPreview";
 import { Button } from "./ui/button";
 import { X } from "lucide-react";
 import { motion } from "framer-motion";

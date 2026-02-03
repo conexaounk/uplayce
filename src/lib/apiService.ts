@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 
 const WORKER_URL = import.meta.env.VITE_API_URL || 'https://api.conexaounk.com';
+console.log('🔌 WORKER_URL initialized:', WORKER_URL);
 const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB
 const MAX_SIMPLE_UPLOAD = 50 * 1024 * 1024; // 50MB - acima disso usa chunked
 

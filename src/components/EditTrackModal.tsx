@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMusicApi } from '@/hooks/use-music-api';
 import { toast } from 'sonner';
 import { Trash2 } from 'lucide-react';
-import { AudioPreview } from '@/components/AudioPreview';
+import AudioPreview from '@/components/AudioPreview';
 
 const schema = z.object({
   title: z.string().min(1),

@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const API_BASE = import.meta.env.VITE_API_URL || "https://api.conexaounk.com";
 console.log('🔌 API_BASE inicializado:', API_BASE);
+console.log('🔌 Current origin:', typeof window !== 'undefined' ? window.location.origin : 'N/A');
 
 // Helper function para retry com exponential backoff
 async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 2): Promise<Response> {

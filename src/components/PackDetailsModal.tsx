@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import type { PackWithTracks } from "@/types/supabase";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Clock, Activity, Download } from "lucide-react";
-import { AudioPreview } from "./AudioPreview";
+import AudioPreview from "./AudioPreview";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useCart } from "@/hooks/use-cart";
 import { getStorageUrl } from "@/lib/storageUtils";
