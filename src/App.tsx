@@ -35,7 +35,7 @@ function Sidebar() {
   const { user, isAdmin } = useAuth();
 
   const navItems = [
-    { href: "/", icon: Home, label: "Home" },
+    { href: "/", icon: Home, label: "Início" },
     { href: "/buscar", icon: Search, label: "Buscar" },
     { href: "/minhas-tracks", icon: Music, label: "Minhas Tracks" },
     { href: "/configuracoes", icon: Settings, label: "Configurações" },
@@ -97,10 +97,10 @@ function Navbar() {
   const [location, setLocation] = useLocation();
   const navLinks = [{
     href: "/",
-    label: "Home"
+    label: "Início"
   }, {
     href: "/djs",
-    label: "Artists"
+    label: "Artistas"
   }];
   return <nav className="fixed top-0 left-0 right-0 z-40 border-b border-white/10 h-16 backdrop-blur-md bg-black/20">
       <div className="container max-w-7xl mx-auto px-4 sm:px-6 h-full flex items-center justify-between">
@@ -166,13 +166,13 @@ function Navbar() {
                     <span className="text-lg font-bold block py-2 border-b border-white/5">{link.label}</span>
                   </Link>)}
                 {user && <Link href="/profile" onClick={() => setMobileMenuOpen(false)}>
-                    <span className="text-lg font-bold block py-2 border-b border-white/5">My Profile</span>
+                    <span className="text-lg font-bold block py-2 border-b border-white/5">Meu Perfil</span>
                   </Link>}
                 {!user && <Button onClick={() => {
                   setLocation("/login");
                   setMobileMenuOpen(false);
                 }} className="mt-4">
-                    Sign In
+                    Entrar
                   </Button>}
               </div>
             </SheetContent>
