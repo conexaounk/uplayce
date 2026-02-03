@@ -10,7 +10,7 @@ import { getStorageUrl } from "@/lib/storageUtils";
 import { useState, useEffect } from "react";
 import { BuyPackModal } from "@/components/BuyPackModal";
 import { CreatePackModal } from "@/components/CreatePackModal";
-import { AudioPreview } from "@/components/AudioPreview";
+import AudioPreview from "@/components/AudioPreview";
 
 export default function DJProfilePage() {
   const { id } = useParams<{ id: string }>();

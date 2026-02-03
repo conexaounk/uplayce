@@ -1,6 +1,6 @@
 import { useAuth } from "@/hooks/use-auth";
 import { EditTrackModal } from "@/components/EditTrackModal";
-import { AudioPreview } from "@/components/AudioPreview";
+import AudioPreview from "@/components/AudioPreview";
 import { useDJ } from "@/hooks/use-djs";
 import { useMusicApi } from "@/hooks/use-music-api";
 import { useCart } from "@/hooks/use-cart";
