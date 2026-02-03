@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-notification';
 const API_BASE = import.meta.env.VITE_API_URL || 'https://api.conexaounk.com';
 
 export function FloatingFolder() {
-  const { currentPack, removeTrack, finalize } = usePack();
+  const { currentPack, removeTrack, finalize, clearPack } = usePack();
   const toast = useToast();
   const [orderData, setOrderData] = useState<{ id: string; qrcode: string; amount_cents: number } | null>(null);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
@@ -18,11 +18,6 @@ export function FloatingFolder() {
 
   const slots = Array.from({ length: 10 });
   const isFull = currentPack.tracks.length === 10;
-
-  const handleCancel = () => {
-    toast.info('Pack cancelado', 'Você descartou este pack');
-    finalize(); // This will clear the pack
-  };
 
   return (
     <div className="fixed bottom-6 right-6 z-50 w-72 shadow-2xl overflow-hidden rounded-2xl border border-white/10 bg-black/90 backdrop-blur-xl">
@@ -36,7 +31,7 @@ export function FloatingFolder() {
           <button
             onClick={() => {
               toast.info('Pack cancelado', 'Você descartou este pack');
-              finalize();
+              clearPack();
             }}
             className="bg-black/20 hover:bg-black/40 p-1 rounded transition-colors"
             title="Cancelar pack"
